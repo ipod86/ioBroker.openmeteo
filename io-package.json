@@ -65,6 +65,7 @@
 		"tier": 3,
 		"mode": "schedule",
 		"schedule": "0 * * * *",
+		"scheduleStartOnChange": true,
 		"type": "weather",
 		"compact": true,
 		"connectionType": "cloud",
