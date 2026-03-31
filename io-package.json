@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.3",
+		"version": "0.0.4",
 		"news": {
+			"0.0.4": {
+				"en": "sync io-package.json version with package.json",
+				"de": "io-package.json Version mit package.json synchronisiert"
+			},
 			"0.0.3": {
 				"en": "fix repository URL format and JSDoc warnings",
 				"de": "Repository-URL-Format und JSDoc-Warnungen behoben"
