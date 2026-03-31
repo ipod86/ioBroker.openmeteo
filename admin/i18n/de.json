@@ -1,11 +1,18 @@
 {
 	"openmeteo adapter settings": "Adaptereinstellungen für openmeteo",
-	"location": "Standort",
+	"locations": "Standorte",
+	"locationName": "Name",
 	"latitude": "Breitengrad",
 	"longitude": "Längengrad",
 	"forecast": "Vorhersage",
 	"daysCount": "Anzahl Tage (1–16)",
 	"daysCountHelp": "Wie viele Tage sollen abgerufen werden (max. 16)",
 	"hourlyDays": "Tage mit Stundenwerten (0–16)",
-	"hourlyDaysHelp": "Für wie viele Tage sollen stündliche Werte gespeichert werden (muss ≤ Anzahl Tage sein)"
+	"hourlyDaysHelp": "Für wie viele Tage sollen stündliche Werte gespeichert werden (muss ≤ Anzahl Tage sein)",
+	"units": "Einheiten",
+	"temperatureUnit": "Temperatureinheit",
+	"windspeedUnit": "Windgeschwindigkeitseinheit",
+	"precipitationUnit": "Niederschlagseinheit",
+	"celsius": "Celsius (°C)",
+	"fahrenheit": "Fahrenheit (°F)"
 }

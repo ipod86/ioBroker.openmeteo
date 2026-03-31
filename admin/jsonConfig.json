@@ -2,33 +2,35 @@
 	"i18n": true,
 	"type": "panel",
 	"items": {
-		"_locationHeader": {
+		"_locationsHeader": {
 			"type": "header",
-			"text": "location",
+			"text": "locations",
 			"newLine": true
 		},
-		"lat": {
-			"type": "number",
-			"label": "latitude",
-			"min": -90,
-			"max": 90,
+		"locations": {
+			"type": "table",
 			"newLine": true,
-			"xs": 12,
-			"sm": 6,
-			"md": 6,
-			"lg": 4,
-			"xl": 4
-		},
-		"lon": {
-			"type": "number",
-			"label": "longitude",
-			"min": -180,
-			"max": 180,
-			"xs": 12,
-			"sm": 6,
-			"md": 6,
-			"lg": 4,
-			"xl": 4
+			"items": {
+				"name": {
+					"type": "text",
+					"label": "locationName",
+					"width": "40%"
+				},
+				"lat": {
+					"type": "number",
+					"label": "latitude",
+					"min": -90,
+					"max": 90,
+					"width": "30%"
+				},
+				"lon": {
+					"type": "number",
+					"label": "longitude",
+					"min": -180,
+					"max": 180,
+					"width": "30%"
+				}
+			}
 		},
 		"_forecastHeader": {
 			"type": "header",
@@ -59,6 +61,53 @@
 			"md": 6,
 			"lg": 4,
 			"xl": 4
+		},
+		"_unitsHeader": {
+			"type": "header",
+			"text": "units",
+			"newLine": true
+		},
+		"temperatureUnit": {
+			"type": "select",
+			"label": "temperatureUnit",
+			"options": [
+				{ "label": "celsius", "value": "celsius" },
+				{ "label": "fahrenheit", "value": "fahrenheit" }
+			],
+			"newLine": true,
+			"xs": 12,
+			"sm": 6,
+			"md": 4,
+			"lg": 3,
+			"xl": 3
+		},
+		"windspeedUnit": {
+			"type": "select",
+			"label": "windspeedUnit",
+			"options": [
+				{ "label": "km/h", "value": "kmh" },
+				{ "label": "m/s", "value": "ms" },
+				{ "label": "mph", "value": "mph" },
+				{ "label": "kn", "value": "kn" }
+			],
+			"xs": 12,
+			"sm": 6,
+			"md": 4,
+			"lg": 3,
+			"xl": 3
+		},
+		"precipitationUnit": {
+			"type": "select",
+			"label": "precipitationUnit",
+			"options": [
+				{ "label": "mm", "value": "mm" },
+				{ "label": "inch", "value": "inch" }
+			],
+			"xs": 12,
+			"sm": 6,
+			"md": 4,
+			"lg": 3,
+			"xl": 3
 		}
 	}
 }
