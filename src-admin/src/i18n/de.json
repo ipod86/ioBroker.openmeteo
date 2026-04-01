@@ -24,6 +24,7 @@
 	"addLocation": "Standort hinzufügen",
 	"updateInterval": "Aktualisierungsintervall",
 	"minutes": "Min",
+	"dailyAt1am": "Täglich um 01:00 Uhr",
 	"optionalData": "Optionale Daten",
 	"enableAirQuality": "Luftqualität (AQI, Feinstaub)",
 	"enableAirQualityHelp": "european_aqi, PM10, PM2.5, NO₂, CO, Staub, Ozon unter current.air_quality",

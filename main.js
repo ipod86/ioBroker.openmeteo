@@ -270,6 +270,7 @@ class Openmeteo extends utils.Adapter {
 			name: "openmeteo",
 		});
 		this.updateInterval = null;
+		this.updateTimeout = null;
 		this.on("ready", this.onReady.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
@@ -280,14 +281,28 @@ class Openmeteo extends utils.Adapter {
 		// Sofort beim Start abrufen
 		await this.runUpdate();
 
-		// Danach stündlich wiederholen
+		// Schedule repeating updates
 		const intervalMinutes = this.config.updateInterval || 60;
-		this.updateInterval = this.setInterval(
-			async () => {
+		if (intervalMinutes >= 1440) {
+			// Daily at 01:00
+			const msUntilNext1am = () => {
+				const now = new Date();
+				const next = new Date();
+				next.setHours(1, 0, 0, 0);
+				if (next <= now) next.setDate(next.getDate() + 1);
+				return next - now;
+			};
+			this.updateTimeout = this.setTimeout(async () => {
 				await this.runUpdate();
-			},
-			intervalMinutes * 60 * 1000,
-		);
+				this.updateInterval = this.setInterval(async () => {
+					await this.runUpdate();
+				}, 24 * 60 * 60 * 1000);
+			}, msUntilNext1am());
+		} else {
+			this.updateInterval = this.setInterval(async () => {
+				await this.runUpdate();
+			}, intervalMinutes * 60 * 1000);
+		}
 	}
 
 	/**
@@ -303,7 +318,9 @@ class Openmeteo extends utils.Adapter {
 		const iconSet = this.config.iconSet || "basmilius";
 		const enablePollen = !!this.config.enablePollen;
 		const enableAirQuality = this.config.enableAirQuality !== false;
+		const enableAirQualityHourly = enableAirQuality && !!this.config.enableAirQualityHourly;
 		const enableAstronomy = this.config.enableAstronomy !== false;
+		const enableAstronomyHourly = enableAstronomy && !!this.config.enableAstronomyHourly;
 		const enableAgriculture = !!this.config.enableAgriculture;
 		const enableAgricultureHourly = enableAgriculture && !!this.config.enableAgricultureHourly;
 		const enablePollenHourly = this.config.enablePollenHourly !== false;
@@ -364,13 +381,13 @@ class Openmeteo extends utils.Adapter {
 					native: {},
 				});
 
-				await this.processData(data, locId, daysCount, hourlyDays, units, iconSet, loc, enableAstronomy, enableAgriculture, enableAgricultureHourly);
+				await this.processData(data, locId, daysCount, hourlyDays, units, iconSet, loc, enableAstronomy, enableAstronomyHourly, enableAgriculture, enableAgricultureHourly);
 				await this.cleanupLocation(locId, daysCount, hourlyDays);
 
 				if (enablePollen || enableAirQuality) {
 					try {
 						const aq = await this.fetchAirQuality(loc.lat, loc.lon);
-						await this.processPollen(aq, locId, hourlyDays, enablePollen, enableAirQuality, enablePollenHourly);
+						await this.processPollen(aq, locId, hourlyDays, enablePollen, enableAirQuality, enableAirQualityHourly, enablePollenHourly);
 					} catch (err) {
 						this.log.warn(`Pollen/Luftqualität-Daten nicht verfügbar für "${loc.name}": ${err.message}`);
 					}
@@ -462,6 +479,7 @@ class Openmeteo extends utils.Adapter {
 				`?latitude=${lat}&longitude=${lon}` +
 				`&current=european_aqi,pm10,pm2_5,nitrogen_dioxide,carbon_monoxide,dust,ozone` +
 			`&hourly=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen` +
+			`,european_aqi,pm10,pm2_5,nitrogen_dioxide,carbon_monoxide,dust,ozone` +
 				`&timezone=Europe/Berlin&forecast_days=4`;
 
 			https
@@ -506,7 +524,7 @@ class Openmeteo extends utils.Adapter {
 	 * @param {object} units - Unit labels { tempUnit, windUnit, precipUnit }
 	 * @param {string} iconSet - Icon set to use ("wmo" or "basmilius")
 	 */
-	async processData(data, locId, daysCount, hourlyDays, units, iconSet, loc, enableAstronomy, enableAgriculture, enableAgricultureHourly) {
+	async processData(data, locId, daysCount, hourlyDays, units, iconSet, loc, enableAstronomy, enableAstronomyHourly, enableAgriculture, enableAgricultureHourly) {
 		const { tempUnit, windUnit, precipUnit, windspeedUnit } = units;
 		const d = data.daily;
 		const h = data.hourly;
@@ -941,36 +959,46 @@ class Openmeteo extends utils.Adapter {
 				role: "value.pressure",
 			});
 
-			// Moon phase (under astronomy channel, only if enabled)
+			// Astronomy channel (sun + moon)
+			let astroData = null;
 			if (enableAstronomy) {
 				const moonDate = new Date(`${d.time[i]}T12:00:00`);
 				const moonIllum = SunCalc.getMoonIllumination(moonDate);
 				const moonTimes = SunCalc.getMoonTimes(moonDate, loc.lat, loc.lon);
 				const { text: moonText, idx: moonIdx } = moonPhaseInfo(moonIllum.phase);
-				await this.setDP(`${prefix}.astronomy.moon_phase_val`, Math.round(moonIllum.phase * 100) / 100, {
+				astroData = {
+					sunrise: d.sunrise[i],
+					sunset: d.sunset[i],
+					moon_phase_val: Math.round(moonIllum.phase * 100) / 100,
+					moon_phase_text: moonText,
+					moon_phase_icon_url: `/openmeteo.admin/icons/moon/${moonIdx}.png`,
+					moonrise: moonTimes.rise ? moonTimes.rise.toISOString() : null,
+					moonset: moonTimes.set ? moonTimes.set.toISOString() : null,
+				};
+				await this.setDP(`${prefix}.astronomy.moon_phase_val`, astroData.moon_phase_val, {
 					name: "Mondphase (0–1)",
 					type: "number",
 					role: "value",
 				});
-				await this.setDP(`${prefix}.astronomy.moon_phase_text`, moonText, {
+				await this.setDP(`${prefix}.astronomy.moon_phase_text`, astroData.moon_phase_text, {
 					name: "Mondphase Text",
 					type: "string",
 					role: "weather.state",
 				});
-				await this.setDP(`${prefix}.astronomy.moon_phase_icon_url`, `/openmeteo.admin/icons/moon/${moonIdx}.png`, {
+				await this.setDP(`${prefix}.astronomy.moon_phase_icon_url`, astroData.moon_phase_icon_url, {
 					name: "Mondphase Icon URL",
 					type: "string",
 					role: "weather.icon",
 				});
-				if (moonTimes.rise) {
-					await this.setDP(`${prefix}.astronomy.moonrise`, moonTimes.rise.toISOString(), {
+				if (astroData.moonrise) {
+					await this.setDP(`${prefix}.astronomy.moonrise`, astroData.moonrise, {
 						name: "Mondaufgang",
 						type: "string",
 						role: "date.sunrise",
 					});
 				}
-				if (moonTimes.set) {
-					await this.setDP(`${prefix}.astronomy.moonset`, moonTimes.set.toISOString(), {
+				if (astroData.moonset) {
+					await this.setDP(`${prefix}.astronomy.moonset`, astroData.moonset, {
 						name: "Monduntergang",
 						type: "string",
 						role: "date.sunset",
@@ -1169,6 +1197,56 @@ class Openmeteo extends utils.Adapter {
 						type: "string",
 						role: "weather.state",
 					});
+
+					// Astronomy: echo daily values into each hourly slot
+					if (enableAstronomyHourly && astroData) {
+						await this.setObjectNotExistsAsync(`${hPath}.astronomy`, {
+							type: "channel",
+							common: { name: "Astronomie" },
+							native: {},
+						});
+						await this.setDP(`${hPath}.astronomy.sunrise`, astroData.sunrise, {
+							name: "Sonnenaufgang",
+							type: "string",
+							role: "date.sunrise",
+						});
+						await this.setDP(`${hPath}.astronomy.sunset`, astroData.sunset, {
+							name: "Sonnenuntergang",
+							type: "string",
+							role: "date.sunset",
+						});
+						await this.setDP(`${hPath}.astronomy.moon_phase_val`, astroData.moon_phase_val, {
+							name: "Mondphase (0–1)",
+							type: "number",
+							role: "value",
+						});
+						await this.setDP(`${hPath}.astronomy.moon_phase_text`, astroData.moon_phase_text, {
+							name: "Mondphase Text",
+							type: "string",
+							role: "weather.state",
+						});
+						await this.setDP(`${hPath}.astronomy.moon_phase_icon_url`, astroData.moon_phase_icon_url, {
+							name: "Mondphase Icon URL",
+							type: "string",
+							role: "weather.icon",
+						});
+						if (astroData.moonrise) {
+							await this.setDP(`${hPath}.astronomy.moonrise`, astroData.moonrise, {
+								name: "Mondaufgang",
+								type: "string",
+								role: "date.sunrise",
+							});
+						}
+						if (astroData.moonset) {
+							await this.setDP(`${hPath}.astronomy.moonset`, astroData.moonset, {
+								name: "Monduntergang",
+								type: "string",
+								role: "date.sunset",
+							});
+						}
+					} else if (!enableAstronomyHourly) {
+						try { await this.delObjectAsync(`${hPath}.astronomy`, { recursive: true }); } catch { /* ok */ }
+					}
 				}
 			}
 
@@ -1217,7 +1295,7 @@ class Openmeteo extends utils.Adapter {
 	 * @param {string} locId - Location ID
 	 * @param {number} hourlyDays - Number of days with hourly channels
 	 */
-	async processPollen(data, locId, hourlyDays, enablePollen, enableAirQuality, enablePollenHourly) {
+	async processPollen(data, locId, hourlyDays, enablePollen, enableAirQuality, enableAirQualityHourly, enablePollenHourly) {
 		// --- AQI current data ---
 		if (enableAirQuality && data.current) {
 			const c = data.current;
@@ -1271,7 +1349,17 @@ class Openmeteo extends utils.Adapter {
 			{ key: "ragweed_pollen", name: "Ambrosia" },
 		];
 
-		// Group hourly pollen values by date
+		const aqHourlyFields = [
+			{ key: "european_aqi", name: "Europäischer Luftqualitätsindex", unit: "" },
+			{ key: "pm10", name: "PM10", unit: "µg/m³" },
+			{ key: "pm2_5", name: "PM2.5", unit: "µg/m³" },
+			{ key: "nitrogen_dioxide", name: "Stickstoffdioxid (NO₂)", unit: "µg/m³" },
+			{ key: "carbon_monoxide", name: "Kohlenmonoxid (CO)", unit: "µg/m³" },
+			{ key: "dust", name: "Staub", unit: "µg/m³" },
+			{ key: "ozone", name: "Ozon", unit: "µg/m³" },
+		];
+
+		// Group hourly pollen + AQ values by date
 		const byDate = {};
 		for (let i = 0; i < h.time.length; i++) {
 			const dateKey = h.time[i].substring(0, 10);
@@ -1287,6 +1375,11 @@ class Openmeteo extends utils.Adapter {
 					byDate[dateKey].max[key] = Math.max(byDate[dateKey].max[key] ?? 0, val);
 				}
 			}
+			const aqVals = {};
+			for (const { key } of aqHourlyFields) {
+				aqVals[key] = h[key] ? h[key][i] : null;
+			}
+			vals._aq = aqVals;
 			byDate[dateKey].hours[hour] = vals;
 		}
 
@@ -1348,37 +1441,72 @@ class Openmeteo extends utils.Adapter {
 				});
 			}
 
-			// Hourly values under dayX.hourly.hXX.pollen (only if hourly channel exists and hourly pollen enabled)
-			if (!enablePollenHourly) {
-				// Clean up any existing hourly pollen channels for this day
-				for (let hh = 0; hh < 24; hh++) {
-					const hKey = `h${String(hh).padStart(2, "0")}`;
-					try { await this.delObjectAsync(`${locId}.day${dayNum}.hourly.${hKey}.pollen`, { recursive: true }); } catch { /* ok */ }
-				}
-			} else if (i < hourlyDays) {
+			// Hourly pollen + AQ under dayX.hourly.hXX.*
+			if (i < hourlyDays) {
 				for (const [hourStr, vals] of Object.entries(dayData.hours)) {
 					const hKey = `h${String(hourStr).padStart(2, "0")}`;
-					const hPollenPrefix = `${locId}.day${dayNum}.hourly.${hKey}.pollen`;
-					await this.setObjectNotExistsAsync(hPollenPrefix, {
-						type: "channel",
-						common: { name: "Pollen" },
-						native: {},
-					});
-					for (const { key, name } of types) {
-						const dpKey = key.replace("_pollen", "");
-						const hVal = vals[key] ?? null;
-						await this.setDP(`${hPollenPrefix}.${dpKey}`, hVal, {
-							name,
-							type: "number",
-							unit: "Grains/m³",
-							role: "value",
+					const hBase = `${locId}.day${dayNum}.hourly.${hKey}`;
+
+					// Pollen hourly
+					if (enablePollenHourly) {
+						const hPollenPrefix = `${hBase}.pollen`;
+						await this.setObjectNotExistsAsync(hPollenPrefix, {
+							type: "channel",
+							common: { name: "Pollen" },
+							native: {},
 						});
-						await this.setDP(`${hPollenPrefix}.${dpKey}_text`, pollenLevelText(hVal, key), {
-							name: `${name} (Text)`,
-							type: "string",
-							unit: "",
-							role: "text",
+						for (const { key, name } of types) {
+							const dpKey = key.replace("_pollen", "");
+							const hVal = vals[key] ?? null;
+							await this.setDP(`${hPollenPrefix}.${dpKey}`, hVal, {
+								name,
+								type: "number",
+								unit: "Grains/m³",
+								role: "value",
+							});
+							await this.setDP(`${hPollenPrefix}.${dpKey}_text`, pollenLevelText(hVal, key), {
+								name: `${name} (Text)`,
+								type: "string",
+								unit: "",
+								role: "text",
+							});
+						}
+					} else {
+						try { await this.delObjectAsync(`${hBase}.pollen`, { recursive: true }); } catch { /* ok */ }
+					}
+
+					// Air quality hourly
+					if (enableAirQualityHourly) {
+						const hAqPrefix = `${hBase}.air_quality`;
+						await this.setObjectNotExistsAsync(hAqPrefix, {
+							type: "channel",
+							common: { name: "Luftqualität" },
+							native: {},
 						});
+						for (const f of aqHourlyFields) {
+							await this.setDP(`${hAqPrefix}.${f.key}`, vals._aq[f.key] ?? null, {
+								name: f.name,
+								type: "number",
+								unit: f.unit,
+								role: "value",
+							});
+						}
+					} else {
+						try { await this.delObjectAsync(`${hBase}.air_quality`, { recursive: true }); } catch { /* ok */ }
+					}
+				}
+			} else {
+				// Day beyond hourlyDays – clean up
+				if (!enablePollenHourly) {
+					for (let hh = 0; hh < 24; hh++) {
+						const hKey = `h${String(hh).padStart(2, "0")}`;
+						try { await this.delObjectAsync(`${locId}.day${dayNum}.hourly.${hKey}.pollen`, { recursive: true }); } catch { /* ok */ }
+					}
+				}
+				if (!enableAirQualityHourly) {
+					for (let hh = 0; hh < 24; hh++) {
+						const hKey = `h${String(hh).padStart(2, "0")}`;
+						try { await this.delObjectAsync(`${locId}.day${dayNum}.hourly.${hKey}.air_quality`, { recursive: true }); } catch { /* ok */ }
 					}
 				}
 			}
@@ -1442,6 +1570,9 @@ class Openmeteo extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
+			if (this.updateTimeout) {
+				this.clearTimeout(this.updateTimeout);
+			}
 			if (this.updateInterval) {
 				this.clearInterval(this.updateInterval);
 			}
