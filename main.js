@@ -1000,30 +1000,16 @@ class Openmeteo extends utils.Adapter {
 	}
 
 	/**
-	 * Processes pollen data and writes datapoints
+	 * Processes pollen data and writes datapoints under dayX.pollen
 	 *
 	 * @param {object} data - Air quality API response
 	 * @param {string} locId - Location ID
 	 */
 	async processPollen(data, locId) {
 		const h = data.hourly;
-		if (!h) {
+		if (!h || !h.time) {
 			return;
 		}
-
-		// Find index for current hour
-		const now = new Date();
-		const currentHourStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T${String(now.getHours()).padStart(2, "0")}:00`;
-		const idx = h.time.findIndex(t => t === currentHourStr);
-		if (idx === -1) {
-			return;
-		}
-
-		await this.setObjectNotExistsAsync(`${locId}.pollen`, {
-			type: "channel",
-			common: { name: "Pollen" },
-			native: {},
-		});
 
 		const types = [
 			{ key: "alder_pollen", name: "Erle" },
@@ -1034,14 +1020,49 @@ class Openmeteo extends utils.Adapter {
 			{ key: "ragweed_pollen", name: "Ambrosia" },
 		];
 
-		for (const { key, name } of types) {
-			const dpKey = key.replace("_pollen", "");
-			await this.setDP(`${locId}.pollen.${dpKey}`, h[key] ? h[key][idx] : null, {
-				name,
-				type: "number",
-				unit: "Grains/m³",
-				role: "value",
+		// Group hourly pollen values by date and compute daily max
+		const dailyMax = {};
+		for (let i = 0; i < h.time.length; i++) {
+			const dateKey = h.time[i].substring(0, 10);
+			if (!dailyMax[dateKey]) {
+				dailyMax[dateKey] = {};
+			}
+			for (const { key } of types) {
+				const val = h[key] ? h[key][i] : null;
+				if (val != null) {
+					dailyMax[dateKey][key] = Math.max(dailyMax[dateKey][key] ?? 0, val);
+				}
+			}
+		}
+
+		const dates = Object.keys(dailyMax).sort();
+		for (let i = 0; i < dates.length; i++) {
+			const dayNum = i + 1;
+			const prefix = `${locId}.day${dayNum}.pollen`;
+			const dayData = dailyMax[dates[i]];
+
+			await this.setObjectNotExistsAsync(prefix, {
+				type: "channel",
+				common: { name: `Pollen Tag ${dayNum}` },
+				native: {},
 			});
+
+			for (const { key, name } of types) {
+				const dpKey = key.replace("_pollen", "");
+				await this.setDP(`${prefix}.${dpKey}`, dayData[key] ?? null, {
+					name,
+					type: "number",
+					unit: "Grains/m³",
+					role: "value",
+				});
+			}
+		}
+
+		// Remove old top-level pollen channel if it exists from a previous version
+		try {
+			await this.delObjectAsync(`${locId}.pollen`, { recursive: true });
+		} catch {
+			// didn't exist, fine
 		}
 	}
 
