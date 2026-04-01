@@ -302,6 +302,9 @@ class Openmeteo extends utils.Adapter {
 		const precipitationUnit = this.config.precipitationUnit || "mm";
 		const iconSet = this.config.iconSet || "basmilius";
 		const enablePollen = !!this.config.enablePollen;
+		const enableAirQuality = this.config.enableAirQuality !== false;
+		const enableAstronomy = this.config.enableAstronomy !== false;
+		const enableAgriculture = !!this.config.enableAgriculture;
 
 		if (!Array.isArray(locations) || locations.length === 0) {
 			// Fallback: use ioBroker system coordinates from system.config
@@ -359,16 +362,19 @@ class Openmeteo extends utils.Adapter {
 					native: {},
 				});
 
-				await this.processData(data, locId, daysCount, hourlyDays, units, iconSet, loc);
+				await this.processData(data, locId, daysCount, hourlyDays, units, iconSet, loc, enableAstronomy, enableAgriculture);
 				await this.cleanupLocation(locId, daysCount, hourlyDays);
 
-				if (enablePollen) {
+				if (enablePollen || enableAirQuality) {
 					try {
 						const aq = await this.fetchAirQuality(loc.lat, loc.lon);
-						await this.processPollen(aq, locId, hourlyDays);
+						await this.processPollen(aq, locId, hourlyDays, enablePollen, enableAirQuality);
 					} catch (err) {
-						this.log.warn(`Pollen-Daten nicht verfügbar für "${loc.name}": ${err.message}`);
+						this.log.warn(`Pollen/Luftqualität-Daten nicht verfügbar für "${loc.name}": ${err.message}`);
 					}
+				} else {
+					// Clean up air_quality channel if both are disabled
+					try { await this.delObjectAsync(`${locId}.current.air_quality`, { recursive: true }); } catch { /* ok */ }
 				}
 
 				anySuccess = true;
@@ -498,7 +504,7 @@ class Openmeteo extends utils.Adapter {
 	 * @param {object} units - Unit labels { tempUnit, windUnit, precipUnit }
 	 * @param {string} iconSet - Icon set to use ("wmo" or "basmilius")
 	 */
-	async processData(data, locId, daysCount, hourlyDays, units, iconSet, loc) {
+	async processData(data, locId, daysCount, hourlyDays, units, iconSet, loc, enableAstronomy, enableAgriculture) {
 		const { tempUnit, windUnit, precipUnit, windspeedUnit } = units;
 		const d = data.daily;
 		const h = data.hourly;
@@ -651,18 +657,33 @@ class Openmeteo extends utils.Adapter {
 				unit: "cm",
 				role: "value.precipitation.snow",
 			});
-			await this.setDP(`${locId}.current.solar_radiation`, cur.shortwave_radiation, {
-				name: "Solarstrahlung",
-				type: "number",
-				unit: "W/m²",
-				role: "value.radiation",
-			});
-			await this.setDP(`${locId}.current.cape`, cur.cape, {
-				name: "Gewitterpotenzial (CAPE)",
-				type: "number",
-				unit: "J/kg",
-				role: "value",
-			});
+			if (enableAgriculture) {
+				await this.setObjectNotExistsAsync(`${locId}.current.agriculture`, {
+					type: "channel",
+					common: { name: "Agrar/Solar aktuell" },
+					native: {},
+				});
+				await this.setDP(`${locId}.current.agriculture.solar_radiation`, cur.shortwave_radiation, {
+					name: "Solarstrahlung",
+					type: "number",
+					unit: "W/m²",
+					role: "value.radiation",
+				});
+				await this.setDP(`${locId}.current.agriculture.cape`, cur.cape, {
+					name: "Gewitterpotenzial (CAPE)",
+					type: "number",
+					unit: "J/kg",
+					role: "value",
+				});
+				await this.setDP(`${locId}.current.agriculture.soil_temp`, cur.soil_temperature_0cm != null ? Math.round(cur.soil_temperature_0cm * 10) / 10 : null, {
+					name: "Bodentemperatur 0cm",
+					type: "number",
+					unit: units.tempUnit,
+					role: "value.temperature",
+				});
+			} else {
+				try { await this.delObjectAsync(`${locId}.current.agriculture`, { recursive: true }); } catch { /* ok */ }
+			}
 		}
 
 		// --- Group hourly values by date ---
@@ -824,16 +845,25 @@ class Openmeteo extends utils.Adapter {
 				type: "string",
 				role: "weather.icon",
 			});
-			await this.setDP(`${prefix}.sunrise`, d.sunrise[i], {
-				name: "Sonnenaufgang",
-				type: "string",
-				role: "date.sunrise",
-			});
-			await this.setDP(`${prefix}.sunset`, d.sunset[i], {
-				name: "Sonnenuntergang",
-				type: "string",
-				role: "date.sunset",
-			});
+			if (enableAstronomy) {
+				await this.setObjectNotExistsAsync(`${prefix}.astronomy`, {
+					type: "channel",
+					common: { name: `Astronomie Tag ${i + 1}` },
+					native: {},
+				});
+				await this.setDP(`${prefix}.astronomy.sunrise`, d.sunrise[i], {
+					name: "Sonnenaufgang",
+					type: "string",
+					role: "date.sunrise",
+				});
+				await this.setDP(`${prefix}.astronomy.sunset`, d.sunset[i], {
+					name: "Sonnenuntergang",
+					type: "string",
+					role: "date.sunset",
+				});
+			} else {
+				try { await this.delObjectAsync(`${prefix}.astronomy`, { recursive: true }); } catch { /* ok */ }
+			}
 			await this.setDP(`${prefix}.uv_index`, d.uv_index_max[i], {
 				name: "UV-Index",
 				type: "number",
@@ -863,18 +893,27 @@ class Openmeteo extends utils.Adapter {
 				unit: "cm",
 				role: "value.precipitation.snow",
 			});
-			await this.setDP(`${prefix}.solar_radiation_sum`, Math.round(d.shortwave_radiation_sum[i] * 10) / 10, {
-				name: "Solarstrahlung gesamt",
-				type: "number",
-				unit: "MJ/m²",
-				role: "value.radiation",
-			});
-			await this.setDP(`${prefix}.evapotranspiration`, Math.round(d.et0_fao_evapotranspiration[i] * 10) / 10, {
-				name: "Evapotranspiration",
-				type: "number",
-				unit: "mm",
-				role: "value",
-			});
+			if (enableAgriculture) {
+				await this.setObjectNotExistsAsync(`${prefix}.agriculture`, {
+					type: "channel",
+					common: { name: `Agrar/Solar Tag ${i + 1}` },
+					native: {},
+				});
+				await this.setDP(`${prefix}.agriculture.solar_radiation_sum`, Math.round(d.shortwave_radiation_sum[i] * 10) / 10, {
+					name: "Solarstrahlung gesamt",
+					type: "number",
+					unit: "MJ/m²",
+					role: "value.radiation",
+				});
+				await this.setDP(`${prefix}.agriculture.evapotranspiration`, Math.round(d.et0_fao_evapotranspiration[i] * 10) / 10, {
+					name: "Evapotranspiration",
+					type: "number",
+					unit: "mm",
+					role: "value",
+				});
+			} else {
+				try { await this.delObjectAsync(`${prefix}.agriculture`, { recursive: true }); } catch { /* ok */ }
+			}
 			await this.setDP(`${prefix}.cloud_cover_max`, d.cloud_cover_max[i], {
 				name: "Bewölkung Max",
 				type: "number",
@@ -900,39 +939,41 @@ class Openmeteo extends utils.Adapter {
 				role: "value.pressure",
 			});
 
-			// Moon phase
-			const moonDate = new Date(`${d.time[i]}T12:00:00`);
-			const moonIllum = SunCalc.getMoonIllumination(moonDate);
-			const moonTimes = SunCalc.getMoonTimes(moonDate, loc.lat, loc.lon);
-			const { text: moonText, idx: moonIdx } = moonPhaseInfo(moonIllum.phase);
-			await this.setDP(`${prefix}.moon_phase_val`, Math.round(moonIllum.phase * 100) / 100, {
-				name: "Mondphase (0–1)",
-				type: "number",
-				role: "value",
-			});
-			await this.setDP(`${prefix}.moon_phase_text`, moonText, {
-				name: "Mondphase Text",
-				type: "string",
-				role: "weather.state",
-			});
-			await this.setDP(`${prefix}.moon_phase_icon_url`, `/openmeteo.admin/icons/moon/${moonIdx}.png`, {
-				name: "Mondphase Icon URL",
-				type: "string",
-				role: "weather.icon",
-			});
-			if (moonTimes.rise) {
-				await this.setDP(`${prefix}.moonrise`, moonTimes.rise.toISOString(), {
-					name: "Mondaufgang",
-					type: "string",
-					role: "date.sunrise",
+			// Moon phase (under astronomy channel, only if enabled)
+			if (enableAstronomy) {
+				const moonDate = new Date(`${d.time[i]}T12:00:00`);
+				const moonIllum = SunCalc.getMoonIllumination(moonDate);
+				const moonTimes = SunCalc.getMoonTimes(moonDate, loc.lat, loc.lon);
+				const { text: moonText, idx: moonIdx } = moonPhaseInfo(moonIllum.phase);
+				await this.setDP(`${prefix}.astronomy.moon_phase_val`, Math.round(moonIllum.phase * 100) / 100, {
+					name: "Mondphase (0–1)",
+					type: "number",
+					role: "value",
 				});
-			}
-			if (moonTimes.set) {
-				await this.setDP(`${prefix}.moonset`, moonTimes.set.toISOString(), {
-					name: "Monduntergang",
+				await this.setDP(`${prefix}.astronomy.moon_phase_text`, moonText, {
+					name: "Mondphase Text",
 					type: "string",
-					role: "date.sunset",
+					role: "weather.state",
 				});
+				await this.setDP(`${prefix}.astronomy.moon_phase_icon_url`, `/openmeteo.admin/icons/moon/${moonIdx}.png`, {
+					name: "Mondphase Icon URL",
+					type: "string",
+					role: "weather.icon",
+				});
+				if (moonTimes.rise) {
+					await this.setDP(`${prefix}.astronomy.moonrise`, moonTimes.rise.toISOString(), {
+						name: "Mondaufgang",
+						type: "string",
+						role: "date.sunrise",
+					});
+				}
+				if (moonTimes.set) {
+					await this.setDP(`${prefix}.astronomy.moonset`, moonTimes.set.toISOString(), {
+						name: "Monduntergang",
+						type: "string",
+						role: "date.sunset",
+					});
+				}
 			}
 
 			// Hourly values (only for days ≤ hourlyDays)
@@ -1073,30 +1114,39 @@ class Openmeteo extends utils.Adapter {
 						unit: "cm",
 						role: "value.precipitation.snow",
 					});
-					await this.setDP(`${hPath}.solar_radiation`, hData.solar_radiation, {
-						name: "Solarstrahlung",
-						type: "number",
-						unit: "W/m²",
-						role: "value.radiation",
-					});
-					await this.setDP(`${hPath}.cape`, hData.cape, {
-						name: "Gewitterpotenzial (CAPE)",
-						type: "number",
-						unit: "J/kg",
-						role: "value",
-					});
-					await this.setDP(`${hPath}.soil_temp`, hData.soil_temp, {
-						name: "Bodentemperatur 0cm",
-						type: "number",
-						unit: tempUnit,
-						role: "value.temperature",
-					});
-					await this.setDP(`${hPath}.irradiance`, hData.irradiance, {
-						name: "Globalstrahlung (geneigt)",
-						type: "number",
-						unit: "W/m²",
-						role: "value.radiation",
-					});
+					if (enableAgriculture) {
+						await this.setObjectNotExistsAsync(`${hPath}.agriculture`, {
+							type: "channel",
+							common: { name: "Agrar/Solar" },
+							native: {},
+						});
+						await this.setDP(`${hPath}.agriculture.solar_radiation`, hData.solar_radiation, {
+							name: "Solarstrahlung",
+							type: "number",
+							unit: "W/m²",
+							role: "value.radiation",
+						});
+						await this.setDP(`${hPath}.agriculture.cape`, hData.cape, {
+							name: "Gewitterpotenzial (CAPE)",
+							type: "number",
+							unit: "J/kg",
+							role: "value",
+						});
+						await this.setDP(`${hPath}.agriculture.soil_temp`, hData.soil_temp, {
+							name: "Bodentemperatur 0cm",
+							type: "number",
+							unit: tempUnit,
+							role: "value.temperature",
+						});
+						await this.setDP(`${hPath}.agriculture.irradiance`, hData.irradiance, {
+							name: "Globalstrahlung (geneigt)",
+							type: "number",
+							unit: "W/m²",
+							role: "value.radiation",
+						});
+					} else {
+						try { await this.delObjectAsync(`${hPath}.agriculture`, { recursive: true }); } catch { /* ok */ }
+					}
 					await this.setDP(`${hPath}.weathercode`, hData.weathercode, {
 						name: "Wettercode",
 						type: "number",
@@ -1165,9 +1215,9 @@ class Openmeteo extends utils.Adapter {
 	 * @param {string} locId - Location ID
 	 * @param {number} hourlyDays - Number of days with hourly channels
 	 */
-	async processPollen(data, locId, hourlyDays) {
+	async processPollen(data, locId, hourlyDays, enablePollen, enableAirQuality) {
 		// --- AQI current data ---
-		if (data.current) {
+		if (enableAirQuality && data.current) {
 			const c = data.current;
 			await this.setObjectNotExistsAsync(`${locId}.current.air_quality`, {
 				type: "channel",
@@ -1191,6 +1241,18 @@ class Openmeteo extends utils.Adapter {
 					role: "value",
 				});
 			}
+		} else if (!enableAirQuality) {
+			try { await this.delObjectAsync(`${locId}.current.air_quality`, { recursive: true }); } catch { /* ok */ }
+		}
+
+		if (!enablePollen) {
+			// Clean up pollen channels
+			try { await this.delObjectAsync(`${locId}.current.pollen`, { recursive: true }); } catch { /* ok */ }
+			// dayX.pollen cleanup happens in cleanupLocation iteration, but do a broad sweep:
+			for (let d = 1; d <= 16; d++) {
+				try { await this.delObjectAsync(`${locId}.day${d}.pollen`, { recursive: true }); } catch { /* ok */ }
+			}
+			return;
 		}
 
 		const h = data.hourly;

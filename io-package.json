@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.25",
+		"version": "0.0.26",
 		"news": {
+			"0.0.26": {
+				"en": "optional data groups: air quality, astronomy, agriculture/solar with auto-cleanup",
+				"de": "Optionale Datengruppen: Luftqualität, Astronomie, Agrar/Solar mit automatischer Bereinigung"
+			},
 			"0.0.25": {
 				"en": "moon phase, AQI, pollen text, night icons, configurable update interval, additional DPs",
 				"de": "Mondphase, AQI, Pollen-Textstufe, Nacht-Icons, konfigurierbares Aktualisierungsintervall, weitere Datenpunkte"
@@ -126,8 +130,11 @@
 		"windspeedUnit": "kmh",
 		"precipitationUnit": "mm",
 		"iconSet": "basmilius",
-		"enablePollen": false,
-		"updateInterval": 60
+		"updateInterval": 60,
+		"enableAirQuality": true,
+		"enableAstronomy": true,
+		"enableAgriculture": false,
+		"enablePollen": false
 	},
 	"objects": [],
 	"instanceObjects": [

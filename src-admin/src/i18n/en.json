@@ -24,7 +24,13 @@
 	"addLocation": "Add location",
 	"updateInterval": "Update interval",
 	"minutes": "min",
-	"pollen": "Pollen & Air Quality",
-	"enablePollen": "Enable pollen data (Europe only, 4-day forecast)",
-	"enablePollenHelp": "Fetches pollen data from Open-Meteo Air Quality API. Available for Europe only."
+	"optionalData": "Optional data",
+	"enableAirQuality": "Air quality (AQI, particulate matter)",
+	"enableAirQualityHelp": "european_aqi, PM10, PM2.5, NO₂, CO, dust, ozone under current.air_quality",
+	"enableAstronomy": "Astronomy (sun & moon)",
+	"enableAstronomyHelp": "Sunrise, sunset, moon phase, moonrise, moonset under dayX.astronomy",
+	"enableAgriculture": "Agriculture / Solar",
+	"enableAgricultureHelp": "Solar radiation, CAPE, soil temperature, irradiance under *.agriculture (default off)",
+	"enablePollen": "Pollen (Europe only, 4-day forecast)",
+	"enablePollenHelp": "Pollen data from Air Quality API. Europe only."
 }
