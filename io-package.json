@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.32",
+		"version": "0.0.33",
 		"news": {
+			"0.0.33": {
+				"en": "fix: hourlyDays=0 was ignored due to falsy check (|| 3), hourly folders not cleaned up",
+				"de": "Fix: hourlyDays=0 wurde durch Falsy-Check (|| 3) ignoriert, stündliche Ordner nicht bereinigt"
+			},
 			"0.0.32": {
 				"en": "fix: pollen cleanup not running when hourly disabled; add daily air quality max (dayX.air_quality)",
 				"de": "Fix: Pollen-Cleanup lief nicht wenn stündlich deaktiviert; tägliche Luftqualitäts-Maximalwerte (dayX.air_quality)"
@@ -27,9 +31,9 @@
 				"en": "per-category hourly toggle for agriculture and pollen",
 				"de": "Stündlich-Option pro Kategorie für Agrar/Solar und Pollen"
 			},
-			"0.0.26": {
-				"en": "optional data groups: air quality, astronomy, agriculture/solar with auto-cleanup",
-				"de": "Optionale Datengruppen: Luftqualität, Astronomie, Agrar/Solar mit automatischer Bereinigung"
+			"0.0.27": {
+				"en": "per-category hourly toggle for agriculture and pollen",
+				"de": "Stündlich-Option pro Kategorie für Agrar/Solar und Pollen"
 			}
 		},
 		"titleLang": {

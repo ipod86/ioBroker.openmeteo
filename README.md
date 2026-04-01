@@ -161,6 +161,9 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 
 ## Changelog
 
+### 0.0.33
+* Fix: setting hourlyDays to 0 was ignored (`0 || 3` evaluated to 3) – hourly folders were never cleaned up
+
 ### 0.0.32
 * Fix: pollen channels not deleted when "pollen hourly" was disabled (early return prevented cleanup)
 * Fix: `enablePollenHourly` defaulted to `true` on upgrades from old config – now correctly defaults to `false`
