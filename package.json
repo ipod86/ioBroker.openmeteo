@@ -1,6 +1,6 @@
 {
   "name": "iobroker.openmeteo",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "Free weather forecast from Open-Meteo API",
   "author": {
     "name": "David G.",
@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "@iobroker/plugin-sentry": "^3.0.4",
     "suncalc": "^1.9.0"
   },
   "devDependencies": {

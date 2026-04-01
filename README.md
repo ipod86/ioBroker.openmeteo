@@ -10,15 +10,11 @@
 
 **Tests:** ![Test and Release](https://github.com/ipod86/ioBroker.openmeteo/workflows/Test%20and%20Release/badge.svg)
 
----
-
-## English
-
-### ioBroker adapter for Open-Meteo weather forecasts
+## ioBroker adapter for Open-Meteo weather forecasts
 
 This adapter retrieves weather forecast data from the free [Open-Meteo API](https://open-meteo.com) and makes it available as ioBroker data points. No API key is required.
 
-### Features
+## Features
 
 - **Free & no API key** – Open-Meteo is a free, open-source weather API
 - **Multiple locations** – configure as many locations as you like
@@ -35,7 +31,7 @@ This adapter retrieves weather forecast data from the free [Open-Meteo API](http
 - **Wind strength** – Beaufort scale (0–12) with Meteocons Beaufort icons
 - **`info.lastUpdate`** – timestamp of last successful update
 
-#### Optional data groups (individually switchable, each with "also hourly" option)
+### Optional data groups (individually switchable, each with "also hourly" option)
 
 | Group | Default | Data points |
 |-------|---------|-------------|
@@ -46,15 +42,11 @@ This adapter retrieves weather forecast data from the free [Open-Meteo API](http
 
 When a group is disabled, its data point channels are automatically deleted on the next update.
 
-### Installation
+## Installation
 
-Install via the ioBroker Admin interface or directly from npm:
+Install via the ioBroker Admin interface (search for "openmeteo").
 
-```bash
-npm install iobroker.openmeteo
-```
-
-### Configuration
+## Configuration
 
 | Setting | Description | Default |
 |---------|-------------|---------|
@@ -75,11 +67,11 @@ npm install iobroker.openmeteo
 | Pollen | Enable pollen data (Europe only) | off |
 | Pollen – also hourly | Hourly pollen per type | off |
 
-### Data points
+## Data points
 
 The adapter creates data points under `openmeteo.<instance>.<location>`.
 
-#### Current weather (`current`)
+### Current weather (`current`)
 
 | Data point | Description | Unit |
 |-----------|-------------|------|
@@ -111,7 +103,7 @@ The adapter creates data points under `openmeteo.<instance>.<location>`.
 | `pollen.*` | Current pollen per type *(if enabled)* | Grains/m³ |
 | `agriculture.*` | Solar radiation, CAPE, soil temperature *(if enabled)* | |
 
-#### Daily forecast (`day1` … `day16`)
+### Daily forecast (`day1` … `day16`)
 
 | Data point | Description |
 |-----------|-------------|
@@ -137,7 +129,7 @@ The adapter creates data points under `openmeteo.<instance>.<location>`.
 | `agriculture.solar_radiation_sum` / `.evapotranspiration` | Solar / evapotranspiration *(if enabled)* | |
 | `pollen.alder` … `pollen.ragweed` | Daily max pollen + level text *(if enabled, day1–4)* | |
 
-#### Hourly values (`day1.hourly.h00` … `h23`)
+### Hourly values (`day1.hourly.h00` … `h23`)
 
 Temperature, feels-like, precipitation, rain, snowfall, snow depth, rain probability, cloud cover, humidity, dew point, pressure, visibility, is_day, wind speed, wind direction (text/emoji/icon), Beaufort, weather code, icon/icon_url, description.
 
@@ -150,181 +142,33 @@ Optional per hour (if enabled + "also hourly"):
 | `hXX.agriculture` | solar_radiation, CAPE, soil_temp, irradiance |
 | `hXX.pollen` | alder … ragweed + level text (Keine/Niedrig/Mittel/Hoch) |
 
-#### Summary
+### Summary
 
 | Data point | Description |
 |-----------|-------------|
 | `weather_short` | Short text overview of all forecast days |
 | `info.lastUpdate` | Timestamp of last successful update |
 
-### Icon credits
+## Icon credits
 
 - **Meteocons** by [Bas Milius](https://github.com/basmilius/weather-icons) – MIT License
 - **WMO meteorological symbols** by [OGC MetOcean DWG](https://github.com/OGCMetOceanDWG/WorldWeatherSymbols) – CC BY 4.0
 
-### Disclaimer
+## Disclaimer
 
 This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property of their respective owners. This adapter is an independent community project and is not affiliated with or endorsed by Open-Meteo.
 
----
-
-## Deutsch
-
-### ioBroker-Adapter für Open-Meteo Wettervorhersagen
-
-Dieser Adapter ruft Wetterdaten von der kostenlosen [Open-Meteo API](https://open-meteo.com) ab und stellt sie als ioBroker-Datenpunkte bereit. Es wird kein API-Schlüssel benötigt.
-
-### Funktionen
-
-- **Kostenlos & kein API-Schlüssel** – Open-Meteo ist eine freie, quelloffene Wetter-API
-- **Mehrere Standorte** – beliebig viele Standorte konfigurierbar
-- **Systemstandort als Fallback** – verwendet ioBroker-Systemkoordinaten, wenn kein Standort konfiguriert ist
-- **Konfigurierbarer Vorhersagezeitraum** – bis zu 16 Tage täglich, bis zu 16 Tage stündlich
-- **Konfigurierbares Aktualisierungsintervall** – 60 Min, 120 Min oder täglich um 01:00 Uhr
-- **Einheiten** – Temperatur (°C / °F), Wind (km/h, m/s, mph, kn), Niederschlag (mm / inch)
-- **3 Wetter-Icon-Sets** mit Live-Vorschau in den Einstellungen:
-  - Meteocons von Bas Milius – statische PNG (Standard)
-  - Meteocons von Bas Milius – animierte SVG
-  - WMO OGC meteorologische Symbole – PNG
-- **Tag/Nacht-Icons** – Meteocons wechseln automatisch zur Nacht-Variante basierend auf `is_day`
-- **Windrichtung** – Grad, Himmelsrichtungstext (N/NE/E/…), Pfeil-Emoji (⬆️↗️…), SVG-Pfeilicon
-- **Windstärke** – Beaufort-Skala (0–12) mit Meteocons Beaufort-Icons
-- **`info.lastUpdate`** – Zeitstempel der letzten erfolgreichen Aktualisierung
-
-#### Optionale Datengruppen (einzeln schaltbar, je mit „auch stündlich"-Option)
-
-| Gruppe | Standard | Datenpunkte |
-|--------|----------|-------------|
-| **Luftqualität** | an | european_aqi, PM10, PM2.5, NO₂, CO, Staub, Ozon → `current.air_quality` / `hXX.air_quality` |
-| **Astronomie** | an | Sonnenauf/-untergang, Mondphase, Mondauf/-untergang → `dayX.astronomy` / `hXX.astronomy` |
-| **Agrar / Solar** | aus | Solarstrahlung, CAPE, Bodentemperatur, Globalstrahlung → `*.agriculture` |
-| **Pollen** | aus | Erle, Birke, Gräser, Beifuß, Olive, Ambrosia mit Textstufe → `dayX.pollen` / `hXX.pollen` |
-
-Wird eine Gruppe deaktiviert, werden die zugehörigen Kanäle beim nächsten Update automatisch gelöscht.
-
-### Installation
-
-Adapter über die ioBroker-Admin-Oberfläche installieren oder direkt über npm:
-
-```bash
-npm install iobroker.openmeteo
-```
-
-### Konfiguration
-
-| Einstellung | Beschreibung | Standard |
-|-------------|--------------|----------|
-| Standorte | Name, Breitengrad, Längengrad | ioBroker-Systemstandort |
-| Vorhersagetage | Täglicher Vorhersagezeitraum (1–16) | 7 |
-| Stundentage | Tage mit Stundenwerten (0–16) | 3 |
-| Temperatureinheit | °C oder °F | °C |
-| Windeinheit | km/h, m/s, mph, kn | km/h |
-| Niederschlagseinheit | mm oder inch | mm |
-| Icon-Set | Wetter-Icon-Set | Meteocons statisch |
-| Aktualisierungsintervall | 60 Min / 120 Min / täglich um 01:00 | 60 Min |
-| Luftqualität | AQI + Feinstaub aktivieren | an |
-| Luftqualität – auch stündlich | Stündliche AQI/PM unter `hXX.air_quality` | aus |
-| Astronomie | Sonne & Mond aktivieren | an |
-| Astronomie – auch stündlich | Astronomiedaten pro Stundenslot | aus |
-| Agrar / Solar | Strahlung, CAPE, Bodentemperatur aktivieren | aus |
-| Agrar – auch stündlich | Stündliche Agrardaten | aus |
-| Pollen | Pollendaten aktivieren (nur Europa) | aus |
-| Pollen – auch stündlich | Stündliche Pollen pro Typ | aus |
-
-### Datenpunkte
-
-Der Adapter legt Datenpunkte unter `openmeteo.<instanz>.<standort>` an.
-
-#### Aktuelles Wetter (`current`)
-
-| Datenpunkt | Beschreibung | Einheit |
-|-----------|--------------|---------|
-| `temperature` | Aktuelle Temperatur | °C/°F |
-| `feels_like` | Gefühlte Temperatur | °C/°F |
-| `weathercode` | WMO-Wettercode | |
-| `description` | Wetterbeschreibung | |
-| `icon` | Wetter-Emoji | |
-| `icon_url` | Wetter-Icon-URL | |
-| `precipitation` | Gesamtniederschlag | mm/inch |
-| `rain` | Regen | mm/inch |
-| `snowfall` | Schneefall | cm |
-| `snow_depth` | Schneehöhe | cm |
-| `cloudcover` | Bewölkung | % |
-| `humidity` | Relative Luftfeuchtigkeit | % |
-| `dew_point` | Taupunkt | °C/°F |
-| `pressure` | Luftdruck (MSL) | hPa |
-| `visibility` | Sichtweite | m |
-| `is_day` | Tag/Nacht | boolean |
-| `windspeed` | Windgeschwindigkeit | km/h … |
-| `windgusts` | Windböen | km/h … |
-| `winddirection` | Windrichtung | ° |
-| `winddirection_text` | Windrichtungstext | N/NE/… |
-| `winddirection_icon` | Windrichtungs-Emoji | ⬆️↗️… |
-| `winddirection_icon_url` | Windrichtungs-Pfeilicon-URL | |
-| `windbeaufort` | Windstärke Beaufort | 0–12 |
-| `windbeaufort_icon_url` | Beaufort-Icon-URL | |
-| `air_quality.*` | AQI, PM10, PM2.5, NO₂, CO, Staub, Ozon *(wenn aktiviert)* | |
-| `pollen.*` | Aktuelle Pollen pro Typ *(wenn aktiviert)* | Körner/m³ |
-| `agriculture.*` | Solarstrahlung, CAPE, Bodentemperatur *(wenn aktiviert)* | |
-
-#### Tagesvorhersage (`day1` … `day16`)
-
-| Datenpunkt | Beschreibung |
-|-----------|--------------|
-| `date` / `weekday` | Datum / Wochentag |
-| `icon` / `icon_url` | Wetter-Icon (Tag/Nacht-Variante) |
-| `description` | Wetterbeschreibung |
-| `temp_max` / `temp_min` | Temperatur max/min |
-| `feels_like_max` / `feels_like_min` | Gefühlte Temperatur max/min |
-| `weathercode` | WMO-Wettercode |
-| `precipitation` | Niederschlagssumme |
-| `rain` / `snowfall` | Regen- / Schneefallsumme |
-| `rain_probability` | Niederschlagswahrscheinlichkeit |
-| `windspeed` / `windgusts` | Windgeschwindigkeit / Böen max |
-| `winddirection` / `_text` / `_icon` / `_icon_url` | Windrichtung |
-| `windbeaufort` / `windbeaufort_icon_url` | Beaufort-Skala |
-| `uv_index` | UV-Index max |
-| `sunshine_hours` / `daylight_hours` | Sonnenschein- / Tageslichtdauer | h |
-| `cloud_cover_max` | Bewölkung max | % |
-| `dew_point_mean` / `humidity_mean` / `pressure_mean` | Tages-Mittelwerte | |
-| `astronomy.sunrise` / `astronomy.sunset` | Sonnenauf/-untergang *(wenn aktiviert)* | |
-| `astronomy.moon_phase_val` / `_text` / `_icon_url` | Mondphase *(wenn aktiviert)* | |
-| `astronomy.moonrise` / `astronomy.moonset` | Mondauf/-untergang *(wenn aktiviert)* | |
-| `agriculture.solar_radiation_sum` / `.evapotranspiration` | Solar / Evapotranspiration *(wenn aktiviert)* | |
-| `pollen.alder` … `pollen.ragweed` | Tagesmax. Pollen + Textstufe *(wenn aktiviert, Tag 1–4)* | |
-
-#### Stundenwerte (`day1.hourly.h00` … `h23`)
-
-Temperatur, gefühlte Temperatur, Niederschlag, Regen, Schneefall, Schneehöhe, Regenwahrscheinlichkeit, Bewölkung, Luftfeuchtigkeit, Taupunkt, Luftdruck, Sichtweite, Tag/Nacht, Windgeschwindigkeit, Windrichtung (Text/Emoji/Icon), Beaufort, Wettercode, Icon/Icon-URL, Beschreibung.
-
-Optional pro Stunde (wenn Gruppe aktiviert + „auch stündlich"):
-
-| Kanal | Datenpunkte |
-|-------|-------------|
-| `hXX.air_quality` | european_aqi, PM10, PM2.5, NO₂, CO, Staub, Ozon |
-| `hXX.astronomy` | Sonnenauf/-untergang, Mondphase (val/text/icon), Mondauf/-untergang |
-| `hXX.agriculture` | Solarstrahlung, CAPE, Bodentemperatur, Globalstrahlung |
-| `hXX.pollen` | Erle … Ambrosia + Textstufe (Keine/Niedrig/Mittel/Hoch) |
-
-#### Zusammenfassung
-
-| Datenpunkt | Beschreibung |
-|-----------|--------------|
-| `weather_short` | Kurzübersicht aller Vorhersagetage als Text |
-| `info.lastUpdate` | Zeitstempel der letzten erfolgreichen Aktualisierung |
-
-### Icon-Lizenzen
-
-- **Meteocons** von [Bas Milius](https://github.com/basmilius/weather-icons) – MIT-Lizenz
-- **WMO meteorologische Symbole** von [OGC MetOcean DWG](https://github.com/OGCMetOceanDWG/WorldWeatherSymbols) – CC BY 4.0
-
-### Haftungsausschluss
-
-Dieser Adapter verwendet die Open-Meteo API. Der Name und das Logo von Open-Meteo sind Eigentum der jeweiligen Inhaber. Dieser Adapter ist ein unabhängiges Community-Projekt und steht in keiner Verbindung zu Open-Meteo.
-
----
-
 ## Changelog
+
+### 0.0.31
+* Remove `@iobroker/plugin-sentry` dependency (not needed)
+* Fix admin globalDependency minVersion to >=7.6.17
+* README.md now English-only; German documentation moved to README.de.md
+
+### 0.0.30
+* Fix: hourly air quality data not written when pollen is disabled
+* Fix: timer reference not cleared on timeout callback
+* Fix: JSDoc for pollenLevelText corrected (4 levels, not 5)
 
 ### 0.0.29
 * Default for pollen hourly changed to off
@@ -352,48 +196,6 @@ Dieser Adapter verwendet die Open-Meteo API. Der Name und das Logo von Open-Mete
 * Additional daily DPs: cloud_cover_max, dew_point_mean, humidity_mean, pressure_mean
 * Additional hourly DPs: soil_temp, irradiance
 
-### 0.0.23
-* Add current pollen values under `current.pollen`
-
-### 0.0.22
-* Add hourly pollen values under `dayX.hourly.hXX.pollen`
-
-### 0.0.21
-* Fix: pollen stored under `dayX.pollen` (daily max) instead of top-level channel
-
-### 0.0.20
-* Add extended weather data: humidity, dew point, pressure, visibility, is_day, rain, snowfall, snow depth, solar radiation, CAPE (current + hourly)
-* Add daily data: rain sum, snowfall sum, daylight hours, solar radiation sum, evapotranspiration
-* Add optional pollen support (Europe only) via settings toggle
-
-### 0.0.19
-* Bilingual README (EN/DE)
-
-### 0.0.18
-* Replace placeholder icon with official Open-Meteo logo
-
-### 0.0.17
-* Fix: windspeedUnit not available in processData
-
-### 0.0.16
-* Add wind direction emoji (⬆️↗️➡️↘️⬇️↙️⬅️↖️)
-* Add Beaufort scale datapoints and Meteocons Beaufort icons
-
-### 0.0.15
-* Add wind direction datapoints (degrees, text, icon, icon_url) for current/daily/hourly
-* Add 8 SVG wind direction arrow icons
-
-### 0.0.14
-* Remove unused Sentry plugin config
-
-### 0.0.13
-* Fix: icon preview hidden behind save/close toolbar
-* Auto-fill locations from ioBroker system.config on first open
-
-### 0.0.12
-* Fix: settings page scrolling
-* Default icon set changed to Meteocons
-
 ### 0.0.11
 * Add React admin UI with icon set picker and live preview
 * Add Meteocons (static PNG + animated SVG) icon sets
@@ -406,8 +208,6 @@ Dieser Adapter verwendet die Open-Meteo API. Der Name und das Logo von Open-Mete
 
 ### 0.0.1
 * Initial release
-
----
 
 ## License
 

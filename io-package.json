@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.30",
+		"version": "0.0.31",
 		"news": {
+			"0.0.31": {
+				"en": "remove sentry dependency; fix admin minVersion; README English-only with README.de.md",
+				"de": "Sentry-Abhängigkeit entfernt; Admin-Mindestversion korrigiert; README nur Englisch mit README.de.md"
+			},
 			"0.0.30": {
 				"en": "fix: hourly air quality not written when pollen disabled; fix JSDoc; fix timer ref cleanup",
 				"de": "Fix: Stündliche Luftqualität wurde nicht geschrieben wenn Pollen deaktiviert; JSDoc-Fix; Timer-Ref-Fix"
@@ -26,51 +30,6 @@
 			"0.0.25": {
 				"en": "moon phase, AQI, pollen text, night icons, configurable update interval, additional DPs",
 				"de": "Mondphase, AQI, Pollen-Textstufe, Nacht-Icons, konfigurierbares Aktualisierungsintervall, weitere Datenpunkte"
-			},
-			"0.0.4": {
-				"en": "sync io-package.json version with package.json",
-				"de": "io-package.json Version mit package.json synchronisiert"
-			},
-			"0.0.3": {
-				"en": "fix repository URL format and JSDoc warnings",
-				"de": "Repository-URL-Format und JSDoc-Warnungen behoben"
-			},
-			"0.0.2": {
-				"en": "switch to daemon mode for immediate fetch on start",
-				"de": "Wechsel zu Daemon-Modus für sofortigen Abruf beim Start"
-			},
-			"0.0.1": {
-				"en": "initial release",
-				"de": "Erstveröffentlichung",
-				"ru": "Начальная версия",
-				"pt": "lançamento inicial",
-				"nl": "Eerste uitgave",
-				"fr": "Première version",
-				"it": "Versione iniziale",
-				"es": "Versión inicial",
-				"pl": "Pierwsze wydanie",
-				"uk": "Початкова версія",
-				"zh-cn": "首次出版"
-			},
-			"0.0.7": {
-				"en": "add Basmilius icon set and configurable icon selection",
-				"de": "Basmilius Icon-Set und konfigurierbare Icon-Auswahl hinzugefügt"
-			},
-			"0.0.8": {
-				"en": "add animated SVG icon set (Basmilius/Meteocons animated)",
-				"de": "Animiertes SVG Icon-Set (Basmilius/Meteocons animiert) hinzugefügt"
-			},
-			"0.0.9": {
-				"en": "show icon preview images in settings",
-				"de": "Icon-Vorschau in den Einstellungen"
-			},
-			"0.0.10": {
-				"en": "custom React admin UI with icon set preview",
-				"de": "Eigene React-Admin-Oberfläche mit Icon-Set-Vorschau"
-			},
-			"0.0.11": {
-				"en": "fix adminUI config for custom React admin page",
-				"de": "adminUI-Konfiguration für React-Admin-Seite korrigiert"
 			}
 		},
 		"titleLang": {
@@ -134,7 +93,7 @@
 		],
 		"globalDependencies": [
 			{
-				"admin": ">=7.0.23"
+				"admin": ">=7.6.17"
 			}
 		]
 	},
