@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.28",
+		"version": "0.0.29",
 		"news": {
+			"0.0.29": {
+				"en": "pollen hourly default off; updated README with full changelog",
+				"de": "Pollen stündlich Standard aus; README mit vollständigem Changelog aktualisiert"
+			},
 			"0.0.28": {
 				"en": "hourly toggle for all 4 optional categories; update interval 60/120min or daily at 01:00",
 				"de": "Stündlich-Toggle für alle 4 optionalen Kategorien; Aktualisierungsintervall 60/120Min oder täglich um 01:00"
@@ -146,7 +150,7 @@
 		"enableAgriculture": false,
 		"enableAgricultureHourly": false,
 		"enablePollen": false,
-		"enablePollenHourly": true
+		"enablePollenHourly": false
 	},
 	"objects": [],
 	"instanceObjects": [
