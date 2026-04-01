@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.34",
+		"version": "0.0.35",
 		"news": {
+			"0.0.35": {
+				"en": "add real Basmilius sleet icons for WMO codes 56/57/66/67 (day + night + animated)",
+				"de": "Echte Basmilius Sleet-Icons für WMO-Codes 56/57/66/67 (Tag + Nacht + animiert)"
+			},
 			"0.0.34": {
 				"en": "add missing WMO codes 56/57 (freezing drizzle) and 66/67 (freezing rain) with descriptions, icons and emoji",
 				"de": "Fehlende WMO-Codes 56/57 (gefrierender Nieselregen) und 66/67 (Eisregen) mit Beschreibung, Icons und Emoji ergänzt"
@@ -35,9 +39,9 @@
 				"en": "per-category hourly toggle for agriculture and pollen",
 				"de": "Stündlich-Option pro Kategorie für Agrar/Solar und Pollen"
 			},
-			"0.0.28": {
-				"en": "hourly toggle for all 4 optional categories; update interval 60/120min or daily at 01:00",
-				"de": "Stündlich-Toggle für alle 4 optionalen Kategorien; Aktualisierungsintervall 60/120Min oder täglich um 01:00"
+			"0.0.29": {
+				"en": "pollen hourly default off; updated README with full changelog",
+				"de": "Pollen stündlich Standard aus; README mit vollständigem Changelog aktualisiert"
 			}
 		},
 		"titleLang": {

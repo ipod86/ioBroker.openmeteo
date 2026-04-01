@@ -161,6 +161,10 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 
 ## Changelog
 
+### 0.0.35
+* Add real Basmilius Meteocons sleet icons for WMO codes 56/57/66/67 (day, night, animated)
+* Previously these codes had placeholder/missing icons; now using correct partly-cloudy/overcast sleet variants
+
 ### 0.0.34
 * Add missing WMO codes 56/57 (freezing drizzle) and 66/67 (freezing rain) to descriptions, emoji icons and rain detection
 * Day icons for codes 56/57/66/67 fall back to nearest equivalent in basmilius/wmo sets (night icons are complete)
