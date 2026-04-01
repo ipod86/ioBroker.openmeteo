@@ -14,7 +14,9 @@ export interface OpenMeteoConfig {
     iconSet: 'wmo' | 'basmilius' | 'basmilius_animated';
     updateInterval: number;
     enableAirQuality: boolean;
+    enableAirQualityHourly: boolean;
     enableAstronomy: boolean;
+    enableAstronomyHourly: boolean;
     enableAgriculture: boolean;
     enableAgricultureHourly: boolean;
     enablePollen: boolean;

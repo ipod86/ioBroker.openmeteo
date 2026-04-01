@@ -122,9 +122,9 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                         label={I18n.t('updateInterval')}
                         onChange={e => update('updateInterval', Number(e.target.value))}
                     >
-                        <MenuItem value={15}>15 {I18n.t('minutes')}</MenuItem>
-                        <MenuItem value={30}>30 {I18n.t('minutes')}</MenuItem>
                         <MenuItem value={60}>60 {I18n.t('minutes')}</MenuItem>
+                        <MenuItem value={120}>120 {I18n.t('minutes')}</MenuItem>
+                        <MenuItem value={1440}>{I18n.t('dailyAt1am')}</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
@@ -143,6 +143,12 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                             label={I18n.t('enableAirQuality')}
                             sx={{ minWidth: 280 }}
                         />
+                        {native.enableAirQuality !== false && (
+                            <FormControlLabel
+                                control={<Switch checked={!!native.enableAirQualityHourly} onChange={e => update('enableAirQualityHourly', e.target.checked)} />}
+                                label={I18n.t('alsoHourly')}
+                            />
+                        )}
                     </Box>
                     <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mb: 1 }}>
                         {I18n.t('enableAirQualityHelp')}
@@ -155,6 +161,12 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                             label={I18n.t('enableAstronomy')}
                             sx={{ minWidth: 280 }}
                         />
+                        {native.enableAstronomy !== false && (
+                            <FormControlLabel
+                                control={<Switch checked={!!native.enableAstronomyHourly} onChange={e => update('enableAstronomyHourly', e.target.checked)} />}
+                                label={I18n.t('alsoHourly')}
+                            />
+                        )}
                     </Box>
                     <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mb: 1 }}>
                         {I18n.t('enableAstronomyHelp')}

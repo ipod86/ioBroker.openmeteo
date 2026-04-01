@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.27",
+		"version": "0.0.28",
 		"news": {
+			"0.0.28": {
+				"en": "hourly toggle for all 4 optional categories; update interval 60/120min or daily at 01:00",
+				"de": "Stündlich-Toggle für alle 4 optionalen Kategorien; Aktualisierungsintervall 60/120Min oder täglich um 01:00"
+			},
 			"0.0.27": {
 				"en": "per-category hourly toggle for agriculture and pollen",
 				"de": "Stündlich-Option pro Kategorie für Agrar/Solar und Pollen"
@@ -136,7 +140,9 @@
 		"iconSet": "basmilius",
 		"updateInterval": 60,
 		"enableAirQuality": true,
+		"enableAirQualityHourly": false,
 		"enableAstronomy": true,
+		"enableAstronomyHourly": false,
 		"enableAgriculture": false,
 		"enableAgricultureHourly": false,
 		"enablePollen": false,

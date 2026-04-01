@@ -24,6 +24,7 @@
 	"addLocation": "Add location",
 	"updateInterval": "Update interval",
 	"minutes": "min",
+	"dailyAt1am": "Daily at 01:00",
 	"optionalData": "Optional data",
 	"enableAirQuality": "Air quality (AQI, particulate matter)",
 	"enableAirQualityHelp": "european_aqi, PM10, PM2.5, NO₂, CO, dust, ozone under current.air_quality",
