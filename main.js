@@ -121,8 +121,8 @@ const WMO_HAS_NIGHT = new Set([0, 1, 2, 3, 45, 48, 51, 53, 55, 56, 57, 61, 63, 6
  * @param {boolean} isDay - Whether it is currently daytime
  * @returns {string} Relative URL path to the icon file
  */
-// Codes without day icons in basmilius/wmo sets → map to nearest equivalent
-const ICON_DAY_FALLBACK = { 56: 55, 57: 55, 66: 65, 67: 65 };
+// WMO icon set does not have icons for codes 56/57/66/67 → fall back to nearest equivalent
+const WMO_CODE_FALLBACK = { 56: 55, 57: 55, 66: 65, 67: 65 };
 
 function weatherIconUrl(code, iconSet, isDay) {
 	const padded = String(code).padStart(2, "0");
@@ -132,13 +132,11 @@ function weatherIconUrl(code, iconSet, isDay) {
 			const nightSet = iconSet === "basmilius_animated" ? "basmilius_animated_night" : "basmilius_night";
 			return `/openmeteo.admin/icons/${nightSet}/wmo_${padded}.${ext}`;
 		}
-		// Day icons for freezing drizzle/rain fall back to non-freezing equivalents
-		const dayCode = ICON_DAY_FALLBACK[code] ?? code;
 		const ext = iconSet === "basmilius_animated" ? "svg" : "png";
-		return `/openmeteo.admin/icons/${iconSet}/wmo_${String(dayCode).padStart(2, "0")}.${ext}`;
+		return `/openmeteo.admin/icons/${iconSet}/wmo_${padded}.${ext}`;
 	}
-	// WMO set: use fallback for missing codes
-	const wmoCode = ICON_DAY_FALLBACK[code] ?? code;
+	// WMO set: fall back for codes without icons
+	const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
 	return `/openmeteo.admin/icons/wmo/wmo_${String(wmoCode).padStart(2, "0")}.png`;
 }
 
