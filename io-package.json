@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.33",
+		"version": "0.0.34",
 		"news": {
+			"0.0.34": {
+				"en": "add missing WMO codes 56/57 (freezing drizzle) and 66/67 (freezing rain) with descriptions, icons and emoji",
+				"de": "Fehlende WMO-Codes 56/57 (gefrierender Nieselregen) und 66/67 (Eisregen) mit Beschreibung, Icons und Emoji ergänzt"
+			},
 			"0.0.33": {
 				"en": "fix: hourlyDays=0 was ignored due to falsy check (|| 3), hourly folders not cleaned up",
 				"de": "Fix: hourlyDays=0 wurde durch Falsy-Check (|| 3) ignoriert, stündliche Ordner nicht bereinigt"
@@ -31,9 +35,9 @@
 				"en": "per-category hourly toggle for agriculture and pollen",
 				"de": "Stündlich-Option pro Kategorie für Agrar/Solar und Pollen"
 			},
-			"0.0.27": {
-				"en": "per-category hourly toggle for agriculture and pollen",
-				"de": "Stündlich-Option pro Kategorie für Agrar/Solar und Pollen"
+			"0.0.28": {
+				"en": "hourly toggle for all 4 optional categories; update interval 60/120min or daily at 01:00",
+				"de": "Stündlich-Toggle für alle 4 optionalen Kategorien; Aktualisierungsintervall 60/120Min oder täglich um 01:00"
 			}
 		},
 		"titleLang": {
