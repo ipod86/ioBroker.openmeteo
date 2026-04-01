@@ -106,6 +106,8 @@ function weatherIconUrl(code, iconSet) {
 }
 
 const COMPASS_DIRS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+const COMPASS_EMOJIS = ["⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️"];
+const BEAUFORT_KMH = [1, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118];
 
 /**
  * Converts wind direction in degrees to compass text (N, NE, E, …)
@@ -119,6 +121,17 @@ function degreesToCompass(deg) {
 }
 
 /**
+ * Converts wind direction in degrees to a directional emoji
+ *
+ * @param {number} deg - Wind direction in degrees (0–360)
+ * @returns {string} Directional arrow emoji
+ */
+function degreesToEmoji(deg) {
+	const idx = Math.round((((deg % 360) + 360) % 360) / 45) % 8;
+	return COMPASS_EMOJIS[idx];
+}
+
+/**
  * Returns the relative URL to the wind direction arrow icon
  *
  * @param {number} deg - Wind direction in degrees (0–360)
@@ -126,6 +139,40 @@ function degreesToCompass(deg) {
  */
 function windDirIconUrl(deg) {
 	return `/openmeteo.admin/icons/wind/${degreesToCompass(deg)}.svg`;
+}
+
+/**
+ * Converts wind speed to Beaufort scale (0–12)
+ *
+ * @param {number} speed - Wind speed value
+ * @param {string} unit - Unit: "kmh" | "ms" | "mph" | "kn"
+ * @returns {number} Beaufort number 0–12
+ */
+function speedToBeaufort(speed, unit) {
+	let kmh = speed;
+	if (unit === "ms") {
+		kmh = speed * 3.6;
+	} else if (unit === "mph") {
+		kmh = speed * 1.60934;
+	} else if (unit === "kn") {
+		kmh = speed * 1.852;
+	}
+	for (let b = 0; b < BEAUFORT_KMH.length; b++) {
+		if (kmh < BEAUFORT_KMH[b]) {
+			return b;
+		}
+	}
+	return 12;
+}
+
+/**
+ * Returns the relative URL to the Beaufort wind speed icon
+ *
+ * @param {number} beaufort - Beaufort number 0–12
+ * @returns {string} Relative URL path to the Beaufort SVG icon
+ */
+function windBeaufortIconUrl(beaufort) {
+	return `/openmeteo.admin/icons/wind/beaufort_${beaufort}.svg`;
 }
 
 function precipitationType(code) {
@@ -391,8 +438,24 @@ class Openmeteo extends utils.Adapter {
 				type: "string",
 				role: "weather.direction.wind",
 			});
+			await this.setDP(`${locId}.current.winddirection_icon`, degreesToEmoji(cur.winddirection_10m), {
+				name: "Windrichtung Icon",
+				type: "string",
+				role: "weather.icon.name",
+			});
 			await this.setDP(`${locId}.current.winddirection_icon_url`, windDirIconUrl(cur.winddirection_10m), {
 				name: "Windrichtung Icon URL",
+				type: "string",
+				role: "weather.icon",
+			});
+			const curBeaufort = speedToBeaufort(cur.windspeed_10m, windspeedUnit);
+			await this.setDP(`${locId}.current.windbeaufort`, curBeaufort, {
+				name: "Windstärke Beaufort",
+				type: "number",
+				role: "value",
+			});
+			await this.setDP(`${locId}.current.windbeaufort_icon_url`, windBeaufortIconUrl(curBeaufort), {
+				name: "Windstärke Icon URL",
 				type: "string",
 				role: "weather.icon",
 			});
@@ -535,8 +598,24 @@ class Openmeteo extends utils.Adapter {
 				type: "string",
 				role: "weather.direction.wind",
 			});
+			await this.setDP(`${prefix}.winddirection_icon`, degreesToEmoji(d.winddirection_10m_dominant[i]), {
+				name: "Windrichtung Icon",
+				type: "string",
+				role: "weather.icon.name",
+			});
 			await this.setDP(`${prefix}.winddirection_icon_url`, windDirIconUrl(d.winddirection_10m_dominant[i]), {
 				name: "Windrichtung Icon URL",
+				type: "string",
+				role: "weather.icon",
+			});
+			const dayBeaufort = speedToBeaufort(d.windspeed_10m_max[i], windspeedUnit);
+			await this.setDP(`${prefix}.windbeaufort`, dayBeaufort, {
+				name: "Windstärke Beaufort",
+				type: "number",
+				role: "value",
+			});
+			await this.setDP(`${prefix}.windbeaufort_icon_url`, windBeaufortIconUrl(dayBeaufort), {
+				name: "Windstärke Icon URL",
 				type: "string",
 				role: "weather.icon",
 			});
@@ -626,8 +705,24 @@ class Openmeteo extends utils.Adapter {
 						type: "string",
 						role: "weather.direction.wind",
 					});
+					await this.setDP(`${hPath}.winddirection_icon`, degreesToEmoji(hData.winddirection), {
+						name: "Windrichtung Icon",
+						type: "string",
+						role: "weather.icon.name",
+					});
 					await this.setDP(`${hPath}.winddirection_icon_url`, windDirIconUrl(hData.winddirection), {
 						name: "Windrichtung Icon URL",
+						type: "string",
+						role: "weather.icon",
+					});
+					const hBeaufort = speedToBeaufort(hData.windspeed, windspeedUnit);
+					await this.setDP(`${hPath}.windbeaufort`, hBeaufort, {
+						name: "Windstärke Beaufort",
+						type: "number",
+						role: "value",
+					});
+					await this.setDP(`${hPath}.windbeaufort_icon_url`, windBeaufortIconUrl(hBeaufort), {
+						name: "Windstärke Icon URL",
 						type: "string",
 						role: "weather.icon",
 					});
