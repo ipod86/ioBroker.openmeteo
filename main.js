@@ -5,7 +5,7 @@
  */
 
 const utils = require("@iobroker/adapter-core");
-const https = require("https");
+const https = require("node:https");
 
 const WEEKDAYS = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
