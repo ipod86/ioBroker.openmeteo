@@ -51,7 +51,7 @@
     "test:package": "mocha test/package --exit",
     "test:integration": "mocha test/integration --exit",
     "test": "npm run test:js && npm run test:package",
-    "lint": "node --max-old-space-size=4096 node_modules/.bin/eslint -c eslint.config.mjs .",
+    "lint": "eslint -c eslint.config.mjs .",
     "translate": "translate-adapter",
     "release": "release-script"
   },
