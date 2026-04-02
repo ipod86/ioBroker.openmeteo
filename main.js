@@ -246,6 +246,7 @@ function generateSummary(hours, lang, isNight) {
 	const temps = hours.map(h => h.temperature).filter(v => v != null);
 	const winds = hours.map(h => h.windspeedKmh).filter(v => v != null);
 	const clouds = hours.map(h => h.cloudcover).filter(v => v != null);
+	const capes = hours.map(h => h.cape).filter(v => v != null);
 
 	const hasCode = (...c) => codes.some(code => c.includes(code));
 
@@ -344,8 +345,19 @@ function generateSummary(hours, lang, isNight) {
 		windPart = t.breezy;
 	}
 
+	// CAPE-based thunderstorm risk (only when no thunderstorm weathercode already active)
+	const maxCape = capes.length > 0 ? Math.max(...capes) : 0;
+	let capePart = null;
+	if (!hasCode(95, 96, 99) && maxCape >= 2500) {
+		capePart = t.thunderstorm_severe;
+	} else if (!hasCode(95, 96, 99) && maxCape >= 1000) {
+		capePart = t.thunderstorm_danger;
+	} else if (!hasCode(95, 96, 99) && maxCape >= 500) {
+		capePart = t.thunderstorm_risk;
+	}
+
 	const weatherPart = precipSuffix ? `${weather} (${precipSuffix})` : weather;
-	return [weatherPart, tempPart, windPart].filter(Boolean).join(", ");
+	return [weatherPart, tempPart, windPart, capePart].filter(Boolean).join(", ");
 }
 
 function precipitationType(code) {
@@ -896,6 +908,7 @@ class Openmeteo extends utils.Adapter {
 						precipitation: cur.precipitation,
 						snowfall: cur.snowfall,
 						is_day: cur.is_day === 1,
+						cape: cur.cape,
 					},
 				],
 				lang,
