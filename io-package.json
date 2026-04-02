@@ -1,8 +1,21 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.37",
+		"version": "0.0.38",
 		"news": {
+			"0.0.38": {
+				"en": "DWD-standard precipitation intensity/frequency, temperature and wind thresholds for weather summaries",
+				"de": "DWD-konforme Schwellenwerte für Niederschlagsintensität/-häufigkeit, Temperatur und Wind in Kurzzusammenfassungen",
+				"ru": "Пороги DWD для интенсивности/частоты осадков, температуры и ветра в сводках погоды",
+				"pt": "Limiares padrão DWD para intensidade/frequência de precipitação, temperatura e vento nos resumos",
+				"nl": "DWD-standaard drempelwaarden voor neerslagintensiteit/-frequentie, temperatuur en wind in samenvattingen",
+				"fr": "Seuils standard DWD pour l'intensité/fréquence des précipitations, température et vent dans les résumés",
+				"it": "Soglie standard DWD per intensità/frequenza delle precipitazioni, temperatura e vento nei riepiloghi",
+				"es": "Umbrales estándar DWD para intensidad/frecuencia de precipitación, temperatura y viento en los resúmenes",
+				"pl": "Progi standardu DWD dla intensywności/częstotliwości opadów, temperatury i wiatru w podsumowaniach",
+				"zh-cn": "气象摘要采用德国气象局(DWD)标准降水强度/频率、温度和风力阈值",
+				"uk": "Порогові значення DWD для інтенсивності/частоти опадів, температури та вітру в зведеннях погоди"
+			},
 			"0.0.37": {
 				"en": "add day/night weather summary texts for each forecast day (11 languages)",
 				"de": "Tages- und Nacht-Kurzzusammenfassungen für jeden Vorhersetag (11 Sprachen)",

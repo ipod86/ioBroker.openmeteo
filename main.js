@@ -248,23 +248,36 @@ function generateSummary(hours, lang, isNight) {
 	const clouds = hours.map(h => h.cloudcover).filter(v => v != null);
 
 	const hasCode = (...c) => codes.some(code => c.includes(code));
-	const countCode = (...c) => codes.filter(code => c.includes(code)).length;
+
+	// DWD precipitation frequency thresholds
+	const RAIN_CODES_SET = new Set([61, 63, 65, 80, 81, 82]);
+	const SNOW_CODES_SET = new Set([71, 73, 75, 77, 85, 86]);
+
+	const rainHours = hours.filter(h => RAIN_CODES_SET.has(h.weathercode));
+	const snowHours = hours.filter(h => SNOW_CODES_SET.has(h.weathercode));
+
+	// DWD frequency: isolated 1–2 h, intermittent 3–5 h, persistent 6+ h
+	const precipFreq = count => (count >= 6 ? "persistent" : count >= 3 ? "intermittent" : "isolated");
+
+	// DWD intensity: light <2.5 mm/h, moderate 2.5–10 mm/h, heavy >10 mm/h
+	const precipIntensity = maxMm => (maxMm >= 10 ? "heavy" : maxMm >= 2.5 ? "moderate" : "light");
 
 	let weather;
 	if (hasCode(95, 96, 99)) {
 		weather = t.thunderstorm;
-	} else if (hasCode(75, 86)) {
-		weather = t.heavy_snow;
-	} else if (hasCode(71, 73, 77, 85)) {
-		weather = t.snow;
 	} else if (hasCode(56, 57, 66, 67)) {
 		weather = t.freezing;
-	} else if (hasCode(65, 82)) {
-		weather = t.heavy_rain;
-	} else if (countCode(61, 63, 80, 81) >= 3) {
-		weather = t.rain_frequent;
-	} else if (hasCode(61, 63, 80, 81)) {
-		weather = t.showers;
+	} else if (snowHours.length > 0) {
+		if (hasCode(75, 86)) {
+			weather = t.snow_heavy;
+		} else {
+			weather = t[`snow_${precipFreq(snowHours.length)}`];
+		}
+	} else if (rainHours.length > 0) {
+		const maxRainPrecip = Math.max(...rainHours.map(h => h.precipitation || 0));
+		const freq = precipFreq(rainHours.length);
+		const inten = precipIntensity(maxRainPrecip);
+		weather = t[`rain_${freq}_${inten}`];
 	} else if (hasCode(51, 53, 55)) {
 		weather = t.drizzle;
 	} else if (hasCode(45, 48)) {
@@ -282,7 +295,7 @@ function generateSummary(hours, lang, isNight) {
 		}
 	}
 
-	// Temperature label based on max temp
+	// DWD temperature thresholds (based on max temp)
 	const tempMin = temps.length > 0 ? Math.round(Math.min(...temps)) : null;
 	const tempMax = temps.length > 0 ? Math.round(Math.max(...temps)) : null;
 	let tempPart = null;
@@ -290,28 +303,34 @@ function generateSummary(hours, lang, isNight) {
 		let tempLabel;
 		if (tempMax >= 30) {
 			tempLabel = t.hot;
-		} else if (tempMax >= 22) {
+		} else if (tempMax >= 25) {
 			tempLabel = t.warm;
-		} else if (tempMax >= 14) {
+		} else if (tempMax >= 15) {
 			tempLabel = t.mild;
-		} else if (tempMax >= 6) {
+		} else if (tempMax >= 5) {
 			tempLabel = t.cool;
 		} else if (tempMax >= 0) {
 			tempLabel = t.cold;
+		} else if (tempMax >= -10) {
+			tempLabel = t.frost;
 		} else {
-			tempLabel = t.frosty;
+			tempLabel = t.hard_frost;
 		}
 		const tempStr = tempMin === tempMax ? `${tempMax}°C` : `${tempMin}–${tempMax}°C`;
 		tempPart = `${tempLabel} (${tempStr})`;
 	}
 
-	// Wind only if notable (>= 20 km/h)
+	// DWD wind: Bft 4 ≥20, Bft 5–6 ≥29, Bft 7 ≥50, Bft 8–9 ≥62, Bft 10+ ≥89 km/h
 	const maxWind = winds.length > 0 ? Math.max(...winds) : 0;
 	let windPart = null;
-	if (maxWind >= 62) {
+	if (maxWind >= 89) {
+		windPart = t.storm;
+	} else if (maxWind >= 62) {
 		windPart = t.stormy;
-	} else if (maxWind >= 39) {
-		windPart = t.windy;
+	} else if (maxWind >= 50) {
+		windPart = t.strong;
+	} else if (maxWind >= 29) {
+		windPart = t.fresh;
 	} else if (maxWind >= 20) {
 		windPart = t.breezy;
 	}
