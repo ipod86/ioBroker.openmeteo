@@ -271,11 +271,11 @@ function generateSummary(hours, lang, isNight) {
 		weather = t.fog;
 	} else {
 		const avgCloud = clouds.length > 0 ? clouds.reduce((a, b) => a + b, 0) / clouds.length : 0;
-		if (avgCloud >= 80) {
+		if (avgCloud >= 87) {
 			weather = t.overcast;
-		} else if (avgCloud >= 50) {
+		} else if (avgCloud >= 62) {
 			weather = t.cloudy;
-		} else if (avgCloud >= 20) {
+		} else if (avgCloud >= 25) {
 			weather = t.partly_cloudy;
 		} else {
 			weather = isNight ? t.clear_night : t.sunny;
