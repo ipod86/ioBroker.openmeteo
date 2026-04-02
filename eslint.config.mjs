@@ -18,6 +18,7 @@ export default [
 			'admin/words.js',
 			'admin/admin.d.ts',
 			'admin/blockly.js',
+			'src-admin/**',
 			'**/adapter-config.d.ts',
 			'widgets/**/*.js'
 		],
