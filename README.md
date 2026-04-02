@@ -161,6 +161,18 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 
 ## Changelog
 
+### 0.0.39
+* Weather summary sentences for `current.summary`, `dayX.summary_day` and `dayX.summary_night` in 11 languages
+* DWD-standard precipitation classification: intensity (light/moderate/heavy via mm/h) × frequency (isolated/intermittent/persistent via hour count)
+* Precipitation amounts shown in summary (mm for rain, cm for snow)
+* CAPE-based thunderstorm risk appended to summary (≥500 J/kg: risk, ≥1000: danger, ≥2500: severe)
+* DWD temperature thresholds: hot/warm/mild/cool/cold/frost/hard_frost (30/25/15/5/0/−10°C)
+* DWD wind scale: breezy/fresh/strong/stormy/storm (20/29/50/62/89 km/h, Beaufort 4–10+)
+
+### 0.0.37
+* Day and night weather summary texts for each forecast day (`summary_day`, `summary_night`)
+* Day/night split based on `is_day` field from API
+
 ### 0.0.36
 * Multilingual weather descriptions, moon phases and pollen levels (11 languages: de, en, fr, it, es, pt, nl, pl, ru, uk, zh-cn)
 * Weekday abbreviations localized per language
