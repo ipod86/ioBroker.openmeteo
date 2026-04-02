@@ -1,8 +1,21 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.36",
+		"version": "0.0.37",
 		"news": {
+			"0.0.37": {
+				"en": "add day/night weather summary texts for each forecast day (11 languages)",
+				"de": "Tages- und Nacht-Kurzzusammenfassungen für jeden Vorhersetag (11 Sprachen)",
+				"ru": "Добавлены краткие сводки погоды для дня и ночи (11 языков)",
+				"pt": "Resumos meteorológicos de dia/noite para cada dia de previsão (11 idiomas)",
+				"nl": "Dag/nacht weerssamenvattingen toegevoegd per voorspellingsdag (11 talen)",
+				"fr": "Résumés météo jour/nuit pour chaque jour de prévision (11 langues)",
+				"it": "Riepiloghi meteo giorno/notte per ogni giorno di previsione (11 lingue)",
+				"es": "Resúmenes meteorológicos de día/noche por día de previsión (11 idiomas)",
+				"pl": "Podsumowania pogody dzień/noc dla każdego dnia prognozy (11 języków)",
+				"uk": "Короткі зведення погоди на день/ніч для кожного дня прогнозу (11 мов)",
+				"zh-cn": "为每个预报日添加昼夜天气摘要（11种语言）"
+			},
 			"0.0.36": {
 				"en": "multilingual weather descriptions, moon phases and pollen levels (11 languages); timezone from ioBroker system config",
 				"de": "Mehrsprachige Wetterbeschreibungen, Mondphasen und Pollenstufen (11 Sprachen); Zeitzone aus ioBroker-Systemkonfiguration",

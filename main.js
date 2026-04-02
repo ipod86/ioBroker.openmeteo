@@ -8,7 +8,7 @@ const utils = require("@iobroker/adapter-core");
 const https = require("node:https");
 const SunCalc = require("suncalc");
 
-const { I18N_WEEKDAYS, I18N_DESCRIPTIONS, I18N_MOON_PHASES, I18N_POLLEN_LEVELS } = require("./lib/i18n");
+const { I18N_WEEKDAYS, I18N_DESCRIPTIONS, I18N_MOON_PHASES, I18N_POLLEN_LEVELS, I18N_SUMMARY } = require("./lib/i18n");
 
 const ICONS = {
 	0: "☀️",
@@ -227,6 +227,96 @@ function speedToBeaufort(speed, unit) {
  */
 function windBeaufortIconUrl(beaufort) {
 	return `/openmeteo.admin/icons/wind/beaufort_${beaufort}.svg`;
+}
+
+/**
+ * Generates a short weather summary text from a set of hourly data points
+ *
+ * @param {Array<{weathercode:number,temperature:number,windspeedKmh:number,cloudcover:number}>} hours - Hourly data
+ * @param {string} lang - Language code
+ * @param {boolean} isNight - Whether this is a night summary
+ * @returns {string|null} Summary text or null if no data
+ */
+function generateSummary(hours, lang, isNight) {
+	if (!hours || hours.length === 0) {
+		return null;
+	}
+	const t = I18N_SUMMARY[lang] || I18N_SUMMARY.en;
+	const codes = hours.map(h => h.weathercode);
+	const temps = hours.map(h => h.temperature).filter(v => v != null);
+	const winds = hours.map(h => h.windspeedKmh).filter(v => v != null);
+	const clouds = hours.map(h => h.cloudcover).filter(v => v != null);
+
+	const hasCode = (...c) => codes.some(code => c.includes(code));
+	const countCode = (...c) => codes.filter(code => c.includes(code)).length;
+
+	let weather;
+	if (hasCode(95, 96, 99)) {
+		weather = t.thunderstorm;
+	} else if (hasCode(75, 86)) {
+		weather = t.heavy_snow;
+	} else if (hasCode(71, 73, 77, 85)) {
+		weather = t.snow;
+	} else if (hasCode(56, 57, 66, 67)) {
+		weather = t.freezing;
+	} else if (hasCode(65, 82)) {
+		weather = t.heavy_rain;
+	} else if (countCode(61, 63, 80, 81) >= 3) {
+		weather = t.rain_frequent;
+	} else if (hasCode(61, 63, 80, 81)) {
+		weather = t.showers;
+	} else if (hasCode(51, 53, 55)) {
+		weather = t.drizzle;
+	} else if (hasCode(45, 48)) {
+		weather = t.fog;
+	} else {
+		const avgCloud = clouds.length > 0 ? clouds.reduce((a, b) => a + b, 0) / clouds.length : 0;
+		if (avgCloud >= 80) {
+			weather = t.overcast;
+		} else if (avgCloud >= 50) {
+			weather = t.cloudy;
+		} else if (avgCloud >= 20) {
+			weather = t.partly_cloudy;
+		} else {
+			weather = isNight ? t.clear_night : t.sunny;
+		}
+	}
+
+	// Temperature label based on max temp
+	const tempMin = temps.length > 0 ? Math.round(Math.min(...temps)) : null;
+	const tempMax = temps.length > 0 ? Math.round(Math.max(...temps)) : null;
+	let tempPart = null;
+	if (tempMax != null) {
+		let tempLabel;
+		if (tempMax >= 30) {
+			tempLabel = t.hot;
+		} else if (tempMax >= 22) {
+			tempLabel = t.warm;
+		} else if (tempMax >= 14) {
+			tempLabel = t.mild;
+		} else if (tempMax >= 6) {
+			tempLabel = t.cool;
+		} else if (tempMax >= 0) {
+			tempLabel = t.cold;
+		} else {
+			tempLabel = t.frosty;
+		}
+		const tempStr = tempMin === tempMax ? `${tempMax}°C` : `${tempMin}–${tempMax}°C`;
+		tempPart = `${tempLabel} (${tempStr})`;
+	}
+
+	// Wind only if notable (>= 20 km/h)
+	const maxWind = winds.length > 0 ? Math.max(...winds) : 0;
+	let windPart = null;
+	if (maxWind >= 62) {
+		windPart = t.stormy;
+	} else if (maxWind >= 39) {
+		windPart = t.windy;
+	} else if (maxWind >= 20) {
+		windPart = t.breezy;
+	}
+
+	return [weather, tempPart, windPart].filter(Boolean).join(", ");
 }
 
 function precipitationType(code) {
@@ -804,12 +894,22 @@ class Openmeteo extends utils.Adapter {
 			if (!hoursByDate[dateKey]) {
 				hoursByDate[dateKey] = [];
 			}
+			const rawWind = h.windspeed_10m[i];
+			const windKmh =
+				windspeedUnit === "ms"
+					? rawWind * 3.6
+					: windspeedUnit === "mph"
+						? rawWind * 1.60934
+						: windspeedUnit === "kn"
+							? rawWind * 1.852
+							: rawWind;
 			hoursByDate[dateKey][hour] = {
 				temperature: Math.round(h.temperature_2m[i] * 10) / 10,
 				feels_like: Math.round(h.apparent_temperature[i] * 10) / 10,
 				precipitation: h.precipitation[i],
 				rain_prob: h.precipitation_probability[i],
-				windspeed: h.windspeed_10m[i],
+				windspeed: rawWind,
+				windspeedKmh: windKmh,
 				winddirection: h.winddirection_10m[i],
 				cloudcover: h.cloudcover[i],
 				weathercode: h.weathercode[i],
@@ -1064,6 +1164,32 @@ class Openmeteo extends utils.Adapter {
 				unit: "hPa",
 				role: "value.pressure",
 			});
+
+			// Day/night summary texts
+			{
+				const allHours = (hoursByDate[d.time[i]] || []).filter(Boolean);
+				const nextDate = d.time[i + 1];
+				const nextHours = nextDate ? (hoursByDate[nextDate] || []).filter(Boolean) : [];
+				const dayHours = allHours.filter(hd => hd.is_day);
+				// Night = evening hours of this day + early morning hours of next day
+				const nightHours = [...allHours.filter(hd => !hd.is_day), ...nextHours.filter(hd => !hd.is_day)];
+				const summaryDay = generateSummary(dayHours, lang, false);
+				const summaryNight = generateSummary(nightHours, lang, true);
+				if (summaryDay) {
+					await this.setDP(`${prefix}.summary_day`, summaryDay, {
+						name: "Zusammenfassung Tag",
+						type: "string",
+						role: "weather.state",
+					});
+				}
+				if (summaryNight) {
+					await this.setDP(`${prefix}.summary_night`, summaryNight, {
+						name: "Zusammenfassung Nacht",
+						type: "string",
+						role: "weather.state",
+					});
+				}
+			}
 
 			// Astronomy channel (sun + moon)
 			let astroData = null;
