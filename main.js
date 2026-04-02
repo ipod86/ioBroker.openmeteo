@@ -878,6 +878,34 @@ class Openmeteo extends utils.Adapter {
 				unit: "cm",
 				role: "value.precipitation.snow",
 			});
+			const curWindKmh =
+				windspeedUnit === "ms"
+					? cur.windspeed_10m * 3.6
+					: windspeedUnit === "mph"
+						? cur.windspeed_10m * 1.60934
+						: windspeedUnit === "kn"
+							? cur.windspeed_10m * 1.852
+							: cur.windspeed_10m;
+			const curSummary = generateSummary(
+				[
+					{
+						weathercode: curCode,
+						temperature: Math.round(cur.temperature_2m * 10) / 10,
+						windspeedKmh: curWindKmh,
+						cloudcover: cur.cloudcover,
+						precipitation: cur.precipitation,
+						snowfall: cur.snowfall,
+						is_day: cur.is_day === 1,
+					},
+				],
+				lang,
+				cur.is_day !== 1,
+			);
+			await this.setDP(`${locId}.current.summary`, curSummary, {
+				name: "Zusammenfassung",
+				type: "string",
+				role: "weather.state",
+			});
 			if (enableAgriculture) {
 				await this.setObjectNotExistsAsync(`${locId}.current.agriculture`, {
 					type: "channel",
