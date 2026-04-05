@@ -22,11 +22,13 @@ This adapter retrieves weather forecast data from the free [Open-Meteo API](http
 - **Configurable forecast range** – up to 16 days daily, up to 16 days hourly
 - **Configurable update interval** – 60 min, 120 min, or daily at 01:00
 - **Units** – temperature (°C / °F), wind speed (km/h, m/s, mph, kn), precipitation (mm / inch)
-- **3 weather icon sets** with live preview in settings:
+- **5 weather icon sets** with live preview in settings:
   - Meteocons by Bas Milius – static PNG (default)
   - Meteocons by Bas Milius – animated SVG
+  - amCharts Weather Icons – animated SVG *(rain/snow/thunder: no day/night variant)*
+  - amCharts Weather Icons – static SVG *(rain/snow/thunder: no day/night variant)*
   - WMO OGC meteorological symbols – PNG
-- **Day/night icons** – Meteocons automatically switch to night variants based on `is_day`
+- **Day/night icons** – Meteocons and amCharts clear/cloudy icons switch to night variants based on `is_day`
 - **Wind direction** – degrees, compass text (N/NE/E/…), arrow emoji (⬆️↗️…), SVG arrow icon
 - **Wind strength** – Beaufort scale (0–12) with Meteocons Beaufort icons
 - **`info.lastUpdate`** – timestamp of last successful update
@@ -153,6 +155,7 @@ Optional per hour (if enabled + "also hourly"):
 ## Icon credits
 
 - **Meteocons** by [Bas Milius](https://github.com/basmilius/weather-icons) – MIT License
+- **amCharts Weather Icons** by [amCharts](https://www.amcharts.com/free-animated-svg-weather-icons/) – [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **WMO meteorological symbols** by [OGC MetOcean DWG](https://github.com/OGCMetOceanDWG/WorldWeatherSymbols) – CC BY 4.0
 
 ## Disclaimer

@@ -95,6 +95,39 @@ const WMO_HAS_NIGHT = new Set([
 // WMO icon set does not have icons for codes 56/57/66/67 → fall back to nearest equivalent
 const WMO_CODE_FALLBACK = { 56: 55, 57: 55, 66: 65, 67: 65 };
 
+// amCharts icon name mapping: WMO code → { day, night } filename (without .svg)
+// Rain/snow/thunder have no day/night variant — same file used for both
+const AMCHARTS_MAP = {
+	0: { day: "day", night: "night" },
+	1: { day: "cloudy-day-1", night: "cloudy-night-1" },
+	2: { day: "cloudy-day-2", night: "cloudy-night-2" },
+	3: { day: "cloudy-day-3", night: "cloudy-night-3" },
+	45: { day: "cloudy", night: "cloudy" },
+	48: { day: "cloudy", night: "cloudy" },
+	51: { day: "rainy-1", night: "rainy-1" },
+	53: { day: "rainy-1", night: "rainy-1" },
+	55: { day: "rainy-2", night: "rainy-2" },
+	56: { day: "rainy-1", night: "rainy-1" },
+	57: { day: "rainy-2", night: "rainy-2" },
+	61: { day: "rainy-3", night: "rainy-3" },
+	63: { day: "rainy-4", night: "rainy-4" },
+	65: { day: "rainy-5", night: "rainy-5" },
+	66: { day: "rainy-3", night: "rainy-3" },
+	67: { day: "rainy-5", night: "rainy-5" },
+	71: { day: "snowy-1", night: "snowy-1" },
+	73: { day: "snowy-2", night: "snowy-2" },
+	75: { day: "snowy-3", night: "snowy-3" },
+	77: { day: "snowy-1", night: "snowy-1" },
+	80: { day: "rainy-4", night: "rainy-4" },
+	81: { day: "rainy-5", night: "rainy-5" },
+	82: { day: "rainy-6", night: "rainy-6" },
+	85: { day: "snowy-4", night: "snowy-4" },
+	86: { day: "snowy-5", night: "snowy-5" },
+	95: { day: "thunder", night: "thunder" },
+	96: { day: "thunder", night: "thunder" },
+	99: { day: "thunder", night: "thunder" },
+};
+
 function weatherIconUrl(code, iconSet, isDay) {
 	const padded = String(code).padStart(2, "0");
 	if (iconSet === "basmilius" || iconSet === "basmilius_animated") {
@@ -105,6 +138,12 @@ function weatherIconUrl(code, iconSet, isDay) {
 		}
 		const ext = iconSet === "basmilius_animated" ? "svg" : "png";
 		return `/openmeteo.admin/icons/${iconSet}/wmo_${padded}.${ext}`;
+	}
+	if (iconSet === "amcharts_animated" || iconSet === "amcharts_static") {
+		const entry = AMCHARTS_MAP[code] || AMCHARTS_MAP[WMO_CODE_FALLBACK[code]] || { day: "cloudy", night: "cloudy" };
+		const name = isDay ? entry.day : entry.night;
+		const folder = iconSet === "amcharts_animated" ? "animated" : "static";
+		return `/openmeteo.admin/icons/amcharts/${folder}/${name}.svg`;
 	}
 	// WMO set: fall back for codes without icons
 	const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
@@ -603,6 +642,196 @@ class Openmeteo extends utils.Adapter {
 			await this.setState("info.lastUpdate", new Date().toISOString(), true);
 		}
 		await this.cleanupOrphanedLocations(validLocationIds);
+
+		// Generate widget HTML DPs
+		if (anySuccess) {
+			const widgets = Array.isArray(this.config.widgets) ? this.config.widgets : [];
+			const activeWidgetKeys = new Set();
+			for (const widget of widgets) {
+				if (!widget.id || !widget.locationName) {
+					continue;
+				}
+				const locId = normalizeId(widget.locationName);
+				if (!validLocationIds.has(locId)) {
+					continue;
+				}
+				const dpKey = `${locId}.widget.${widget.id}`;
+				activeWidgetKeys.add(dpKey);
+				try {
+					const html = await this.buildWidgetHtml(widget, locId);
+					await this.setObjectNotExistsAsync(`${locId}.widget`, {
+						type: "channel",
+						common: { name: "Widget" },
+						native: {},
+					});
+					await this.setDP(dpKey, html, {
+						name: `Widget ${widget.id}`,
+						type: "string",
+						role: "html",
+					});
+				} catch (err) {
+					this.log.error(`Widget ${widget.id} Fehler: ${err.message}`);
+				}
+			}
+			// Cleanup removed widgets
+			await this.cleanupOrphanedWidgets(validLocationIds, activeWidgetKeys);
+		}
+	}
+
+	/**
+	 * Builds HTML widget string from adapter states
+	 *
+	 * @param {object} widget - Widget config
+	 * @param {string} locId - Location channel ID
+	 * @returns {Promise<string>} HTML string
+	 */
+	async buildWidgetHtml(widget, locId) {
+		const host = `${widget.protocol}://${widget.host}:${widget.port}`;
+		const p = locId;
+		const isLight = widget.theme === "light";
+		const textColor = isLight ? "rgba(0,0,0,0.87)" : "rgba(255,255,255,1)";
+		const subColor = isLight ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.7)";
+		const fadeColor = isLight ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.45)";
+		const divColor = isLight ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.2)";
+
+		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
+
+		const [curTemp, curDesc, curIcon, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
+			gs(`${p}.current.temperature`),
+			gs(`${p}.current.description`),
+			gs(`${p}.current.icon_url`),
+			gs(`${p}.current.windspeed`),
+			gs(`${p}.current.humidity`),
+			gs(`${p}.current.pressure`),
+			gs(`${p}.current.summary`),
+			gs(`${p}.day1.sunshine_hours`),
+		]);
+
+		const days = Math.min(widget.days ?? 5, 14);
+
+		// Fetch day data in parallel
+		const dayData = await Promise.all(
+			Array.from({ length: days }, (_, i) =>
+				Promise.all([
+					gs(`${p}.day${i + 1}.weekday`),
+					gs(`${p}.day${i + 1}.icon_url`),
+					gs(`${p}.day${i + 1}.temp_max`),
+					gs(`${p}.day${i + 1}.temp_min`),
+					gs(`${p}.day${i + 1}.precipitation_probability`),
+				]),
+			),
+		);
+
+		let html = `<div style="background:transparent;color:${textColor};padding:0 5px;font-family:sans-serif;max-width:450px;">`;
+
+		// Header
+		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
+<tr>
+<td width="75px"><img src="${host}${curIcon}" style="width:75px;height:75px;display:block;"></td>
+<td style="padding-left:10px;vertical-align:middle;">
+<div style="font-size:15px;font-weight:400;color:${subColor};">${curDesc}</div>
+<div style="font-size:12px;color:${fadeColor};margin-top:2px;">${curSummary}</div>
+</td>
+<td style="text-align:right;vertical-align:middle;padding-right:5px;">
+<div style="font-size:42px;font-weight:300;letter-spacing:-1px;color:${textColor};">${curTemp}<span style="font-size:18px;vertical-align:top;font-weight:300;margin-left:2px;position:relative;top:6px;">°C</span></div>
+</td>
+</tr>
+</table>`;
+
+		// Details
+		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:12px;font-size:13px;color:${subColor};">
+<tr>
+<td width="5%"></td>
+<td width="45%" style="text-align:left;padding:1px 0;"><span style="display:inline-block;width:20px;text-align:center;">💨</span><span style="margin-left:5px;">${curWind} <span style="font-size:10px;color:${fadeColor};">km/h</span></span></td>
+<td width="45%" style="text-align:right;padding:1px 0;"><span style="margin-right:5px;">${curHum} <span style="font-size:10px;color:${fadeColor};">%</span></span><span style="display:inline-block;width:20px;text-align:center;">💧</span></td>
+<td width="5%"></td>
+</tr>
+<tr>
+<td></td>
+<td style="text-align:left;padding:1px 0;"><span style="display:inline-block;width:20px;text-align:center;">☀️</span><span style="margin-left:5px;">${sunH} <span style="font-size:10px;color:${fadeColor};">h</span></span></td>
+<td style="text-align:right;padding:1px 0;"><span style="margin-right:5px;">${curPress} <span style="font-size:10px;color:${fadeColor};">hPa</span></span><span style="display:inline-block;width:20px;text-align:center;">⏲️</span></td>
+<td></td>
+</tr>
+</table>`;
+
+		// Forecast rows
+		const batchSize = 7;
+		for (let start = 0; start < days; start += batchSize) {
+			const end = Math.min(start + batchSize, days);
+			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;text-align:center;"><tr>`;
+			for (let i = start; i < end; i++) {
+				const border = i > start ? `border-left:2px solid ${divColor};` : "";
+				html += `<td style="font-size:12px;color:${fadeColor};padding-bottom:2px;${border}">${dayData[i][0]}</td>`;
+			}
+			html += `</tr><tr>`;
+			for (let i = start; i < end; i++) {
+				const border = i > start ? `border-left:2px solid ${divColor};` : "";
+				html += `<td style="padding:0;${border}"><img src="${host}${dayData[i][1]}" style="width:42px;height:42px;display:inline-block;margin:-2px 0;"></td>`;
+			}
+			html += `</tr><tr>`;
+			for (let i = start; i < end; i++) {
+				const border = i > start ? `border-left:2px solid ${divColor};` : "";
+				html += `<td style="font-size:14px;font-weight:600;padding-top:2px;color:${textColor};${border}">${dayData[i][2]}<span style="font-size:10px;font-weight:400;vertical-align:top;margin-left:1px;">°C</span></td>`;
+			}
+			html += `</tr><tr>`;
+			for (let i = start; i < end; i++) {
+				const border = i > start ? `border-left:2px solid ${divColor};` : "";
+				html += `<td style="font-size:11px;color:${fadeColor};padding-top:0;${border}">${dayData[i][3]}<span style="font-size:8px;vertical-align:top;margin-left:1px;">°C</span></td>`;
+			}
+			html += `</tr><tr>`;
+			for (let i = start; i < end; i++) {
+				const border = i > start ? `border-left:2px solid ${divColor};` : "";
+				html += `<td style="font-size:11px;color:${fadeColor};padding-top:0;${border}">${dayData[i][4]}<span style="font-size:9px;margin-left:1px;">%</span></td>`;
+			}
+			html += `</tr></table>`;
+		}
+
+		html += `</div>`;
+		return html;
+	}
+
+	/**
+	 * Deletes widget DPs that are no longer in the config
+	 *
+	 * @param {Set<string>} validLocationIds - Location IDs still in config
+	 * @param {Set<string>} activeWidgetKeys - Widget DP paths still in config
+	 */
+	async cleanupOrphanedWidgets(validLocationIds, activeWidgetKeys) {
+		for (const locId of validLocationIds) {
+			let widgetFolder;
+			try {
+				widgetFolder = await this.getObjectAsync(`${locId}.widget`);
+			} catch {
+				continue;
+			}
+			if (!widgetFolder) {
+				continue;
+			}
+			const children = await this.getObjectViewAsync("system", "state", {
+				startkey: `${this.namespace}.${locId}.widget.`,
+				endkey: `${this.namespace}.${locId}.widget.\u9999`,
+			});
+			let remaining = 0;
+			for (const row of children?.rows || []) {
+				const relId = row.id.replace(`${this.namespace}.`, "");
+				if (!activeWidgetKeys.has(relId)) {
+					try {
+						await this.delObjectAsync(relId);
+					} catch {
+						/* ok */
+					}
+				} else {
+					remaining++;
+				}
+			}
+			if (remaining === 0) {
+				try {
+					await this.delObjectAsync(`${locId}.widget`);
+				} catch {
+					/* ok */
+				}
+			}
+		}
 	}
 
 	/**

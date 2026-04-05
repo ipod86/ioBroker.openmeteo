@@ -4,6 +4,16 @@ export interface Location {
     lon: number;
 }
 
+export interface Widget {
+    id: string;
+    locationName: string;
+    days: 5 | 7 | 14;
+    theme: 'light' | 'dark';
+    protocol: 'http' | 'https';
+    host: string;
+    port: number;
+}
+
 export interface OpenMeteoConfig {
     locations: Location[];
     daysCount: number;
@@ -11,7 +21,7 @@ export interface OpenMeteoConfig {
     temperatureUnit: 'celsius' | 'fahrenheit';
     windspeedUnit: 'kmh' | 'ms' | 'mph' | 'kn';
     precipitationUnit: 'mm' | 'inch';
-    iconSet: 'wmo' | 'basmilius' | 'basmilius_animated';
+    iconSet: 'wmo' | 'basmilius' | 'basmilius_animated' | 'amcharts_animated' | 'amcharts_static';
     updateInterval: number;
     enableAirQuality: boolean;
     enableAirQualityHourly: boolean;
@@ -21,4 +31,5 @@ export interface OpenMeteoConfig {
     enableAgricultureHourly: boolean;
     enablePollen: boolean;
     enablePollenHourly: boolean;
+    widgets: Widget[];
 }

@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "openmeteo",
-		"version": "0.0.39",
+		"version": "0.0.40",
 		"news": {
+			"0.0.40": {
+				"en": "amCharts animated/static SVG icons (CC BY 4.0), HTML widget DPs with light/dark theme, OSM map preview and address geocoding in location settings",
+				"de": "amCharts animierte/statische SVG-Icons (CC BY 4.0), HTML-Widget-Datenpunkte mit Hell/Dunkel-Design, OSM-Kartenvorschau und Adress-Geocodierung in den Standorteinstellungen"
+			},
 			"0.0.39": {
 				"en": "Weather summary sentences with DWD-standard thresholds, precipitation amounts, CAPE-based thunderstorm risk and current.summary",
 				"de": "Wettertext-Zusammenfassungen mit DWD-Schwellenwerten, Niederschlagsmengen, CAPE-basierter Gewittergefahr und current.summary",

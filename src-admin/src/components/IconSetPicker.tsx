@@ -9,18 +9,36 @@ interface Props {
 
 const PREVIEW_CODES = ['00', '01', '03', '45', '61', '63', '73', '80', '95', '99'];
 
+// amCharts WMO-code → filename mapping (day variant for preview)
+const AMCHARTS_PREVIEW: Record<string, string> = {
+    '00': 'day', '01': 'cloudy-day-1', '03': 'cloudy-day-3',
+    '45': 'cloudy', '61': 'rainy-3', '63': 'rainy-4',
+    '73': 'snowy-2', '80': 'rainy-4', '95': 'thunder', '99': 'thunder',
+};
+
 const ICON_SETS = [
-    { value: 'basmilius', label: 'Meteocons (statisch)', ext: 'png' },
-    { value: 'basmilius_animated', label: 'Meteocons (animiert SVG)', ext: 'svg' },
-    { value: 'wmo', label: 'WMO OGC (meteorologische Symbole)', ext: 'png' },
+    { value: 'basmilius',          label: 'Meteocons (statisch)',              ext: 'png', amcharts: false },
+    { value: 'basmilius_animated', label: 'Meteocons (animiert SVG)',          ext: 'svg', amcharts: false },
+    { value: 'amcharts_animated',  label: 'amCharts (animiert SVG)',           ext: 'svg', amcharts: true  },
+    { value: 'amcharts_static',    label: 'amCharts (statisch SVG)',           ext: 'svg', amcharts: true  },
+    { value: 'wmo',                label: 'WMO OGC (meteorologische Symbole)', ext: 'png', amcharts: false },
 ];
 
 const IconSetPicker: React.FC<Props> = ({ iconSet, onChange }) => {
-    const current = ICON_SETS.find(s => s.value === iconSet) || ICON_SETS.find(s => s.value === 'basmilius')!;
+    const current = ICON_SETS.find(s => s.value === iconSet) || ICON_SETS[0];
+    const folder = iconSet === 'amcharts_animated' ? 'animated' : 'static';
+
+    const getIconUrl = (code: string): string => {
+        if (current.amcharts) {
+            const name = AMCHARTS_PREVIEW[code] || 'cloudy';
+            return `./icons/amcharts/${folder}/${name}.svg`;
+        }
+        return `./icons/${current.value}/wmo_${code}.${current.ext}`;
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <FormControl sx={{ width: 300 }}>
+            <FormControl sx={{ width: 320 }}>
                 <InputLabel>{I18n.t('iconSet')}</InputLabel>
                 <Select
                     value={iconSet}
@@ -33,6 +51,13 @@ const IconSetPicker: React.FC<Props> = ({ iconSet, onChange }) => {
                 </Select>
             </FormControl>
 
+            {current.amcharts && (
+                <Typography variant="caption" color="warning.main">
+                    ⚠ amCharts: Regen, Schnee und Gewitter haben keine Tag/Nacht-Variante.
+                    Icons © <a href="https://www.amcharts.com/free-animated-svg-weather-icons/" target="_blank" rel="noreferrer">amCharts</a> (CC BY 4.0)
+                </Typography>
+            )}
+
             <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                     {I18n.t('iconSetHelp')}
@@ -41,24 +66,17 @@ const IconSetPicker: React.FC<Props> = ({ iconSet, onChange }) => {
                     {PREVIEW_CODES.map(code => (
                         <Box
                             key={code}
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: 0.5,
-                            }}
+                            sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}
                         >
                             <img
-                                src={`./icons/${current.value}/wmo_${code}.${current.ext}`}
+                                src={getIconUrl(code)}
                                 alt={`wmo_${code}`}
                                 width={48}
                                 height={48}
                                 style={{ objectFit: 'contain' }}
                                 onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
                             />
-                            <Typography variant="caption" color="text.secondary">
-                                {code}
-                            </Typography>
+                            <Typography variant="caption" color="text.secondary">{code}</Typography>
                         </Box>
                     ))}
                 </Box>

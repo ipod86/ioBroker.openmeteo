@@ -1,7 +1,9 @@
 import React from 'react';
 import { GenericApp, GenericAppProps, GenericAppState, AdminConnection, I18n } from '@iobroker/adapter-react-v5';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { Box, Tab, Tabs } from '@mui/material';
 import SettingsPanel from './components/SettingsPanel';
+import WidgetsTable from './components/WidgetsTable';
 import { OpenMeteoConfig } from './types';
 
 import en from './i18n/en.json';
@@ -9,6 +11,7 @@ import de from './i18n/de.json';
 
 interface AppState extends GenericAppState {
     native: OpenMeteoConfig;
+    tab: number;
 }
 
 class App extends GenericApp<GenericAppProps, AppState> {
@@ -21,7 +24,6 @@ class App extends GenericApp<GenericAppProps, AppState> {
     }
 
     async componentDidUpdate(prevProps: GenericAppProps, prevState: AppState): Promise<void> {
-        // On first load: pre-fill locations from ioBroker system.config if empty
         if (!prevState.loaded && this.state.loaded) {
             const native = this.state.native as OpenMeteoConfig;
             if (!native.locations || native.locations.length === 0) {
@@ -35,7 +37,7 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         this.setState({ native: newNative as any, changed: true } as any);
                     }
                 } catch {
-                    // ignore — user can fill in manually
+                    // ignore
                 }
             }
         }
@@ -51,21 +53,41 @@ class App extends GenericApp<GenericAppProps, AppState> {
             return super.render();
         }
 
+        const tab = (this.state as any).tab ?? 0;
+        const native = this.state.native as OpenMeteoConfig;
+
+        const handleChange = (newNative: OpenMeteoConfig): void => {
+            this.setState({
+                native: newNative as any,
+                changed: this.getIsChanged(newNative as any),
+            });
+        };
+
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
+                            <Tabs value={tab} onChange={(_, v) => this.setState({ tab: v } as any)}>
+                                <Tab label={I18n.t('tabSettings')} />
+                                <Tab label={I18n.t('tabWidgets')} />
+                            </Tabs>
+                        </Box>
                         <div style={{ flex: 1, overflowY: 'auto', margin: 16, width: 'calc(100% - 32px)', paddingBottom: 120 }}>
-                            <SettingsPanel
-                                native={this.state.native as OpenMeteoConfig}
-                                onChange={(newNative: OpenMeteoConfig) => {
-                                    this.setState({
-                                        native: newNative as any,
-                                        changed: this.getIsChanged(newNative as any),
-                                    });
-                                }}
-                                themeType={this.state.themeType}
-                            />
+                            {tab === 0 && (
+                                <SettingsPanel
+                                    native={native}
+                                    onChange={handleChange}
+                                    themeType={this.state.themeType}
+                                />
+                            )}
+                            {tab === 1 && (
+                                <WidgetsTable
+                                    widgets={native.widgets || []}
+                                    locations={native.locations || []}
+                                    onChange={wgts => handleChange({ ...native, widgets: wgts })}
+                                />
+                            )}
                         </div>
                         {this.renderError()}
                         {this.renderSaveCloseButtons()}
