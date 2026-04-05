@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, Button, IconButton, TextField, Typography,
     ToggleButtonGroup, ToggleButton, CircularProgress, Tooltip,
@@ -30,21 +30,6 @@ function osmEmbedUrl(lat: number, lon: number): string {
     return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
 }
 
-async function reverseGeocode(lat: number, lon: number): Promise<string | null> {
-    if (!lat && !lon) return null;
-    try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-        const res = await fetch(url, { headers: { 'Accept-Language': 'de' } });
-        const item = await res.json();
-        if (!item || item.error) return null;
-        const addr = item.address || {};
-        const city = addr.city || addr.town || addr.village || addr.municipality || '';
-        const road = addr.road || addr.pedestrian || addr.suburb || '';
-        return road ? `${city}, ${road}`.replace(/^, /, '') : city || item.display_name?.split(',')[0] || null;
-    } catch {
-        return null;
-    }
-}
 
 async function geocode(address: string): Promise<{ lat: number; lon: number; displayName: string } | null> {
     const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`;
@@ -69,8 +54,6 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
         locations.map(() => ({ mode: 'coords' as InputMode, addressText: '', geocoding: false, geoError: '' }))
     );
 
-    const geocodedRef = useRef<Set<number>>(new Set());
-
     const updateRow = (index: number, patch: Partial<RowState>): void => {
         setRowStates(prev => {
             const next = [...prev];
@@ -83,7 +66,6 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
     };
 
     // When locations array grows (e.g. auto-populated on fresh install), sync rowStates
-    // and run reverse geocode for new entries that have coordinates but no address text
     useEffect(() => {
         setRowStates(prev => {
             if (prev.length >= locations.length) return prev;
@@ -92,14 +74,6 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
                 next.push({ mode: 'coords', addressText: '', geocoding: false, geoError: '' });
             }
             return next;
-        });
-        locations.forEach((loc, i) => {
-            if (geocodedRef.current.has(i)) return;
-            if (!loc.lat && !loc.lon) return;
-            geocodedRef.current.add(i);
-            reverseGeocode(loc.lat, loc.lon)
-                .then(addr => { if (addr) updateRow(i, { addressText: addr }); })
-                .catch(() => { /* ignore network errors */ });
         });
     }, [locations.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
