@@ -630,11 +630,11 @@ class Openmeteo extends utils.Adapter {
 				`&hourly=temperature_2m,apparent_temperature,precipitation_probability` +
 				`,precipitation,weathercode,windspeed_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
-				`,rain,snowfall,snow_depth,shortwave_radiation,cape,soil_temperature_0cm,global_tilted_irradiance` +
+				`,rain,snowfall,snow_depth,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
 				`&current=temperature_2m,apparent_temperature,precipitation,weathercode` +
 				`,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
-				`,rain,snowfall,snow_depth,shortwave_radiation,cape,soil_temperature_0cm,global_tilted_irradiance` +
+				`,rain,snowfall,snow_depth,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
 				`&timezone=${encodeURIComponent(timezone)}&forecast_days=${daysCount}` +
 				`&temperature_unit=${temperatureUnit}` +
 				`&windspeed_unit=${windspeedUnit}` +
@@ -977,7 +977,7 @@ class Openmeteo extends utils.Adapter {
 				temperature: Math.round(h.temperature_2m[i] * 10) / 10,
 				feels_like: Math.round(h.apparent_temperature[i] * 10) / 10,
 				precipitation: h.precipitation[i],
-				rain_prob: h.precipitation_probability[i],
+				precip_prob: h.precipitation_probability[i],
 				windspeed: rawWind,
 				windspeedKmh: windKmh,
 				winddirection: h.winddirection_10m[i],
@@ -995,6 +995,7 @@ class Openmeteo extends utils.Adapter {
 				snow_depth: Math.round(h.snow_depth[i] * 100),
 				solar_radiation: h.shortwave_radiation[i],
 				cape: h.cape[i],
+				lifted_index: h.lifted_index ? h.lifted_index[i] : null,
 				soil_temp: h.soil_temperature_0cm ? Math.round(h.soil_temperature_0cm[i] * 10) / 10 : null,
 				irradiance: h.global_tilted_irradiance ? h.global_tilted_irradiance[i] : null,
 			};
@@ -1203,6 +1204,17 @@ class Openmeteo extends utils.Adapter {
 						role: "value",
 					},
 				);
+				const dayHoursForLI = (hoursByDate[d.time[i]] || []).filter(Boolean);
+				const liValues = dayHoursForLI.map(hd => hd.lifted_index).filter(v => v != null);
+				if (liValues.length > 0) {
+					const liMin = Math.round(Math.min(...liValues) * 10) / 10;
+					await this.setDP(`${prefix}.agriculture.lifted_index_min`, liMin, {
+						name: "Lifted Index (Min)",
+						type: "number",
+						unit: "K",
+						role: "value",
+					});
+				}
 			} else {
 				try {
 					await this.delObjectAsync(`${prefix}.agriculture`, { recursive: true });
@@ -1476,6 +1488,14 @@ class Openmeteo extends utils.Adapter {
 							unit: "W/m²",
 							role: "value.radiation",
 						});
+						if (hData.lifted_index != null) {
+							await this.setDP(`${hPath}.agriculture.lifted_index`, hData.lifted_index, {
+								name: "Lifted Index",
+								type: "number",
+								unit: "K",
+								role: "value",
+							});
+						}
 					} else {
 						try {
 							await this.delObjectAsync(`${hPath}.agriculture`, { recursive: true });
