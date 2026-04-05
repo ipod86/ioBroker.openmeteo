@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box, Button, IconButton, TextField, Typography,
     ToggleButtonGroup, ToggleButton, CircularProgress, Tooltip,
@@ -65,6 +65,8 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
         locations.map(() => ({ mode: 'coords' as InputMode, addressText: '', geocoding: false, geoError: '' }))
     );
 
+    const geocodedRef = useRef<Set<number>>(new Set());
+
     const updateRow = (index: number, patch: Partial<RowState>): void => {
         setRowStates(prev => {
             const next = [...prev];
@@ -76,7 +78,8 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
         });
     };
 
-    // Sync rowStates length when locations change (e.g. auto-populated from system.config)
+    // When locations array grows (e.g. auto-populated on fresh install), sync rowStates
+    // and run reverse geocode for new entries that have coordinates but no address text
     useEffect(() => {
         setRowStates(prev => {
             if (prev.length >= locations.length) return prev;
@@ -86,18 +89,13 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
             }
             return next;
         });
-        // For new locations with valid coords but no addressText, run reverse geocode
         locations.forEach((loc, i) => {
-            const hasCoords = loc.lat !== 0 || loc.lon !== 0;
-            if (hasCoords) {
-                setRowStates(prev => {
-                    if (prev[i]?.addressText) return prev; // already has address
-                    void reverseGeocode(loc.lat, loc.lon).then(addr => {
-                        if (addr) updateRow(i, { addressText: addr });
-                    });
-                    return prev;
-                });
-            }
+            if (geocodedRef.current.has(i)) return;
+            if (!loc.lat && !loc.lon) return;
+            geocodedRef.current.add(i);
+            reverseGeocode(loc.lat, loc.lon)
+                .then(addr => { if (addr) updateRow(i, { addressText: addr }); })
+                .catch(() => { /* ignore network errors */ });
         });
     }, [locations.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
