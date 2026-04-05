@@ -689,10 +689,10 @@ class Openmeteo extends utils.Adapter {
 		const host = `${widget.protocol}://${widget.host}:${widget.port}`;
 		const p = locId;
 		const isLight = widget.theme === "light";
-		const textColor = isLight ? "rgba(0,0,0,0.87)" : "rgba(255,255,255,1)";
-		const subColor = isLight ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.7)";
-		const fadeColor = isLight ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.45)";
-		const divColor = isLight ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.2)";
+		const textColor = isLight ? "rgba(255,255,255,1)" : "rgba(0,0,0,0.87)";
+		const subColor = isLight ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.6)";
+		const fadeColor = isLight ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)";
+		const divColor = isLight ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)";
 
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
 

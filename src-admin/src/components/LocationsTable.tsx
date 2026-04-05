@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, Button, IconButton, TextField, Typography,
     ToggleButtonGroup, ToggleButton, CircularProgress, Tooltip,
@@ -66,8 +66,40 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
     );
 
     const updateRow = (index: number, patch: Partial<RowState>): void => {
-        setRowStates(prev => prev.map((r, i) => i === index ? { ...r, ...patch } : r));
+        setRowStates(prev => {
+            const next = [...prev];
+            while (next.length <= index) {
+                next.push({ mode: 'coords', addressText: '', geocoding: false, geoError: '' });
+            }
+            next[index] = { ...next[index], ...patch };
+            return next;
+        });
     };
+
+    // Sync rowStates length when locations change (e.g. auto-populated from system.config)
+    useEffect(() => {
+        setRowStates(prev => {
+            if (prev.length >= locations.length) return prev;
+            const next = [...prev];
+            while (next.length < locations.length) {
+                next.push({ mode: 'coords', addressText: '', geocoding: false, geoError: '' });
+            }
+            return next;
+        });
+        // For new locations with valid coords but no addressText, run reverse geocode
+        locations.forEach((loc, i) => {
+            const hasCoords = loc.lat !== 0 || loc.lon !== 0;
+            if (hasCoords) {
+                setRowStates(prev => {
+                    if (prev[i]?.addressText) return prev; // already has address
+                    void reverseGeocode(loc.lat, loc.lon).then(addr => {
+                        if (addr) updateRow(i, { addressText: addr });
+                    });
+                    return prev;
+                });
+            }
+        });
+    }, [locations.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updateLoc = (index: number, field: keyof Location, value: any): void => {
         onChange(locations.map((loc, i) =>
