@@ -116,6 +116,9 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
                                     onChange={e => updateLoc(i, 'name', e.target.value)}
                                     sx={{ width: 300 }}
                                     size="small"
+                                    required
+                                    error={!loc.name.trim()}
+                                    helperText={!loc.name.trim() ? I18n.t('locationNameRequired') : undefined}
                                 />
 
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

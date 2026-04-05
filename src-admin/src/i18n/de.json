@@ -52,5 +52,6 @@
 	"inputCoords": "Koordinaten",
 	"inputAddress": "Adresse",
 	"addressSearch": "Adresse / Ort",
-	"geocode": "Koordinaten ermitteln"
+	"geocode": "Koordinaten ermitteln",
+	"locationNameRequired": "Name ist erforderlich"
 }

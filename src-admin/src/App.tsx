@@ -45,6 +45,12 @@ class App extends GenericApp<GenericAppProps, AppState> {
 
     onPrepareSave(settings: Record<string, any>): boolean {
         super.onPrepareSave(settings);
+        const native = settings as OpenMeteoConfig;
+        const invalid = (native.locations || []).some(loc => !loc.name?.trim());
+        if (invalid) {
+            this.showError(I18n.t('locationNameRequired'));
+            return false;
+        }
         return true;
     }
 
