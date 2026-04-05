@@ -1591,7 +1591,7 @@ class Openmeteo extends utils.Adapter {
 						unit: precipUnit,
 						role: "value.precipitation.hour",
 					});
-					await this.setDP(`${hPath}.precip_prob`, hData.rain_prob, {
+					await this.setDP(`${hPath}.precip_prob`, hData.precip_prob, {
 						name: "Niederschlagswahrsch.",
 						type: "number",
 						unit: "%",
