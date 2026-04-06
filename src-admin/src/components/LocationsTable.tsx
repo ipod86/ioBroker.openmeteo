@@ -223,7 +223,7 @@ const LocationsTable: React.FC<Props> = ({ locations, onChange }) => {
                                         src={osmEmbedUrl(loc.lat, loc.lon)}
                                         width={260}
                                         height={180}
-                                        style={{ border: '1px solid #ccc', borderRadius: 4, display: 'block' }}
+                                        style={{ border: `1px solid ${themeType === 'dark' ? '#555' : '#ccc'}`, borderRadius: 4, display: 'block' }}
                                         sandbox="allow-scripts allow-same-origin"
                                     />
                                     <Typography variant="caption" color="text.secondary">
