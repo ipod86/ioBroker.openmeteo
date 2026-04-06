@@ -3,6 +3,19 @@
         "name": "openmeteo",
         "version": "0.0.44",
         "news": {
+            "0.0.44": {
+                "en": "Fix dark theme: set theme-aware background color on root wrapper",
+                "de": "Dark-Theme korrigiert: theme-abhängige Hintergrundfarbe am Root-Element gesetzt",
+                "ru": "Исправлена тёмная тема: установлен фоновый цвет корневого элемента в зависимости от темы",
+                "pt": "Correção do tema escuro: cor de fundo adaptada ao tema definida no elemento raiz",
+                "nl": "Donker thema gecorrigeerd: thema-afhankelijke achtergrondkleur ingesteld op root-element",
+                "fr": "Correction du thème sombre: couleur de fond adaptée au thème définie sur l'élément racine",
+                "it": "Tema scuro corretto: colore di sfondo adattato al tema impostato sull'elemento radice",
+                "es": "Tema oscuro corregido: color de fondo adaptado al tema establecido en el elemento raíz",
+                "pl": "Poprawka ciemnego motywu: kolor tła zależny od motywu ustawiony na elemencie głównym",
+                "uk": "Виправлена темна тема: встановлено залежний від теми колір фону кореневого елементу",
+                "zh-cn": "修复暗色主题：在根元素上设置主题感知背景颜色"
+            },
             "0.0.43": {
                 "en": "Fix: remove auto-location entry written to system.config on first start",
                 "de": "Fix: automatisch erzeugter Standorteintrag in system.config beim ersten Start wird nicht mehr gespeichert",

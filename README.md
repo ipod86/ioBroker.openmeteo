@@ -164,6 +164,9 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 
 ## Changelog
 
+### 0.0.44
+* (ipod86) fix dark theme: set theme-aware background color on root wrapper
+
 ### 0.0.43
 * Fix: remove auto-location entry written to `system.config` on first start
 
