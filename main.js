@@ -795,7 +795,7 @@ class Openmeteo extends utils.Adapter {
 						await this.registerNotification(
 							"openmeteo",
 							"storm",
-							`Sturmwarnung für ${loc.name}: Wind (Bft ≥ ${stormBft}) erwartet von ${timeRange} (in ${leadHours} Stunde(n))`,
+							`Sturmwarnung für ${loc.name}: Wind (Bft ≥ ${stormBft}) erwartet von ${timeRange}`,
 						);
 					} else if (!isStorm) {
 						this.warnState[stormKey] = false;
@@ -814,7 +814,7 @@ class Openmeteo extends utils.Adapter {
 						await this.registerNotification(
 							"openmeteo",
 							"thunderstorm",
-							`Gewitterwarnung für ${loc.name}: Gewitter erwartet von ${timeRange} (in ${leadHours} Stunde(n))`,
+							`Gewitterwarnung für ${loc.name}: Gewitter erwartet von ${timeRange}`,
 						);
 					} else if (!isThunder) {
 						this.warnState[thunderKey] = false;
