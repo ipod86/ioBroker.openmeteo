@@ -743,8 +743,15 @@ class Openmeteo extends utils.Adapter {
 		if (lastTrueTime === startTime) {
 			return null;
 		}
-		const endHour = (lastTrueTime.getHours() + 1) % 24;
-		return `${String(endHour).padStart(2, "0")}:00 Uhr`;
+		const endTime = new Date(lastTrueTime.getTime() + 60 * 60 * 1000);
+		const endHourStr = `${String(endTime.getHours()).padStart(2, "0")}:00 Uhr`;
+		const startDay = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate());
+		const endDay = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate());
+		const dayDiff = Math.round((endDay - startDay) / (24 * 60 * 60 * 1000));
+		if (dayDiff > 0) {
+			return `${endHourStr} (+${dayDiff} Tag${dayDiff > 1 ? "e" : ""})`;
+		}
+		return endHourStr;
 	}
 
 	async checkWeatherWarnings(locations) {

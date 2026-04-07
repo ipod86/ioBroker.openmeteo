@@ -298,17 +298,17 @@
                     },
                     "severity": "alert",
                     "description": {
-                        "en": "Wind speed Bft ≥ 8 expected",
-                        "de": "Windstärke Bft ≥ 8 erwartet",
-                        "ru": "Ожидается скорость ветра Bft ≥ 8",
-                        "pt": "Velocidade do vento Bft ≥ 8 esperada",
-                        "nl": "Windsnelheid Bft ≥ 8 verwacht",
-                        "fr": "Vitesse de vent Bft ≥ 8 attendue",
-                        "it": "Velocità del vento Bft ≥ 8 prevista",
-                        "es": "Velocidad del viento Bft ≥ 8 esperada",
-                        "pl": "Oczekiwana prędkość wiatru Bft ≥ 8",
-                        "uk": "Очікується швидкість вітру Bft ≥ 8",
-                        "zh-cn": "预计风速 Bft ≥ 8"
+                        "en": "Wind gusts exceed configured Beaufort threshold",
+                        "de": "Windböen überschreiten konfigurierte Beaufort-Schwelle",
+                        "ru": "Порывы ветра превышают заданный порог Бофорта",
+                        "pt": "Rajadas de vento excedem o limiar Beaufort configurado",
+                        "nl": "Windstoten overschrijden de ingestelde Beaufort-drempel",
+                        "fr": "Les rafales dépassent le seuil Beaufort configuré",
+                        "it": "Le raffiche superano la soglia Beaufort configurata",
+                        "es": "Las ráfagas superan el umbral Beaufort configurado",
+                        "pl": "Porywy wiatru przekraczają skonfigurowany próg Beauforta",
+                        "uk": "Пориви вітру перевищують налаштований поріг Бофорта",
+                        "zh-cn": "阵风超过配置的蒲福风级阈值"
                     },
                     "regex": [],
                     "limit": 10
