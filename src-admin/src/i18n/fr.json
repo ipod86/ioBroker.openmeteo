@@ -7,5 +7,6 @@
     "warnNeedsHourlyInterval": "Les alertes nécessitent des mises à jour au moins toutes les heures. Définissez l'intervalle à 60 minutes.",
     "warningsViaNotificationManager": "via le système de notification ioBroker",
     "warnStormBft": "Alerter à partir du niveau Beaufort",
-    "defaultValue": "défaut"
+    "defaultValue": "défaut",
+    "warnLeadHoursTooHigh": "Le délai d'anticipation ne doit pas dépasser 24 heures"
 }

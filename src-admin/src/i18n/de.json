@@ -62,5 +62,6 @@
     "warnNeedsHourlyInterval": "Warnungen benötigen mindestens stündliche Aktualisierung. Das Intervall wurde auf 60 Minuten gesetzt.",
     "warningsViaNotificationManager": "über das ioBroker Notification-System",
     "warnStormBft": "Ab Beaufort-Stufe warnen",
-    "defaultValue": "Standard"
+    "defaultValue": "Standard",
+    "warnLeadHoursTooHigh": "Vorlaufzeit darf maximal 24 Stunden betragen"
 }

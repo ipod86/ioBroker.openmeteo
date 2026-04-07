@@ -7,5 +7,6 @@
     "warnNeedsHourlyInterval": "警告需要至少每小时更新一次。请将间隔设置为60分钟。",
     "warningsViaNotificationManager": "通过ioBroker通知系统",
     "warnStormBft": "从蒲福风级开始警告",
-    "defaultValue": "默认"
+    "defaultValue": "默认",
+    "warnLeadHoursTooHigh": "提前时间不得超过24小时"
 }

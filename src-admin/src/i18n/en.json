@@ -62,5 +62,6 @@
     "warnNeedsHourlyInterval": "Warnings require at least hourly updates. The interval has been set to 60 minutes.",
     "warningsViaNotificationManager": "via ioBroker notification system",
     "warnStormBft": "Warn from Beaufort level",
-    "defaultValue": "default"
+    "defaultValue": "default",
+    "warnLeadHoursTooHigh": "Lead time must not exceed 24 hours"
 }

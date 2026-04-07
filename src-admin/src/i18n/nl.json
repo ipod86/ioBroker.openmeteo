@@ -7,5 +7,6 @@
     "warnNeedsHourlyInterval": "Waarschuwingen vereisen minimaal elk uur updates. Stel het interval in op 60 minuten.",
     "warningsViaNotificationManager": "via ioBroker-meldingssysteem",
     "warnStormBft": "Waarschuwen vanaf Beaufort-niveau",
-    "defaultValue": "standaard"
+    "defaultValue": "standaard",
+    "warnLeadHoursTooHigh": "Voorlooptijd mag maximaal 24 uur zijn"
 }

@@ -7,5 +7,6 @@
     "warnNeedsHourlyInterval": "Ostrzeżenia wymagają aktualizacji co najmniej co godzinę. Ustaw interwał na 60 minut.",
     "warningsViaNotificationManager": "przez system powiadomień ioBroker",
     "warnStormBft": "Ostrzegaj od poziomu Beaufort",
-    "defaultValue": "domyślny"
+    "defaultValue": "domyślny",
+    "warnLeadHoursTooHigh": "Czas wyprzedzenia nie może przekraczać 24 godzin"
 }

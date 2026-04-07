@@ -7,5 +7,6 @@
     "warnNeedsHourlyInterval": "Попередження потребують оновлень щонайменше кожну годину. Встановіть інтервал 60 хвилин.",
     "warningsViaNotificationManager": "через систему сповіщень ioBroker",
     "warnStormBft": "Попереджати з рівня Бофорта",
-    "defaultValue": "за замовчуванням"
+    "defaultValue": "за замовчуванням",
+    "warnLeadHoursTooHigh": "Час попередження не повинен перевищувати 24 години"
 }
