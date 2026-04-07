@@ -59,5 +59,6 @@
     "warnThunderstorm": "Gewitterwarnung",
     "warnLeadHours": "Vorlaufzeit (Stunden)",
     "warnLeadHoursHelp": "Wie viele Stunden im Voraus soll gewarnt werden?",
-    "warnNeedsHourlyInterval": "Warnungen benötigen mindestens stündliche Aktualisierung. Das Intervall wurde auf 60 Minuten gesetzt."
+    "warnNeedsHourlyInterval": "Warnungen benötigen mindestens stündliche Aktualisierung. Das Intervall wurde auf 60 Minuten gesetzt.",
+    "warnNeedsHourlyDays": "Warnungen benötigen stündliche Daten. Bitte \"Stündliche Tage\" auf mindestens 1 setzen."
 }
