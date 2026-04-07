@@ -717,6 +717,49 @@ class Openmeteo extends utils.Adapter {
 	 *
 	 * @param {Array} locations - List of location configs
 	 */
+	/**
+	 * Finds how many consecutive hours (starting at startHour on startDayOffset) the given dp is true.
+	 * Returns a formatted "bis HH:00 Uhr" string or null if only 1 hour.
+	 *
+	 * @param {string} locId
+	 * @param {number} startDayOffset
+	 * @param {number} startHour
+	 * @param {string} dp - datapoint name, e.g. "is_storm"
+	 * @param {number} maxHourlyDays
+	 * @returns {Promise<string|null>}
+	 */
+	async findEventEnd(locId, startDayOffset, startHour, dp, maxHourlyDays) {
+		let lastTrueHour = startHour;
+		let lastTrueDayOffset = startDayOffset;
+		let h = startHour + 1;
+		let d = startDayOffset;
+
+		while (d < maxHourlyDays) {
+			if (h >= 24) {
+				h = 0;
+				d++;
+				if (d >= maxHourlyDays) {
+					break;
+				}
+			}
+			const hKey = `h${String(h).padStart(2, "0")}`;
+			const state = await this.getStateAsync(`${locId}.day${d}.hourly.${hKey}.${dp}`);
+			if (!state?.val) {
+				break;
+			}
+			lastTrueHour = h;
+			lastTrueDayOffset = d;
+			h++;
+		}
+
+		if (lastTrueDayOffset === startDayOffset && lastTrueHour === startHour) {
+			return null;
+		}
+		const endHour = lastTrueHour + 1; // event ends *after* the last true hour
+		const endHourNorm = endHour % 24;
+		return `${String(endHourNorm).padStart(2, "0")}:00 Uhr`;
+	}
+
 	async checkWeatherWarnings(locations) {
 		const warnStorm = !!this.config.warnStorm;
 		const warnThunderstorm = !!this.config.warnThunderstorm;
@@ -724,6 +767,7 @@ class Openmeteo extends utils.Adapter {
 			return;
 		}
 		const leadHours = this.config.warnLeadHours ?? 2;
+		const hourlyDays = this.config.hourlyDays ?? 3;
 		const now = new Date();
 
 		for (const loc of locations) {
@@ -734,13 +778,12 @@ class Openmeteo extends utils.Adapter {
 
 			// Determine which day and hour slot is "now + leadHours"
 			const targetTime = new Date(now.getTime() + leadHours * 60 * 60 * 1000);
-			const targetDayOffset = Math.floor(
-				(targetTime - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (24 * 60 * 60 * 1000),
-			);
+			const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			const targetDayOffset = Math.floor((targetTime - todayMidnight) / (24 * 60 * 60 * 1000));
 			const targetHour = targetTime.getHours();
 			const hKey = `h${String(targetHour).padStart(2, "0")}`;
 			const hPath = `${locId}.day${targetDayOffset}.hourly.${hKey}`;
-			const timeStr = `${String(targetTime.getHours()).padStart(2, "0")}:${String(targetTime.getMinutes()).padStart(2, "0")} Uhr`;
+			const fromStr = `${String(targetHour).padStart(2, "0")}:00 Uhr`;
 
 			const stormKey = `${locId}_storm`;
 			const thunderKey = `${locId}_thunder`;
@@ -751,11 +794,13 @@ class Openmeteo extends utils.Adapter {
 					const isStorm = !!stormState?.val;
 					if (isStorm && !this.warnState[stormKey]) {
 						this.warnState[stormKey] = true;
+						const untilStr = await this.findEventEnd(locId, targetDayOffset, targetHour, "is_storm", hourlyDays);
+						const timeRange = untilStr ? `${fromStr} – ${untilStr}` : fromStr;
 						this.log.warn(`Sturmwarnung für ${loc.name} in ${leadHours}h`);
 						await this.registerNotification(
 							"openmeteo",
 							"storm",
-							`Sturmwarnung für ${loc.name}: Sturm (Bft ≥ 8) erwartet um ${timeStr} (in ${leadHours} Stunde(n))`,
+							`Sturmwarnung für ${loc.name}: Sturm (Bft ≥ 8) erwartet von ${timeRange} (in ${leadHours} Stunde(n))`,
 						);
 					} else if (!isStorm) {
 						this.warnState[stormKey] = false;
@@ -767,11 +812,13 @@ class Openmeteo extends utils.Adapter {
 					const isThunder = !!thunderState?.val;
 					if (isThunder && !this.warnState[thunderKey]) {
 						this.warnState[thunderKey] = true;
+						const untilStr = await this.findEventEnd(locId, targetDayOffset, targetHour, "is_thunderstorm", hourlyDays);
+						const timeRange = untilStr ? `${fromStr} – ${untilStr}` : fromStr;
 						this.log.warn(`Gewitterwarnung für ${loc.name} in ${leadHours}h`);
 						await this.registerNotification(
 							"openmeteo",
 							"thunderstorm",
-							`Gewitterwarnung für ${loc.name}: Gewitter erwartet um ${timeStr} (in ${leadHours} Stunde(n))`,
+							`Gewitterwarnung für ${loc.name}: Gewitter erwartet von ${timeRange} (in ${leadHours} Stunde(n))`,
 						);
 					} else if (!isThunder) {
 						this.warnState[thunderKey] = false;
