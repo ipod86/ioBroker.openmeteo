@@ -774,13 +774,13 @@ class Openmeteo extends utils.Adapter {
 
 			try {
 				if (warnStorm) {
-					const isStorm = hData != null && speedToBeaufort(hData.windspeedKmh, "kmh") >= 8;
+					const isStorm = hData != null && speedToBeaufort(hData.gustKmh, "kmh") >= 8;
 					if (isStorm && !this.warnState[stormKey]) {
 						this.warnState[stormKey] = true;
 						const untilStr = this.findEventEnd(
 							hoursByDate,
 							targetTime,
-							hd => speedToBeaufort(hd.windspeedKmh, "kmh") >= 8,
+							hd => speedToBeaufort(hd.gustKmh, "kmh") >= 8,
 						);
 						const timeRange = untilStr ? `${fromStr} – ${untilStr}` : fromStr;
 						this.log.warn(`Sturmwarnung für ${loc.name} in ${leadHours}h`);
@@ -1356,6 +1356,15 @@ class Openmeteo extends utils.Adapter {
 						: windspeedUnit === "kn"
 							? rawWind * 1.852
 							: rawWind;
+			const rawGust = h.windgusts_10m[i];
+			const gustKmh =
+				windspeedUnit === "ms"
+					? rawGust * 3.6
+					: windspeedUnit === "mph"
+						? rawGust * 1.60934
+						: windspeedUnit === "kn"
+							? rawGust * 1.852
+							: rawGust;
 			hoursByDate[dateKey][hour] = {
 				temperature: Math.round(h.temperature_2m[i] * 10) / 10,
 				feels_like: Math.round(h.apparent_temperature[i] * 10) / 10,
@@ -1363,6 +1372,7 @@ class Openmeteo extends utils.Adapter {
 				precip_prob: h.precipitation_probability[i],
 				windspeed: rawWind,
 				windspeedKmh: windKmh,
+				gustKmh,
 				winddirection: h.winddirection_10m[i],
 				cloudcover: h.cloudcover[i],
 				weathercode: h.weathercode[i],
@@ -1661,7 +1671,7 @@ class Openmeteo extends utils.Adapter {
 					type: "boolean",
 					role: "indicator.alarm",
 				});
-				const dayHasStorm = allHours.some(hd => speedToBeaufort(hd.windspeedKmh, "kmh") >= 8);
+				const dayHasStorm = allHours.some(hd => speedToBeaufort(hd.gustKmh, "kmh") >= 8);
 				await this.setDP(`${prefix}.has_storm`, dayHasStorm, {
 					name: "Sturm (Bft ≥ 8)",
 					type: "boolean",
@@ -1841,7 +1851,7 @@ class Openmeteo extends utils.Adapter {
 						type: "boolean",
 						role: "indicator.alarm",
 					});
-					await this.setDP(`${hPath}.is_storm`, hBeaufort >= 8, {
+					await this.setDP(`${hPath}.is_storm`, speedToBeaufort(hData.gustKmh, "kmh") >= 8, {
 						name: "Sturm (Bft ≥ 8)",
 						type: "boolean",
 						role: "indicator.alarm",
