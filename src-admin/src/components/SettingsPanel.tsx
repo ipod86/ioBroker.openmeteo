@@ -193,6 +193,11 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                                     {I18n.t('warnNeedsHourlyInterval')}
                                 </Alert>
                             )}
+                            {(native.warnLeadHours ?? 2) > 24 && (
+                                <Alert severity="error" sx={{ mt: 1 }}>
+                                    {I18n.t('warnLeadHoursTooHigh')}
+                                </Alert>
+                            )}
 
                         </>
                     )}
