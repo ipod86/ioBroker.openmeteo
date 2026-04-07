@@ -554,9 +554,9 @@ class Openmeteo extends utils.Adapter {
 						lastErr = err;
 						if (attempt < 3) {
 							this.log.warn(
-								`Abruf für "${loc.name}" fehlgeschlagen (Versuch ${attempt}/3): ${err.message} – Wiederholung in 5s`,
+								`Abruf für "${loc.name}" fehlgeschlagen (Versuch ${attempt}/3): ${err.message} – Wiederholung in 60s`,
 							);
-							await new Promise(r => setTimeout(r, 5000));
+							await new Promise(r => setTimeout(r, 60000));
 						}
 					}
 				}
@@ -658,7 +658,7 @@ class Openmeteo extends utils.Adapter {
 			this.consecutiveFailures++;
 			this.log.warn(`Alle Standorte fehlgeschlagen (${this.consecutiveFailures}x in Folge) – behalte letzten Stand`);
 		}
-		await this.setState("info.connection", anySuccess || this.consecutiveFailures < 3, true);
+		await this.setState("info.connection", anySuccess || this.consecutiveFailures < 1, true);
 		if (anySuccess) {
 			await this.setObjectNotExistsAsync("info.lastUpdate", {
 				type: "state",
