@@ -656,7 +656,9 @@ class Openmeteo extends utils.Adapter {
 			this.consecutiveFailures = 0;
 		} else {
 			this.consecutiveFailures++;
-			this.log.warn(`Alle Standorte fehlgeschlagen (${this.consecutiveFailures}x in Folge) – behalte letzten Stand`);
+			this.log.warn(
+				`Alle Standorte fehlgeschlagen (${this.consecutiveFailures}x in Folge) – behalte letzten Stand`,
+			);
 		}
 		await this.setState("info.connection", anySuccess || this.consecutiveFailures < 1, true);
 		if (anySuccess) {
