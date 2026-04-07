@@ -6,5 +6,6 @@
     "warnLeadHoursHelp": "За сколько часов до события отправить предупреждение?",
     "warnNeedsHourlyInterval": "Для предупреждений необходимо обновление не реже 1 раза в час. Установите интервал 60 минут.",
     "warningsViaNotificationManager": "через систему уведомлений ioBroker",
-    "warnStormBft": "Предупреждать с уровня Бофорта"
+    "warnStormBft": "Предупреждать с уровня Бофорта",
+    "defaultValue": "по умолчанию"
 }

@@ -160,14 +160,14 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                                     { bft: 5,  kmh: 29,  label: 'Frische Brise' },
                                     { bft: 6,  kmh: 39,  label: 'Starke Brise' },
                                     { bft: 7,  kmh: 50,  label: 'Steifer Wind' },
-                                    { bft: 8,  kmh: 62,  label: 'Stürmischer Wind' },
+                                    { bft: 8,  kmh: 62,  label: 'Stürmischer Wind', isDefault: true },
                                     { bft: 9,  kmh: 75,  label: 'Sturm' },
                                     { bft: 10, kmh: 89,  label: 'Schwerer Sturm' },
                                     { bft: 11, kmh: 103, label: 'Orkanartiger Sturm' },
                                     { bft: 12, kmh: 118, label: 'Orkan' },
                                 ].map(o => (
                                     <MenuItem key={o.bft} value={o.bft}>
-                                        Bft {o.bft} – {o.label} (≥ {o.kmh} km/h)
+                                        Bft {o.bft} – {o.label} (≥ {o.kmh} km/h){o.isDefault ? ` – ${I18n.t('defaultValue')}` : ''}
                                     </MenuItem>
                                 ))}
                             </Select>
