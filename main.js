@@ -894,6 +894,11 @@ class Openmeteo extends utils.Adapter {
 					let raw = "";
 					res.on("data", c => (raw += c));
 					res.on("end", () => {
+						const { statusCode } = res;
+						if (statusCode && statusCode >= 400) {
+							reject(new Error(`HTTP ${statusCode}`));
+							return;
+						}
 						try {
 							resolve(JSON.parse(raw));
 						} catch (e) {
@@ -928,6 +933,11 @@ class Openmeteo extends utils.Adapter {
 					let raw = "";
 					res.on("data", c => (raw += c));
 					res.on("end", () => {
+						const { statusCode } = res;
+						if (statusCode && statusCode >= 400) {
+							reject(new Error(`HTTP ${statusCode}`));
+							return;
+						}
 						try {
 							resolve(JSON.parse(raw));
 						} catch (e) {
