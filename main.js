@@ -559,7 +559,9 @@ class Openmeteo extends utils.Adapter {
 						}
 					}
 				}
-				if (lastErr) throw lastErr;
+				if (lastErr) {
+					throw lastErr;
+				}
 
 				await this.setObjectNotExistsAsync(locId, {
 					type: "channel",
