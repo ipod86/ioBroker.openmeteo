@@ -718,46 +718,33 @@ class Openmeteo extends utils.Adapter {
 	 * @param {Array} locations - List of location configs
 	 */
 	/**
-	 * Finds how many consecutive hours (starting at startHour on startDayOffset) the given dp is true.
-	 * Returns a formatted "bis HH:00 Uhr" string or null if only 1 hour.
+	 * Finds the end of a weather event by scanning raw hourly data forward from startTime.
+	 * Returns "HH:00 Uhr" of the first hour the event is gone, or null if it lasts only 1 hour.
 	 *
-	 * @param {string} locId
-	 * @param {number} startDayOffset
-	 * @param {number} startHour
-	 * @param {string} dp - datapoint name, e.g. "is_storm"
-	 * @param {number} maxHourlyDays
-	 * @returns {Promise<string|null>}
+	 * @param {object} hoursByDate - raw hourly data keyed by date string "YYYY-MM-DD"
+	 * @param {Date} startTime - start of the event (the targetTime from checkWeatherWarnings)
+	 * @param {Function} checkFn - returns true if the event is active for a given hourly data object
+	 * @returns {string|null}
 	 */
-	async findEventEnd(locId, startDayOffset, startHour, dp, maxHourlyDays) {
-		let lastTrueHour = startHour;
-		let lastTrueDayOffset = startDayOffset;
-		let h = startHour + 1;
-		let d = startDayOffset;
+	findEventEnd(hoursByDate, startTime, checkFn) {
+		let lastTrueTime = startTime;
+		const cur = new Date(startTime.getTime() + 60 * 60 * 1000); // start at next hour
 
-		while (d < maxHourlyDays) {
-			if (h >= 24) {
-				h = 0;
-				d++;
-				if (d >= maxHourlyDays) {
-					break;
-				}
-			}
-			const hKey = `h${String(h).padStart(2, "0")}`;
-			const state = await this.getStateAsync(`${locId}.day${d + 1}.hourly.${hKey}.${dp}`);
-			if (!state?.val) {
+		for (let step = 0; step < 24 * 14; step++) {
+			const dateKey = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`;
+			const hData = (hoursByDate[dateKey] || [])[cur.getHours()];
+			if (!hData || !checkFn(hData)) {
 				break;
 			}
-			lastTrueHour = h;
-			lastTrueDayOffset = d;
-			h++;
+			lastTrueTime = new Date(cur.getTime());
+			cur.setTime(cur.getTime() + 60 * 60 * 1000);
 		}
 
-		if (lastTrueDayOffset === startDayOffset && lastTrueHour === startHour) {
+		if (lastTrueTime === startTime) {
 			return null;
 		}
-		const endHour = lastTrueHour + 1; // event ends *after* the last true hour
-		const endHourNorm = endHour % 24;
-		return `${String(endHourNorm).padStart(2, "0")}:00 Uhr`;
+		const endHour = (lastTrueTime.getHours() + 1) % 24;
+		return `${String(endHour).padStart(2, "0")}:00 Uhr`;
 	}
 
 	async checkWeatherWarnings(locations) {
@@ -767,7 +754,6 @@ class Openmeteo extends utils.Adapter {
 			return;
 		}
 		const leadHours = this.config.warnLeadHours ?? 2;
-		const hourlyDays = this.config.hourlyDays ?? 3;
 		const now = new Date();
 
 		for (const loc of locations) {
@@ -776,13 +762,11 @@ class Openmeteo extends utils.Adapter {
 				continue;
 			}
 
-			// Determine which day and hour slot is "now + leadHours"
+			const hoursByDate = this._latestHoursByDate?.[locId] || {};
 			const targetTime = new Date(now.getTime() + leadHours * 60 * 60 * 1000);
-			const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-			const targetDayOffset = Math.floor((targetTime - todayMidnight) / (24 * 60 * 60 * 1000));
+			const targetDateKey = `${targetTime.getFullYear()}-${String(targetTime.getMonth() + 1).padStart(2, "0")}-${String(targetTime.getDate()).padStart(2, "0")}`;
 			const targetHour = targetTime.getHours();
-			const hKey = `h${String(targetHour).padStart(2, "0")}`;
-			const hPath = `${locId}.day${targetDayOffset + 1}.hourly.${hKey}`;
+			const hData = (hoursByDate[targetDateKey] || [])[targetHour];
 			const fromStr = `${String(targetHour).padStart(2, "0")}:00 Uhr`;
 
 			const stormKey = `${locId}_storm`;
@@ -790,17 +774,10 @@ class Openmeteo extends utils.Adapter {
 
 			try {
 				if (warnStorm) {
-					const stormState = await this.getStateAsync(`${hPath}.is_storm`);
-					const isStorm = !!stormState?.val;
+					const isStorm = hData != null && speedToBeaufort(hData.windspeedKmh, "kmh") >= 8;
 					if (isStorm && !this.warnState[stormKey]) {
 						this.warnState[stormKey] = true;
-						const untilStr = await this.findEventEnd(
-							locId,
-							targetDayOffset,
-							targetHour,
-							"is_storm",
-							hourlyDays,
-						);
+						const untilStr = this.findEventEnd(hoursByDate, targetTime, hd => speedToBeaufort(hd.windspeedKmh, "kmh") >= 8);
 						const timeRange = untilStr ? `${fromStr} – ${untilStr}` : fromStr;
 						this.log.warn(`Sturmwarnung für ${loc.name} in ${leadHours}h`);
 						await this.registerNotification(
@@ -814,17 +791,10 @@ class Openmeteo extends utils.Adapter {
 				}
 
 				if (warnThunderstorm) {
-					const thunderState = await this.getStateAsync(`${hPath}.is_thunderstorm`);
-					const isThunder = !!thunderState?.val;
+					const isThunder = hData != null && [95, 96, 99].includes(hData.weathercode);
 					if (isThunder && !this.warnState[thunderKey]) {
 						this.warnState[thunderKey] = true;
-						const untilStr = await this.findEventEnd(
-							locId,
-							targetDayOffset,
-							targetHour,
-							"is_thunderstorm",
-							hourlyDays,
-						);
+						const untilStr = this.findEventEnd(hoursByDate, targetTime, hd => [95, 96, 99].includes(hd.weathercode));
 						const timeRange = untilStr ? `${fromStr} – ${untilStr}` : fromStr;
 						this.log.warn(`Gewitterwarnung für ${loc.name} in ${leadHours}h`);
 						await this.registerNotification(
@@ -1361,6 +1331,9 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		// --- Group hourly values by date ---
+		if (!this._latestHoursByDate) {
+			this._latestHoursByDate = {};
+		}
 		const hoursByDate = {};
 		for (let i = 0; i < h.time.length; i++) {
 			const dateKey = h.time[i].substring(0, 10);
@@ -1404,6 +1377,7 @@ class Openmeteo extends utils.Adapter {
 				irradiance: h.global_tilted_irradiance ? h.global_tilted_irradiance[i] : null,
 			};
 		}
+		this._latestHoursByDate[locId] = hoursByDate;
 
 		const shortParts = [];
 
