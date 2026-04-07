@@ -133,7 +133,12 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
 
             {/* Warnings */}
             <Box>
-                <Typography variant="h6" gutterBottom>{I18n.t('warnings')}</Typography>
+                <Typography variant="h6" gutterBottom>
+                    {I18n.t('warnings')}
+                    <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                        ({I18n.t('warningsViaNotificationManager')})
+                    </Typography>
+                </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <FormControlLabel
                         control={<Switch checked={!!native.warnStorm} onChange={e => update('warnStorm', e.target.checked)} />}
