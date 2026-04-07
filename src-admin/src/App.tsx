@@ -31,6 +31,15 @@ class App extends GenericApp<GenericAppProps, AppState> {
             this.showError(I18n.t('locationNameRequired'));
             return false;
         }
+        const warningsActive = native.warnStorm || native.warnThunderstorm;
+        if (warningsActive && (native.updateInterval || 60) > 60) {
+            this.showError(I18n.t('warnNeedsHourlyInterval'));
+            return false;
+        }
+        if (warningsActive && (native.hourlyDays ?? 3) < 1) {
+            this.showError(I18n.t('warnNeedsHourlyDays'));
+            return false;
+        }
         return true;
     }
 

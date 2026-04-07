@@ -136,25 +136,11 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                 <Typography variant="h6" gutterBottom>{I18n.t('warnings')}</Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <FormControlLabel
-                        control={<Switch checked={!!native.warnStorm} onChange={e => {
-                            const val = e.target.checked;
-                            const update2: Partial<OpenMeteoConfig> = { warnStorm: val };
-                            if (val && (native.updateInterval || 60) > 60) {
-                                update2.updateInterval = 60;
-                            }
-                            onChange({ ...native, ...update2 });
-                        }} />}
+                        control={<Switch checked={!!native.warnStorm} onChange={e => update('warnStorm', e.target.checked)} />}
                         label={I18n.t('warnStorm')}
                     />
                     <FormControlLabel
-                        control={<Switch checked={!!native.warnThunderstorm} onChange={e => {
-                            const val = e.target.checked;
-                            const update2: Partial<OpenMeteoConfig> = { warnThunderstorm: val };
-                            if (val && (native.updateInterval || 60) > 60) {
-                                update2.updateInterval = 60;
-                            }
-                            onChange({ ...native, ...update2 });
-                        }} />}
+                        control={<Switch checked={!!native.warnThunderstorm} onChange={e => update('warnThunderstorm', e.target.checked)} />}
                         label={I18n.t('warnThunderstorm')}
                     />
                     {(native.warnStorm || native.warnThunderstorm) && (
