@@ -534,15 +534,30 @@ class Openmeteo extends utils.Adapter {
 			}
 
 			try {
-				const data = await this.fetchWeather(
-					loc.lat,
-					loc.lon,
-					daysCount,
-					temperatureUnit,
-					windspeedUnit,
-					precipitationUnit,
-					timezone,
-				);
+				let data;
+				let lastErr;
+				for (let attempt = 1; attempt <= 3; attempt++) {
+					try {
+						data = await this.fetchWeather(
+							loc.lat,
+							loc.lon,
+							daysCount,
+							temperatureUnit,
+							windspeedUnit,
+							precipitationUnit,
+							timezone,
+						);
+						lastErr = null;
+						break;
+					} catch (err) {
+						lastErr = err;
+						if (attempt < 3) {
+							this.log.warn(`Abruf für "${loc.name}" fehlgeschlagen (Versuch ${attempt}/3): ${err.message} – Wiederholung in 5s`);
+							await new Promise(r => setTimeout(r, 5000));
+						}
+					}
+				}
+				if (lastErr) throw lastErr;
 
 				await this.setObjectNotExistsAsync(locId, {
 					type: "channel",
