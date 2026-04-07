@@ -5,6 +5,5 @@
     "warnLeadHours": "Anticipo (ore)",
     "warnLeadHoursHelp": "Quante ore prima inviare l'avviso?",
     "warnNeedsHourlyInterval": "Gli avvisi richiedono aggiornamenti almeno ogni ora. Imposta l'intervallo a 60 minuti.",
-    "warnNeedsHourlyDays": "Gli avvisi richiedono dati orari. Imposta «Giorni orari» ad almeno 1.",
     "warningsViaNotificationManager": "tramite il sistema di notifica ioBroker"
 }

@@ -60,6 +60,5 @@
     "warnLeadHours": "Lead time (hours)",
     "warnLeadHoursHelp": "How many hours in advance should the warning be sent?",
     "warnNeedsHourlyInterval": "Warnings require at least hourly updates. The interval has been set to 60 minutes.",
-    "warnNeedsHourlyDays": "Warnings require hourly data. Please set \"Hourly days\" to at least 1.",
     "warningsViaNotificationManager": "via ioBroker notification system"
 }
