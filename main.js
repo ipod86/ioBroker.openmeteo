@@ -743,7 +743,7 @@ class Openmeteo extends utils.Adapter {
 				}
 			}
 			const hKey = `h${String(h).padStart(2, "0")}`;
-			const state = await this.getStateAsync(`${locId}.day${d}.hourly.${hKey}.${dp}`);
+			const state = await this.getStateAsync(`${locId}.day${d + 1}.hourly.${hKey}.${dp}`);
 			if (!state?.val) {
 				break;
 			}
@@ -782,7 +782,7 @@ class Openmeteo extends utils.Adapter {
 			const targetDayOffset = Math.floor((targetTime - todayMidnight) / (24 * 60 * 60 * 1000));
 			const targetHour = targetTime.getHours();
 			const hKey = `h${String(targetHour).padStart(2, "0")}`;
-			const hPath = `${locId}.day${targetDayOffset}.hourly.${hKey}`;
+			const hPath = `${locId}.day${targetDayOffset + 1}.hourly.${hKey}`;
 			const fromStr = `${String(targetHour).padStart(2, "0")}:00 Uhr`;
 
 			const stormKey = `${locId}_storm`;
