@@ -1676,13 +1676,13 @@ class Openmeteo extends utils.Adapter {
 					});
 				}
 				const dayHasThunderstorm = allHours.some(hd => [95, 96, 99].includes(hd.weathercode));
-				await this.setDP(`${prefix}.is_thunderstorm`, dayHasThunderstorm, {
+				await this.setDP(`${prefix}.has_thunderstorm`, dayHasThunderstorm, {
 					name: "Gewitter",
 					type: "boolean",
 					role: "indicator.alarm",
 				});
 				const dayHasStorm = allHours.some(hd => speedToBeaufort(hd.windspeedKmh, "kmh") >= 8);
-				await this.setDP(`${prefix}.is_storm`, dayHasStorm, {
+				await this.setDP(`${prefix}.has_storm`, dayHasStorm, {
 					name: "Sturm (Bft ≥ 8)",
 					type: "boolean",
 					role: "indicator.alarm",
