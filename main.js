@@ -708,7 +708,7 @@ class Openmeteo extends utils.Adapter {
 
 		// Weather warnings
 		if (anySuccess) {
-			await this.checkWeatherWarnings(locations, windspeedUnit);
+			await this.checkWeatherWarnings(locations);
 		}
 	}
 
@@ -716,9 +716,8 @@ class Openmeteo extends utils.Adapter {
 	 * Checks upcoming hourly data for storm and thunderstorm warnings and sends notifications once per event.
 	 *
 	 * @param {Array} locations - List of location configs
-	 * @param {string} windspeedUnit - Wind speed unit
 	 */
-	async checkWeatherWarnings(locations, windspeedUnit) {
+	async checkWeatherWarnings(locations) {
 		const warnStorm = !!this.config.warnStorm;
 		const warnThunderstorm = !!this.config.warnThunderstorm;
 		if (!warnStorm && !warnThunderstorm) {
@@ -735,7 +734,9 @@ class Openmeteo extends utils.Adapter {
 
 			// Determine which day and hour slot is "now + leadHours"
 			const targetTime = new Date(now.getTime() + leadHours * 60 * 60 * 1000);
-			const targetDayOffset = Math.floor((targetTime - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (24 * 60 * 60 * 1000));
+			const targetDayOffset = Math.floor(
+				(targetTime - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / (24 * 60 * 60 * 1000),
+			);
 			const targetHour = targetTime.getHours();
 			const hKey = `h${String(targetHour).padStart(2, "0")}`;
 			const hPath = `${locId}.day${targetDayOffset}.hourly.${hKey}`;
