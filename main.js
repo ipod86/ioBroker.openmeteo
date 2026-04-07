@@ -1708,6 +1708,16 @@ class Openmeteo extends utils.Adapter {
 						type: "boolean",
 						role: "indicator.day",
 					});
+					await this.setDP(`${hPath}.is_thunderstorm`, [95, 96, 99].includes(hData.weathercode), {
+						name: "Gewitter",
+						type: "boolean",
+						role: "indicator.alarm",
+					});
+					await this.setDP(`${hPath}.is_storm`, hBeaufort >= 8, {
+						name: "Sturm (Bft ≥ 8)",
+						type: "boolean",
+						role: "indicator.alarm",
+					});
 					await this.setDP(`${hPath}.rain`, hData.rain, {
 						name: "Regen",
 						type: "number",
