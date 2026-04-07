@@ -420,6 +420,7 @@ class Openmeteo extends utils.Adapter {
 		});
 		this.updateInterval = null;
 		this.updateTimeout = null;
+		this.consecutiveFailures = 0;
 		this.on("ready", this.onReady.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
@@ -651,7 +652,13 @@ class Openmeteo extends utils.Adapter {
 			}
 		}
 
-		await this.setState("info.connection", anySuccess, true);
+		if (anySuccess) {
+			this.consecutiveFailures = 0;
+		} else {
+			this.consecutiveFailures++;
+			this.log.warn(`Alle Standorte fehlgeschlagen (${this.consecutiveFailures}x in Folge) – behalte letzten Stand`);
+		}
+		await this.setState("info.connection", anySuccess || this.consecutiveFailures < 3, true);
 		if (anySuccess) {
 			await this.setObjectNotExistsAsync("info.lastUpdate", {
 				type: "state",
