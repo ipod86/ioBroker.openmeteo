@@ -13,6 +13,8 @@ updates:
     versioning-strategy: 'increase'
     directories:
       - '**/*'
+    cooldown:
+      default: 7
 
   - package-ecosystem: 'github-actions'
     directory: '/'
