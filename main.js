@@ -1008,7 +1008,7 @@ class Openmeteo extends utils.Adapter {
 				`&hourly=temperature_2m,apparent_temperature,precipitation_probability` +
 				`,precipitation,weathercode,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
-				`,rain,snowfall,snow_depth,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
+				`,rain,snowfall,snow_depth,snowfall_height,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
 				`&current=temperature_2m,apparent_temperature,precipitation,weathercode` +
 				`,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
@@ -1394,6 +1394,7 @@ class Openmeteo extends utils.Adapter {
 				rain: h.rain[i],
 				snowfall: h.snowfall[i],
 				snow_depth: Math.round(h.snow_depth[i] * 100),
+				snowfall_height: h.snowfall_height ? Math.round(h.snowfall_height[i]) : null,
 				solar_radiation: h.shortwave_radiation[i],
 				cape: h.cape[i],
 				lifted_index: h.lifted_index ? h.lifted_index[i] : null,
@@ -1580,6 +1581,18 @@ class Openmeteo extends utils.Adapter {
 				unit: "cm",
 				role: "value.precipitation.snow",
 			});
+			{
+				const dayHours = (hoursByDate[d.time[i]] || []).filter(Boolean);
+				const heights = dayHours.map(h => h.snowfall_height).filter(v => v !== null && v !== undefined);
+				if (heights.length > 0) {
+					await this.setDP(`${prefix}.snowfall_height_min`, Math.min(...heights), {
+						name: "Tiefste Schneefallgrenze (Tagesminimum)",
+						type: "number",
+						unit: "m",
+						role: "value",
+					});
+				}
+			}
 			if (enableAgriculture) {
 				await this.setObjectNotExistsAsync(`${prefix}.agriculture`, {
 					type: "channel",
@@ -1694,6 +1707,11 @@ class Openmeteo extends utils.Adapter {
 				const moonIllum = SunCalc.getMoonIllumination(moonDate);
 				const moonTimes = SunCalc.getMoonTimes(moonDate, loc.lat, loc.lon);
 				const { text: moonText, idx: moonIdx } = moonPhaseInfo(moonIllum.phase, lang);
+				const sunTimes = SunCalc.getTimes(moonDate, loc.lat, loc.lon);
+				const solarNoon = sunTimes.solarNoon;
+				const sunPos = SunCalc.getPosition(solarNoon, loc.lat, loc.lon);
+				const solarNoonStr = `${String(solarNoon.getHours()).padStart(2, "0")}:${String(solarNoon.getMinutes()).padStart(2, "0")}`;
+				const solarElevationMax = Math.round(sunPos.altitude * (180 / Math.PI) * 10) / 10;
 				astroData = {
 					sunrise: d.sunrise[i],
 					sunset: d.sunset[i],
@@ -1702,6 +1720,8 @@ class Openmeteo extends utils.Adapter {
 					moon_phase_icon_url: `/openmeteo.admin/icons/moon/${moonIdx}.png`,
 					moonrise: moonTimes.rise ? moonTimes.rise.toISOString() : null,
 					moonset: moonTimes.set ? moonTimes.set.toISOString() : null,
+					solar_noon: solarNoonStr,
+					solar_elevation_max: solarElevationMax,
 				};
 				await this.setDP(`${prefix}.astronomy.moon_phase_val`, astroData.moon_phase_val, {
 					name: "Mondphase (0–1)",
@@ -1732,6 +1752,17 @@ class Openmeteo extends utils.Adapter {
 						role: "date.sunset",
 					});
 				}
+				await this.setDP(`${prefix}.astronomy.solar_noon`, astroData.solar_noon, {
+					name: "Sonnenhöchststand (Uhrzeit)",
+					type: "string",
+					role: "date",
+				});
+				await this.setDP(`${prefix}.astronomy.solar_elevation_max`, astroData.solar_elevation_max, {
+					name: "Max. Sonnenhöhenwinkel",
+					type: "number",
+					unit: "°",
+					role: "value",
+				});
 			}
 
 			// Hourly values (only for days ≤ hourlyDays)
@@ -1882,6 +1913,14 @@ class Openmeteo extends utils.Adapter {
 						unit: "cm",
 						role: "value.precipitation.snow",
 					});
+					if (hData.snowfall_height !== null && hData.snowfall_height !== undefined) {
+						await this.setDP(`${hPath}.snowfall_height`, hData.snowfall_height, {
+							name: "Schneefallgrenze",
+							type: "number",
+							unit: "m",
+							role: "value",
+						});
+					}
 					if (enableAgricultureHourly) {
 						await this.setObjectNotExistsAsync(`${hPath}.agriculture`, {
 							type: "channel",
