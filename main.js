@@ -1925,12 +1925,16 @@ class Openmeteo extends utils.Adapter {
 						role: "value.precipitation.snow",
 					});
 					if (hData.snowfall_height !== null && hData.snowfall_height !== undefined) {
-						await this.setDP(`${hPath}.snowfall_height`, hData.snowfall_height, {
-							name: "Schneefallgrenze",
-							type: "number",
-							unit: "m",
-							role: "value",
-						});
+						await this.setDP(
+							`${hPath}.snowfall_height`,
+							hData.precipitation > 0 ? hData.snowfall_height : null,
+							{
+								name: "Schneefallgrenze",
+								type: "number",
+								unit: "m",
+								role: "value",
+							},
+						);
 					}
 					if (enableAgricultureHourly) {
 						await this.setObjectNotExistsAsync(`${hPath}.agriculture`, {
