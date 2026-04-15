@@ -1584,7 +1584,10 @@ class Openmeteo extends utils.Adapter {
 			});
 			{
 				const dayHours = (hoursByDate[d.time[i]] || []).filter(Boolean);
-				const heights = dayHours.map(h => h.snowfall_height).filter(v => v !== null && v !== undefined);
+				const heights = dayHours
+					.filter(h => h.precipitation > 0)
+					.map(h => h.snowfall_height)
+					.filter(v => v !== null && v !== undefined);
 				if (heights.length > 0) {
 					await this.setDP(`${prefix}.snowfall_height_min`, Math.min(...heights), {
 						name: "Tiefste Schneefallgrenze (Tagesminimum)",
