@@ -649,9 +649,12 @@ class Openmeteo extends utils.Adapter {
 
 				if (enableDwd) {
 					try {
+						this.log.debug(`DWD: Starte Warncell-ID-Auflösung für "${loc.name}" (${loc.lat},${loc.lon})`);
 						const warncellId = await this.fetchWarncellId(loc.lat, loc.lon);
+						this.log.debug(`DWD: Warncell-ID für "${loc.name}": ${warncellId}`);
 						if (warncellId) {
 							const dwdWarnings = await this.fetchDwdWarnings(warncellId);
+							this.log.debug(`DWD: ${dwdWarnings.length} Warnung(en) für "${loc.name}"`);
 							await this.processDwdWarnings(dwdWarnings, locId);
 						} else {
 							this.log.warn(
