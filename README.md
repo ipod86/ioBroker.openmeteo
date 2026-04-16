@@ -228,7 +228,7 @@ Optional per hour (if enabled + "also hourly"):
 This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property of their respective owners. This adapter is an independent community project and is not affiliated with or endorsed by Open-Meteo.
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.1.0 (2026-04-16)
 * (ipod86) Official weather warnings: DE uses DWD, EU countries use MeteoAlarm – auto-detected from coordinates
 * (ipod86) Unified `location.warnings.*` folder for all official warnings with `source` data point
 * (ipod86) Single `warnOfficial` toggle replaces separate `enableDwd` / `warnDwd` settings
@@ -255,11 +255,6 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 
 ### 0.0.43
 * Fix: remove auto-location entry written to `system.config` on first start
-
-### 0.0.42
-* Remove automatic reverse geocoding from location settings table
-
-For older changelog entries see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## License
 

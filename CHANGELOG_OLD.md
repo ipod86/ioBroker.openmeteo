@@ -93,3 +93,7 @@
 
 ### 0.0.1
 * Initial release
+## 0.0.42
+* Remove automatic reverse geocoding from location settings table
+
+For older changelog entries see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
