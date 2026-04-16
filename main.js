@@ -1005,10 +1005,12 @@ class Openmeteo extends utils.Adapter {
 				`,winddirection_10m_dominant,sunrise,sunset,uv_index_max,sunshine_duration` +
 				`,rain_sum,snowfall_sum,daylight_duration,shortwave_radiation_sum,et0_fao_evapotranspiration` +
 				`,cloud_cover_max,dew_point_2m_mean,relative_humidity_2m_mean,pressure_msl_mean` +
+				`,temperature_2m_mean,apparent_temperature_mean,precipitation_hours,uv_index_clear_sky_max,showers_sum` +
 				`&hourly=temperature_2m,apparent_temperature,precipitation_probability` +
 				`,precipitation,weathercode,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
-				`,rain,snowfall,snow_depth,snowfall_height,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
+				`,rain,snowfall,snow_depth,snowfall_height,freezing_level_height,uv_index,wet_bulb_temperature_2m` +
+				`,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
 				`&current=temperature_2m,apparent_temperature,precipitation,weathercode` +
 				`,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
@@ -1396,6 +1398,12 @@ class Openmeteo extends utils.Adapter {
 				snow_depth: Math.round(h.snow_depth[i] * 100),
 				snowfall_height:
 					h.snowfall_height && h.snowfall_height[i] !== null ? Math.round(h.snowfall_height[i]) : null,
+				freezing_level_height:
+					h.freezing_level_height && h.freezing_level_height[i] !== null
+						? Math.round(h.freezing_level_height[i])
+						: null,
+				uv_index: h.uv_index ? Math.round(h.uv_index[i] * 10) / 10 : null,
+				wet_bulb_temp: h.wet_bulb_temperature_2m ? Math.round(h.wet_bulb_temperature_2m[i] * 10) / 10 : null,
 				solar_radiation: h.shortwave_radiation[i],
 				cape: h.cape[i],
 				lifted_index: h.lifted_index ? h.lifted_index[i] : null,
@@ -1415,8 +1423,10 @@ class Openmeteo extends utils.Adapter {
 			const prefix = `${locId}.day${i + 1}`;
 			const tempMax = Math.round(d.temperature_2m_max[i] * 10) / 10;
 			const tempMin = Math.round(d.temperature_2m_min[i] * 10) / 10;
+			const tempMean = Math.round(d.temperature_2m_mean[i] * 10) / 10;
 			const feelsMax = Math.round(d.apparent_temperature_max[i] * 10) / 10;
 			const feelsMin = Math.round(d.apparent_temperature_min[i] * 10) / 10;
+			const feelsMean = Math.round(d.apparent_temperature_mean[i] * 10) / 10;
 			const sunH = Math.round(d.sunshine_duration[i] / 360) / 10;
 			const daylightH = Math.round(d.daylight_duration[i] / 360) / 10;
 			const precipType = precipitationType(d.weathercode[i]);
@@ -1460,6 +1470,18 @@ class Openmeteo extends utils.Adapter {
 			});
 			await this.setDP(`${prefix}.feels_like_min`, feelsMin, {
 				name: "Gefühlt Min",
+				type: "number",
+				unit: tempUnit,
+				role: "value.temperature.feelslike",
+			});
+			await this.setDP(`${prefix}.temp_mean`, tempMean, {
+				name: "Temp. Mittel",
+				type: "number",
+				unit: tempUnit,
+				role: "value.temperature",
+			});
+			await this.setDP(`${prefix}.feels_like_mean`, feelsMean, {
+				name: "Gefühlt Mittel",
 				type: "number",
 				unit: tempUnit,
 				role: "value.temperature.feelslike",
@@ -1671,6 +1693,23 @@ class Openmeteo extends utils.Adapter {
 				type: "number",
 				unit: "hPa",
 				role: "value.pressure",
+			});
+			await this.setDP(`${prefix}.precipitation_hours`, d.precipitation_hours[i], {
+				name: "Niederschlagsstunden",
+				type: "number",
+				unit: "h",
+				role: "value",
+			});
+			await this.setDP(`${prefix}.showers`, d.showers_sum[i], {
+				name: "Schauer",
+				type: "number",
+				unit: precipUnit,
+				role: "value.precipitation",
+			});
+			await this.setDP(`${prefix}.uv_index_clear_sky`, d.uv_index_clear_sky_max[i], {
+				name: "UV-Index (wolkenlos)",
+				type: "number",
+				role: "value.uv",
 			});
 
 			// Day/night summary texts
@@ -1935,6 +1974,29 @@ class Openmeteo extends utils.Adapter {
 								role: "value",
 							},
 						);
+					}
+					if (hData.freezing_level_height !== null && hData.freezing_level_height !== undefined) {
+						await this.setDP(`${hPath}.freezing_level_height`, hData.freezing_level_height, {
+							name: "Nullgradgrenze",
+							type: "number",
+							unit: "m",
+							role: "value",
+						});
+					}
+					if (hData.uv_index !== null && hData.uv_index !== undefined) {
+						await this.setDP(`${hPath}.uv_index`, hData.uv_index, {
+							name: "UV-Index",
+							type: "number",
+							role: "value.uv",
+						});
+					}
+					if (hData.wet_bulb_temp !== null && hData.wet_bulb_temp !== undefined) {
+						await this.setDP(`${hPath}.wet_bulb_temp`, hData.wet_bulb_temp, {
+							name: "Feuchtkugeltemperatur",
+							type: "number",
+							unit: tempUnit,
+							role: "value.temperature",
+						});
 					}
 					if (enableAgricultureHourly) {
 						await this.setObjectNotExistsAsync(`${hPath}.agriculture`, {
