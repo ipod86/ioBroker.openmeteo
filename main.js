@@ -1009,7 +1009,7 @@ class Openmeteo extends utils.Adapter {
 				`&hourly=temperature_2m,apparent_temperature,precipitation_probability` +
 				`,precipitation,weathercode,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
-				`,rain,snowfall,snow_depth,snowfall_height,freezing_level_height,uv_index,wet_bulb_temperature_2m` +
+				`,rain,snowfall,snow_depth,snowfall_height,freezing_level_height,uv_index` +
 				`,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
 				`&current=temperature_2m,apparent_temperature,precipitation,weathercode` +
 				`,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
@@ -1403,7 +1403,6 @@ class Openmeteo extends utils.Adapter {
 						? Math.round(h.freezing_level_height[i])
 						: null,
 				uv_index: h.uv_index ? Math.round(h.uv_index[i] * 10) / 10 : null,
-				wet_bulb_temp: h.wet_bulb_temperature_2m ? Math.round(h.wet_bulb_temperature_2m[i] * 10) / 10 : null,
 				solar_radiation: h.shortwave_radiation[i],
 				cape: h.cape[i],
 				lifted_index: h.lifted_index ? h.lifted_index[i] : null,
@@ -1988,14 +1987,6 @@ class Openmeteo extends utils.Adapter {
 							name: "UV-Index",
 							type: "number",
 							role: "value.uv",
-						});
-					}
-					if (hData.wet_bulb_temp !== null && hData.wet_bulb_temp !== undefined) {
-						await this.setDP(`${hPath}.wet_bulb_temp`, hData.wet_bulb_temp, {
-							name: "Feuchtkugeltemperatur",
-							type: "number",
-							unit: tempUnit,
-							role: "value.temperature",
 						});
 					}
 					if (enableAgricultureHourly) {
