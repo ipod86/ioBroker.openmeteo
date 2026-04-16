@@ -131,98 +131,6 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
 
             <Divider />
 
-            {/* Warnings */}
-            <Box>
-                <Typography variant="h6" gutterBottom>
-                    {I18n.t('warnings')}
-                    <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                        ({I18n.t('warningsViaNotificationManager')})
-                    </Typography>
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        {I18n.t('warningsOpenMeteo')}
-                    </Typography>
-                    <FormControlLabel
-                        control={<Switch checked={!!native.warnStorm} onChange={e => update('warnStorm', e.target.checked)} />}
-                        label={I18n.t('warnStorm')}
-                    />
-                    {native.warnStorm && (
-                        <FormControl sx={{ width: 360, ml: 2 }} size="small">
-                            <InputLabel>{I18n.t('warnStormBft')}</InputLabel>
-                            <Select
-                                value={native.warnStormBft ?? 8}
-                                label={I18n.t('warnStormBft')}
-                                onChange={e => update('warnStormBft', Number(e.target.value))}
-                            >
-                                {[
-                                    { bft: 1,  kmh: 1,   label: 'Leiser Zug' },
-                                    { bft: 2,  kmh: 6,   label: 'Leichte Brise' },
-                                    { bft: 3,  kmh: 12,  label: 'Schwache Brise' },
-                                    { bft: 4,  kmh: 20,  label: 'Mäßige Brise' },
-                                    { bft: 5,  kmh: 29,  label: 'Frische Brise' },
-                                    { bft: 6,  kmh: 39,  label: 'Starke Brise' },
-                                    { bft: 7,  kmh: 50,  label: 'Steifer Wind' },
-                                    { bft: 8,  kmh: 62,  label: 'Stürmischer Wind', isDefault: true },
-                                    { bft: 9,  kmh: 75,  label: 'Sturm' },
-                                    { bft: 10, kmh: 89,  label: 'Schwerer Sturm' },
-                                    { bft: 11, kmh: 103, label: 'Orkanartiger Sturm' },
-                                    { bft: 12, kmh: 118, label: 'Orkan' },
-                                ].map(o => (
-                                    <MenuItem key={o.bft} value={o.bft}>
-                                        Bft {o.bft} – {o.label} (≥ {o.kmh} km/h){o.isDefault ? ` – ${I18n.t('defaultValue')}` : ''}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
-                    <FormControlLabel
-                        control={<Switch checked={!!native.warnThunderstorm} onChange={e => update('warnThunderstorm', e.target.checked)} />}
-                        label={I18n.t('warnThunderstorm')}
-                    />
-                    {(native.warnStorm || native.warnThunderstorm) && (
-                        <>
-                            <TextField
-                                label={I18n.t('warnLeadHours')}
-                                type="number"
-                                value={native.warnLeadHours ?? 2}
-                                inputProps={{ min: 1, max: 24 }}
-                                onChange={e => update('warnLeadHours', parseInt(e.target.value) || 2)}
-                                helperText={I18n.t('warnLeadHoursHelp')}
-                                sx={{ width: 200, mt: 1 }}
-                            />
-                            {(native.updateInterval || 60) > 60 && (
-                                <Alert severity="warning" sx={{ mt: 1 }}>
-                                    {I18n.t('warnNeedsHourlyInterval')}
-                                </Alert>
-                            )}
-                            {(native.warnLeadHours ?? 2) > 24 && (
-                                <Alert severity="error" sx={{ mt: 1 }}>
-                                    {I18n.t('warnLeadHoursTooHigh')}
-                                </Alert>
-                            )}
-
-                        </>
-                    )}
-
-                    {/* DWD Notifications */}
-                    <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 1.5 }}>
-                        {I18n.t('warningsDwd')}
-                    </Typography>
-                    <FormControlLabel
-                        control={<Switch checked={!!native.warnDwd} onChange={e => update('warnDwd', e.target.checked)} />}
-                        label={I18n.t('warnDwd')}
-                    />
-                    {native.warnDwd && !native.enableDwd && (
-                        <Alert severity="error" sx={{ mt: 0.5 }}>
-                            {I18n.t('warnDwdNeedsEnabled')}
-                        </Alert>
-                    )}
-                </Box>
-            </Box>
-
-            <Divider />
-
             {/* Optional data */}
             <Box>
                 <Typography variant="h6" gutterBottom>{I18n.t('optionalData')}</Typography>
@@ -312,6 +220,98 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                         {I18n.t('enableDwdHelp')}
                     </Typography>
 
+                </Box>
+            </Box>
+
+            <Divider />
+
+            {/* Warnings */}
+            <Box>
+                <Typography variant="h6" gutterBottom>
+                    {I18n.t('warnings')}
+                    <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                        ({I18n.t('warningsViaNotificationManager')})
+                    </Typography>
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {I18n.t('warningsOpenMeteo')}
+                    </Typography>
+                    <FormControlLabel
+                        control={<Switch checked={!!native.warnStorm} onChange={e => update('warnStorm', e.target.checked)} />}
+                        label={I18n.t('warnStorm')}
+                    />
+                    {native.warnStorm && (
+                        <FormControl sx={{ width: 360, ml: 2 }} size="small">
+                            <InputLabel>{I18n.t('warnStormBft')}</InputLabel>
+                            <Select
+                                value={native.warnStormBft ?? 8}
+                                label={I18n.t('warnStormBft')}
+                                onChange={e => update('warnStormBft', Number(e.target.value))}
+                            >
+                                {[
+                                    { bft: 1,  kmh: 1,   label: 'Leiser Zug' },
+                                    { bft: 2,  kmh: 6,   label: 'Leichte Brise' },
+                                    { bft: 3,  kmh: 12,  label: 'Schwache Brise' },
+                                    { bft: 4,  kmh: 20,  label: 'Mäßige Brise' },
+                                    { bft: 5,  kmh: 29,  label: 'Frische Brise' },
+                                    { bft: 6,  kmh: 39,  label: 'Starke Brise' },
+                                    { bft: 7,  kmh: 50,  label: 'Steifer Wind' },
+                                    { bft: 8,  kmh: 62,  label: 'Stürmischer Wind', isDefault: true },
+                                    { bft: 9,  kmh: 75,  label: 'Sturm' },
+                                    { bft: 10, kmh: 89,  label: 'Schwerer Sturm' },
+                                    { bft: 11, kmh: 103, label: 'Orkanartiger Sturm' },
+                                    { bft: 12, kmh: 118, label: 'Orkan' },
+                                ].map(o => (
+                                    <MenuItem key={o.bft} value={o.bft}>
+                                        Bft {o.bft} – {o.label} (≥ {o.kmh} km/h){o.isDefault ? ` – ${I18n.t('defaultValue')}` : ''}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    )}
+                    <FormControlLabel
+                        control={<Switch checked={!!native.warnThunderstorm} onChange={e => update('warnThunderstorm', e.target.checked)} />}
+                        label={I18n.t('warnThunderstorm')}
+                    />
+                    {(native.warnStorm || native.warnThunderstorm) && (
+                        <>
+                            <TextField
+                                label={I18n.t('warnLeadHours')}
+                                type="number"
+                                value={native.warnLeadHours ?? 2}
+                                inputProps={{ min: 1, max: 24 }}
+                                onChange={e => update('warnLeadHours', parseInt(e.target.value) || 2)}
+                                helperText={I18n.t('warnLeadHoursHelp')}
+                                sx={{ width: 200, mt: 1 }}
+                            />
+                            {(native.updateInterval || 60) > 60 && (
+                                <Alert severity="warning" sx={{ mt: 1 }}>
+                                    {I18n.t('warnNeedsHourlyInterval')}
+                                </Alert>
+                            )}
+                            {(native.warnLeadHours ?? 2) > 24 && (
+                                <Alert severity="error" sx={{ mt: 1 }}>
+                                    {I18n.t('warnLeadHoursTooHigh')}
+                                </Alert>
+                            )}
+
+                        </>
+                    )}
+
+                    {/* DWD Notifications */}
+                    <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 1.5 }}>
+                        {I18n.t('warningsDwd')}
+                    </Typography>
+                    <FormControlLabel
+                        control={<Switch checked={!!native.warnDwd} onChange={e => update('warnDwd', e.target.checked)} />}
+                        label={I18n.t('warnDwd')}
+                    />
+                    {native.warnDwd && !native.enableDwd && (
+                        <Alert severity="error" sx={{ mt: 0.5 }}>
+                            {I18n.t('warnDwdNeedsEnabled')}
+                        </Alert>
+                    )}
                 </Box>
             </Box>
         </Box>
