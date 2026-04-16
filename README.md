@@ -228,6 +228,8 @@ Optional per hour (if enabled + "also hourly"):
 This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property of their respective owners. This adapter is an independent community project and is not affiliated with or endorsed by Open-Meteo.
 
 ## Changelog
+### **WORK IN PROGRESS**
+
 ### 0.0.46 (2026-04-08)
 * (ipod86) add CHANGELOG_OLD.md; add release-script
 

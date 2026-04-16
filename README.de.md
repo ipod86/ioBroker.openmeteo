@@ -232,6 +232,8 @@ Dieser Adapter verwendet die Open-Meteo API. Der Name und das Logo von Open-Mete
 
 ## Changelog
 
+### **WORK IN PROGRESS**
+
 ### 0.0.46 (2026-04-08)
 * (ipod86) CHANGELOG_OLD.md hinzugefügt; release-script eingerichtet
 
