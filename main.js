@@ -966,8 +966,12 @@ class Openmeteo extends utils.Adapter {
 		const fadeColor = isLight ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)";
 		const divColor = isLight ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)";
 		const iconColor = isLight ? "rgba(255,255,255,0.85)" : "rgba(0,0,0,0.6)";
-		const isAmcharts = (this.config.iconSet || "basmilius").startsWith("amcharts");
-		const imgScale = isAmcharts ? "transform:scale(1.7);transform-origin:center;" : "";
+		const _iconSet = this.config.iconSet || "basmilius";
+		const imgScale = _iconSet.startsWith("amcharts")
+			? "transform:scale(1.6);transform-origin:center;"
+			: _iconSet.startsWith("basmilius")
+				? "transform:scale(1.1);transform-origin:center;"
+				: "";
 
 		const mdi = (path, size = 16, ml = 0) =>
 			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}" style="vertical-align:middle;fill:${iconColor};flex-shrink:0;margin-left:${ml}px;"><path d="${path}"/></svg>`;
