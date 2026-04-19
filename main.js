@@ -1151,7 +1151,13 @@ class Openmeteo extends utils.Adapter {
 					res.on("end", () => {
 						const { statusCode } = res;
 						if (statusCode && statusCode >= 400) {
-							reject(new Error(`HTTP ${statusCode}`));
+							let reason = raw;
+							try {
+								reason = JSON.parse(raw)?.reason || raw;
+							} catch (_) {
+								/* ignore */
+							}
+							reject(new Error(`HTTP ${statusCode}: ${reason}`));
 							return;
 						}
 						try {
@@ -1190,7 +1196,13 @@ class Openmeteo extends utils.Adapter {
 					res.on("end", () => {
 						const { statusCode } = res;
 						if (statusCode && statusCode >= 400) {
-							reject(new Error(`HTTP ${statusCode}`));
+							let reason = raw;
+							try {
+								reason = JSON.parse(raw)?.reason || raw;
+							} catch (_) {
+								/* ignore */
+							}
+							reject(new Error(`HTTP ${statusCode}: ${reason}`));
 							return;
 						}
 						try {
