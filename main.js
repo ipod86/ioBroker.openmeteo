@@ -214,7 +214,12 @@ function weatherIconUrl(code, iconSet, isDay) {
 		const folder = iconSet === "amcharts_animated" ? "animated" : "static";
 		return `/openmeteo.admin/icons/amcharts/${folder}/${name}.svg`;
 	}
-	// WMO set: fall back for codes without icons
+	// WMO SVG set
+	if (iconSet === "wmo_svg") {
+		const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
+		return `/openmeteo.admin/icons/wmo_svg/wmo_${String(wmoCode).padStart(2, "0")}.svg`;
+	}
+	// WMO PNG set: fall back for codes without icons
 	const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
 	return `/openmeteo.admin/icons/wmo/wmo_${String(wmoCode).padStart(2, "0")}.png`;
 }
@@ -969,9 +974,12 @@ class Openmeteo extends utils.Adapter {
 		const _iconSet = this.config.iconSet || "basmilius";
 		const isAmcharts = _iconSet.startsWith("amcharts");
 		const isBasmilius = _iconSet.startsWith("basmilius");
+		const isWmoSvg = _iconSet === "wmo_svg";
 		// For main header icon: use real size (avoids layout overflow into adjacent cell)
 		const mainIconSize = isAmcharts ? 95 : isBasmilius ? 82 : 75;
 		// For forecast day icons: scale transform is fine (isolated cells)
+		// wmo_svg: black strokes → invert to white on dark (light theme), keep on light (dark theme)
+		const wmoSvgFilter = isWmoSvg ? (isLight ? "filter:invert(1);" : "") : "";
 		const imgScale = isAmcharts
 			? "transform:scale(1.6);transform-origin:center;"
 			: isBasmilius
@@ -1022,7 +1030,7 @@ class Openmeteo extends utils.Adapter {
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
 <tr>
-<td width="${mainIconSize}px"><img src="${host}${curIcon}" style="width:${mainIconSize}px;height:${mainIconSize}px;display:block;"></td>
+<td width="${mainIconSize}px"><img src="${host}${curIcon}" style="width:${mainIconSize}px;height:${mainIconSize}px;display:block;${wmoSvgFilter}"></td>
 <td style="padding-left:10px;vertical-align:middle;">
 <div style="font-size:13px;font-weight:600;color:${textColor};margin-bottom:2px;">${widget.locationName}</div>
 <div style="font-size:15px;font-weight:400;color:${subColor};">${curDesc}</div>
@@ -1062,7 +1070,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:2px solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${host}${dayData[i][1]}" style="width:42px;height:42px;display:inline-block;margin:-2px 0;${imgScale}"></td>`;
+				html += `<td style="padding:0;${border}"><img src="${host}${dayData[i][1]}" style="width:42px;height:42px;display:inline-block;margin:-2px 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
