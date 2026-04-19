@@ -2,6 +2,7 @@
     "celsius": "Celsius (°C)",
     "daysCount": "Number of days (1–16)",
     "daysCountHelp": "How many days to fetch (max. 16)",
+    "enableAgricultureHelp": "Solar radiation, CAPE, soil temperature, irradiance under *.agriculture",
     "fahrenheit": "Fahrenheit (°F)",
     "forecast": "Forecast",
     "hourlyDays": "Days with hourly data (0–16)",

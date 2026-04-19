@@ -1,4 +1,5 @@
 {
+    "enableAgricultureHelp": "Solar radiation, CAPE, soil temperature, irradiance under *.agriculture",
     "hourlyDaysExceedsDaysCount": "Must not exceed number of forecast days",
     "tabGeneral": "General",
     "tabNotifications": "Notifications",

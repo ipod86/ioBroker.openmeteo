@@ -9,7 +9,7 @@
     "daysCountHelp": "Ile dni na pobranie (maks. 16)",
     "defaultValue": "domyślny",
     "enableAgriculture": "Rolnictwo / Energia słoneczna",
-    "enableAgricultureHelp": "Promieniowanie słoneczne, CAPE, temperatura gleby, natężenie promieniowania w obszarze *.rolnictwo (domyślnie wyłączone)",
+    "enableAgricultureHelp": "Promieniowanie słoneczne, CAPE, temperatura gleby, naświetlenie w *.rolnictwo",
     "enableAirQuality": "Jakość powietrza (AQI, cząstki stałe)",
     "enableAirQualityHelp": "european_aqi, PM10, PM2,5, NO₂, CO, pył, ozon poniżej aktualnej jakości powietrza",
     "enableAstronomy": "Astronomia (Słońce i Księżyc)",

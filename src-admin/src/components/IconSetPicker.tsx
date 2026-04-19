@@ -17,11 +17,11 @@ const AMCHARTS_PREVIEW: Record<string, string> = {
 };
 
 const ICON_SETS = [
-    { value: 'basmilius',          label: 'Meteocons (statisch)',              ext: 'png', amcharts: false },
-    { value: 'basmilius_animated', label: 'Meteocons (animiert SVG)',          ext: 'svg', amcharts: false },
-    { value: 'amcharts_animated',  label: 'amCharts (animiert SVG)',           ext: 'svg', amcharts: true  },
-    { value: 'amcharts_static',    label: 'amCharts (statisch SVG)',           ext: 'svg', amcharts: true  },
-    { value: 'wmo_svg',            label: 'WMO OGC (meteorologische Symbole, SVG)', ext: 'svg', amcharts: false },
+    { value: 'basmilius',          label: 'Meteocons (statisch)',    ext: 'png', amcharts: false },
+    { value: 'basmilius_animated', label: 'Meteocons (animiert)',    ext: 'svg', amcharts: false },
+    { value: 'amcharts_animated',  label: 'amCharts (animiert)',     ext: 'svg', amcharts: true  },
+    { value: 'amcharts_static',    label: 'amCharts (statisch)',     ext: 'svg', amcharts: true  },
+    { value: 'wmo_svg',            label: 'WMO OGC',                ext: 'svg', amcharts: false },
 ];
 
 const IconSetPicker: React.FC<Props> = ({ iconSet, onChange }) => {
