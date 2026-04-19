@@ -93,6 +93,9 @@
 
 ### 0.0.1
 * Initial release
+## 0.0.43
+* Fix: remove auto-location entry written to `system.config` on first start
+
 ## 0.0.42
 * Remove automatic reverse geocoding from location settings table
 

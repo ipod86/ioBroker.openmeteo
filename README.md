@@ -228,7 +228,7 @@ Optional per hour (if enabled + "also hourly"):
 This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property of their respective owners. This adapter is an independent community project and is not affiliated with or endorsed by Open-Meteo.
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.1.1 (2026-04-19)
 * (ipod86) Rename adapter to ioBroker.openmeteo-notify
 
 ### 0.1.0 (2026-04-16)
@@ -255,9 +255,6 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 
 ### 0.0.44
 * (ipod86) fix dark theme: set theme-aware background color on root wrapper
-
-### 0.0.43
-* Fix: remove auto-location entry written to `system.config` on first start
 
 ## License
 
