@@ -32,5 +32,7 @@
     "warnFrost": "Aviso de geada",
     "warnFrostThreshold": "Limiar de geada (°C)",
     "warnFrostThresholdHelp": "Enviar aviso quando a temperatura cair abaixo deste valor",
+    "widgetDark": "Escuro",
+    "widgetLight": "Claro",
     "windspeedUnit": "Unidade de velocidade do vento"
 }

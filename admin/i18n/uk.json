@@ -32,5 +32,7 @@
     "warnFrost": "Попередження про мороз",
     "warnFrostThreshold": "Поріг морозу (°C)",
     "warnFrostThresholdHelp": "Надіслати попередження коли температура опуститься нижче цього значення",
+    "widgetDark": "Темна",
+    "widgetLight": "Світла",
     "windspeedUnit": "Одиниця швидкості вітру"
 }

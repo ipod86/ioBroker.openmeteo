@@ -69,7 +69,7 @@
     "widgetHint": "Jedes Widget generiert einen HTML-Datenpunkt unter location.widget.widgetID. Rufen Sie IP und Port vom Webadapter ab.",
     "widgetHost": "IP-Adresse",
     "widgetHostHint": "vom Webadapter",
-    "widgetLight": "Licht",
+    "widgetLight": "Hell",
     "widgetPort": "Hafen",
     "widgetProtocol": "Protokoll",
     "widgetTheme": "Thema",

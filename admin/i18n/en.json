@@ -28,5 +28,7 @@
     "warnFrost": "Frost warning",
     "warnFrostThreshold": "Frost threshold (°C)",
     "warnFrostThresholdHelp": "Send warning when temperature drops below this value",
+    "widgetDark": "Dark",
+    "widgetLight": "Light",
     "windspeedUnit": "Wind speed unit"
 }

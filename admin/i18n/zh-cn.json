@@ -32,5 +32,7 @@
     "warnFrost": "霜冻预警",
     "warnFrostThreshold": "霜冻阈值 (°C)",
     "warnFrostThresholdHelp": "当温度低于此值时发送警告",
+    "widgetDark": "深色",
+    "widgetLight": "浅色",
     "windspeedUnit": "风速单位"
 }

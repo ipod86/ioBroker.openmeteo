@@ -69,7 +69,7 @@
     "widgetHint": "Cada widget gera um ponto de dados HTML em location.widget.widgetID. Obtenha IP e porta do adaptador web.",
     "widgetHost": "Endereço IP",
     "widgetHostHint": "do adaptador web",
-    "widgetLight": "Luz",
+    "widgetLight": "Claro",
     "widgetPort": "Porta",
     "widgetProtocol": "Protocolo",
     "widgetTheme": "Tema",

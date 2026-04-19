@@ -32,5 +32,7 @@
     "warnFrost": "Avviso gelo",
     "warnFrostThreshold": "Soglia gelo (°C)",
     "warnFrostThresholdHelp": "Invia avviso quando la temperatura scende sotto questo valore",
+    "widgetDark": "Scuro",
+    "widgetLight": "Chiaro",
     "windspeedUnit": "Unità di velocità del vento"
 }

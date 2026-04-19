@@ -28,5 +28,7 @@
     "warnFrost": "Frostwarnung",
     "warnFrostThreshold": "Frost-Schwellenwert (°C)",
     "warnFrostThresholdHelp": "Warnung senden wenn Temperatur unter diesen Wert fällt",
+    "widgetDark": "Dunkel",
+    "widgetLight": "Hell",
     "windspeedUnit": "Windgeschwindigkeitseinheit"
 }
