@@ -35,14 +35,30 @@ class App extends GenericApp<GenericAppProps, AppState> {
             this.setConfigurationError(I18n.t('locationNameRequired'));
             return;
         }
-        const warningsActive = native.warnStorm || native.warnThunderstorm;
-        if (warningsActive && (native.updateInterval || 60) > 60) {
-            this.setConfigurationError(I18n.t('warnNeedsHourlyInterval'));
+        const daysCount = native.daysCount ?? 7;
+        if (daysCount < 1 || daysCount > 16) {
+            this.setConfigurationError(I18n.t('validRange', '1–16'));
             return;
         }
-        if (warningsActive && (native.warnLeadHours ?? 2) > 24) {
-            this.setConfigurationError(I18n.t('warnLeadHoursTooHigh'));
+        const hourlyDays = native.hourlyDays ?? 3;
+        if (hourlyDays < 0 || hourlyDays > daysCount) {
+            this.setConfigurationError(I18n.t('hourlyDaysExceedsDaysCount'));
             return;
+        }
+        const warningsActive = native.warnStorm || native.warnThunderstorm || native.warnFrost;
+        if (warningsActive) {
+            const leadHours = native.warnLeadHours ?? 2;
+            if (leadHours < 1 || leadHours > 24) {
+                this.setConfigurationError(I18n.t('validRange', '1–24'));
+                return;
+            }
+        }
+        if (native.warnFrost) {
+            const threshold = native.warnFrostThreshold ?? 0;
+            if (threshold < -20 || threshold > 5) {
+                this.setConfigurationError(I18n.t('validRange', '−20–5'));
+                return;
+            }
         }
         this.setConfigurationError('');
     }
