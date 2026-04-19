@@ -8,6 +8,8 @@
     "daysCountHelp": "获取多少天（最多 16 天）",
     "enableAgriculture": "太阳能 & 气候",
     "enableAgricultureHelp": "太阳辐射、CAPE、土壤温度、辐照度（*.agriculture）",
+    "enableComfort": "舒适度指数",
+    "enableComfortHelp": "热指数、风寒指数、湿热指数、紫外线指数位于 *.comfort",
     "fahrenheit": "华氏度 (°F)",
     "forecast": "预报",
     "hourlyDays": "包含每小时数据的天数 (0–16)",

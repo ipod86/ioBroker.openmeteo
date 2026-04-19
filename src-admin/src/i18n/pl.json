@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "european_aqi, PM10, PM2,5, NO₂, CO, pył, ozon poniżej aktualnej jakości powietrza",
     "enableAstronomy": "Astronomia (Słońce i Księżyc)",
     "enableAstronomyHelp": "Wschód i zachód słońca, faza księżyca, wschód księżyca, zachód księżyca w ramach dayX.astronomy",
+    "enableComfort": "Indeksy komfortu",
+    "enableComfortHelp": "Indeks ciepła, odczuwalny chłód, humidex, indeks UV w *.comfort",
     "enablePollen": "Pyłek (tylko Europa, prognoza na 4 dni)",
     "enablePollenHelp": "Dane dotyczące pyłków z API jakości powietrza. Tylko Europa.",
     "fahrenheit": "Fahrenheita (°F)",

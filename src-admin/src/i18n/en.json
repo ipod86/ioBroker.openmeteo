@@ -1,5 +1,7 @@
 {
     "enableAgricultureHelp": "Solar radiation, CAPE, soil temperature, irradiance under *.agriculture",
+    "enableComfort": "Comfort Indices",
+    "enableComfortHelp": "Heat index, wind chill, humidex, UV index under *.comfort",
     "hourlyDaysExceedsDaysCount": "Must not exceed number of forecast days",
     "tabGeneral": "General",
     "tabNotifications": "Notifications",

@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "european_aqi, PM10, PM2,5, NO₂, CO, пил, озон під струмом.air_quality",
     "enableAstronomy": "Астрономія (сонце і місяць)",
     "enableAstronomyHelp": "Схід сонця, захід сонця, фаза місяця, схід місяця, захід місяця під dayX.astronomy",
+    "enableComfort": "Індекси комфорту",
+    "enableComfortHelp": "Індекс спеки, вітрохолодовий індекс, гумідекс, УФ-індекс у *.comfort",
     "enablePollen": "Пилок (лише для Європи, прогноз на 4 дні)",
     "enablePollenHelp": "Дані про пилок від Air Quality API. тільки Європа.",
     "fahrenheit": "Фаренгейт (°F)",

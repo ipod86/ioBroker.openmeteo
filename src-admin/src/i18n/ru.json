@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "european_aqi, PM10, PM2,5, NO₂, CO, пыль, озон при текущем.air_quality",
     "enableAstronomy": "Астрономия (солнце и луна)",
     "enableAstronomyHelp": "Восход, закат, фаза луны, восход луны, заход луны в соответствии с dayX.astronomy",
+    "enableComfort": "Индексы комфорта",
+    "enableComfortHelp": "Индекс жары, ветро-холодовой индекс, гумидекс, УФ-индекс в *.comfort",
     "enablePollen": "Пыльца (только Европа, прогноз на 4 дня)",
     "enablePollenHelp": "Данные о пыльце из Air Quality API. Только Европа.",
     "fahrenheit": "Фаренгейт (°F)",

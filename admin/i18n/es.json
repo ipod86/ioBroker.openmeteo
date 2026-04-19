@@ -8,6 +8,8 @@
     "daysCountHelp": "Cuántos días recuperar (máx. 16)",
     "enableAgriculture": "Solar & Clima",
     "enableAgricultureHelp": "Radiación solar, CAPE, temperatura del suelo, irradiancia en *.agriculture",
+    "enableComfort": "Índices de confort",
+    "enableComfortHelp": "Índice de calor, sensación térmica, humidex, índice UV en *.comfort",
     "fahrenheit": "Fahrenheit (°F)",
     "forecast": "Pronóstico",
     "hourlyDays": "Días con datos horarios (0–16)",

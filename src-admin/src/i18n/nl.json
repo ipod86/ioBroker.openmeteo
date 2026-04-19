@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "europese_aqi, PM10, PM2.5, NO₂, CO, stof, ozon onder huidige luchtkwaliteit",
     "enableAstronomy": "Astronomie (zon & maan)",
     "enableAstronomyHelp": "Zonsopgang, zonsondergang, maanfase, maanopkomst, maanondergang onder dayX.astronomie",
+    "enableComfort": "Comfortindices",
+    "enableComfortHelp": "Warmte-index, windkoeling, humidex, UV-index onder *.comfort",
     "enablePollen": "Pollen (alleen Europa, 4-daagse voorspelling)",
     "enablePollenHelp": "Pollengegevens van Air Quality API. Alleen Europa.",
     "fahrenheit": "Fahrenheit (°F)",

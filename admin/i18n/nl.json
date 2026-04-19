@@ -8,6 +8,8 @@
     "daysCountHelp": "Hoeveel dagen ophalen (max. 16)",
     "enableAgriculture": "Solar & Klimaat",
     "enableAgricultureHelp": "Zonnestraling, CAPE, bodemtemperatuur, bestralingssterkte onder *.agriculture",
+    "enableComfort": "Comfortindices",
+    "enableComfortHelp": "Warmte-index, windkoeling, humidex, UV-index onder *.comfort",
     "fahrenheit": "Fahrenheit (°F)",
     "forecast": "Voorspelling",
     "hourlyDays": "Dagen met uurgegevens (0–16)",

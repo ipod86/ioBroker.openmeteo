@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "European_aqi, PM10, PM2,5, NO₂, CO, poussière, ozone sous current.air_quality",
     "enableAstronomy": "Astronomie (soleil et lune)",
     "enableAstronomyHelp": "Lever, coucher de soleil, phase de lune, lever et coucher de la lune sous dayX.astronomy",
+    "enableComfort": "Indices de confort",
+    "enableComfortHelp": "Indice de chaleur, refroidissement éolien, humidex, indice UV sous *.comfort",
     "enablePollen": "Pollen (Europe uniquement, prévisions sur 4 jours)",
     "enablePollenHelp": "Données polliniques de l’API Air Quality. Europe uniquement.",
     "fahrenheit": "Fahrenheit (°F)",

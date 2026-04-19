@@ -8,6 +8,8 @@
     "daysCountHelp": "Скільки днів для отримання (макс. 16)",
     "enableAgriculture": "Сонячна & Клімат",
     "enableAgricultureHelp": "Сонячна радіація, CAPE, температура ґрунту, освітленість у *.agriculture",
+    "enableComfort": "Індекси комфорту",
+    "enableComfortHelp": "Індекс спеки, вітрохолодовий індекс, гумідекс, УФ-індекс у *.comfort",
     "fahrenheit": "Фаренгейт (°F)",
     "forecast": "Прогноз",
     "hourlyDays": "Дні з погодинними даними (0–16)",

@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "European_AQI, PM10, PM2,5, NO₂, CO, Staub, Ozon unter current.air_quality",
     "enableAstronomy": "Astronomie (Sonne & Mond)",
     "enableAstronomyHelp": "Sonnenaufgang, Sonnenuntergang, Mondphase, Mondaufgang, Monduntergang unter dayX.astronomy",
+    "enableComfort": "Komfortindizes",
+    "enableComfortHelp": "Hitzeindex, Windchill, Humidex, UV-Index unter *.comfort",
     "enablePollen": "Pollen (nur Europa, 4-Tages-Vorhersage)",
     "enablePollenHelp": "Pollendaten von der Air Quality API. Nur Europa.",
     "fahrenheit": "Fahrenheit (°F)",

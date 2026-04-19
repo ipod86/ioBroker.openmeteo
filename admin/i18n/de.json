@@ -4,6 +4,8 @@
     "daysCountHelp": "Wie viele Tage sollen abgerufen werden (max. 16)",
     "enableAgriculture": "Solar & Klima",
     "enableAgricultureHelp": "Sonneneinstrahlung, CAPE, Bodentemperatur, Bestrahlungsstärke unter *.agriculture",
+    "enableComfort": "Komfortindizes",
+    "enableComfortHelp": "Hitzeindex, Windchill, Humidex, UV-Index unter *.comfort",
     "fahrenheit": "Fahrenheit (°F)",
     "forecast": "Vorhersage",
     "hourlyDays": "Tage mit Stundenwerten (0–16)",

@@ -14,6 +14,8 @@
     "enableAirQualityHelp": "current.air_quality 下的 european_aqi、PM10、PM2.5、NO2、CO、灰尘、臭氧",
     "enableAstronomy": "天文学（太阳和月亮）",
     "enableAstronomyHelp": "dayX.astronomy 下的日出、日落、月相、月出、月落",
+    "enableComfort": "舒适度指数",
+    "enableComfortHelp": "热指数、风寒指数、湿热指数、紫外线指数位于 *.comfort",
     "enablePollen": "花粉（仅限欧洲，4 天预报）",
     "enablePollenHelp": "来自空气质量 API 的花粉数据。仅限欧洲。",
     "fahrenheit": "华氏度 (°F)",

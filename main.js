@@ -478,6 +478,163 @@ function precipitationType(code) {
 	return 0;
 }
 
+/**
+ * Heat Index (Rothfusz), valid when T >= 27°C and RH >= 40%.
+ *
+ * @param {number} T - Temperature in °C
+ * @param {number} RH - Relative humidity in %
+ * @returns {number|null}
+ */
+function calcHeatIndex(T, RH) {
+	if (T == null || RH == null || T < 27 || RH < 40) {
+		return null;
+	}
+	const Tf = (T * 9) / 5 + 32;
+	// prettier-ignore
+	const hi =
+		-42.379 +
+		2.04901523 * Tf +
+		10.14333127 * RH -
+		0.22475541 * Tf * RH -
+		0.00683783 * Tf * Tf -
+		0.05481717 * RH * RH +
+		0.00122874 * Tf * Tf * RH +
+		0.00085282 * Tf * RH * RH -
+		0.00000199 * Tf * Tf * RH * RH;
+	return Math.round((((hi - 32) * 5) / 9) * 10) / 10;
+}
+
+/**
+ * Wind Chill (NWS formula), valid when T <= 10°C and wind > 4.8 km/h.
+ *
+ * @param {number} T - Temperature in °C
+ * @param {number} vKmh - Wind speed in km/h
+ * @returns {number|null}
+ */
+function calcWindchill(T, vKmh) {
+	if (T == null || vKmh == null || T > 10 || vKmh <= 4.8) {
+		return null;
+	}
+	const wc = 13.12 + 0.6215 * T - 11.37 * Math.pow(vKmh, 0.16) + 0.3965 * T * Math.pow(vKmh, 0.16);
+	return Math.round(wc * 10) / 10;
+}
+
+/**
+ * Humidex (Canadian formula).
+ *
+ * @param {number} T - Temperature in °C
+ * @param {number} Td - Dew point in °C
+ * @returns {number}
+ */
+function calcHumidex(T, Td) {
+	if (T == null || Td == null) {
+		return null;
+	}
+	const e = 6.112 * Math.exp((17.67 * Td) / (Td + 243.5));
+	return Math.round((T + 0.5555 * (e - 10)) * 10) / 10;
+}
+
+/**
+ * Humidex discomfort level 1–5.
+ *
+ * @param {number} humidex
+ * @returns {number}
+ */
+function humidexLevel(humidex) {
+	if (humidex == null) {
+		return null;
+	}
+	if (humidex < 29) {
+		return 1;
+	}
+	if (humidex < 35) {
+		return 2;
+	}
+	if (humidex < 40) {
+		return 3;
+	}
+	if (humidex < 46) {
+		return 4;
+	}
+	return 5;
+}
+
+/**
+ * UV index level string.
+ *
+ * @param {number} uv
+ * @returns {string}
+ */
+function uvLevel(uv) {
+	if (uv == null) {
+		return null;
+	}
+	if (uv < 3) {
+		return "low";
+	}
+	if (uv < 6) {
+		return "moderate";
+	}
+	if (uv < 8) {
+		return "high";
+	}
+	if (uv < 11) {
+		return "very_high";
+	}
+	return "extreme";
+}
+
+/**
+ * Convert °C to configured temp unit.
+ *
+ * @param {number} valC - value in °C
+ * @param {string} unit - 'celsius' | 'fahrenheit'
+ * @returns {number}
+ */
+function celsiusToUnit(valC, unit) {
+	if (valC == null) {
+		return null;
+	}
+	return unit === "fahrenheit" ? Math.round(((valC * 9) / 5 + 32) * 10) / 10 : valC;
+}
+
+/**
+ * Ensure wind speed is in km/h for comfort formulas.
+ *
+ * @param {number} val
+ * @param {string} unit
+ * @returns {number}
+ */
+function windToKmh(val, unit) {
+	if (val == null) {
+		return null;
+	}
+	if (unit === "ms") {
+		return val * 3.6;
+	}
+	if (unit === "mph") {
+		return val * 1.60934;
+	}
+	if (unit === "kn") {
+		return val * 1.852;
+	}
+	return val;
+}
+
+/**
+ * Ensure temperature is in °C for comfort formulas.
+ *
+ * @param {number} val
+ * @param {string} unit
+ * @returns {number}
+ */
+function unitToCelsius(val, unit) {
+	if (val == null) {
+		return null;
+	}
+	return unit === "fahrenheit" ? ((val - 32) * 5) / 9 : val;
+}
+
 class Openmeteo extends utils.Adapter {
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options] - Adapter options
@@ -554,6 +711,8 @@ class Openmeteo extends utils.Adapter {
 		const enableAgriculture = !!this.config.enableAgriculture;
 		const enableAgricultureHourly = enableAgriculture && !!this.config.enableAgricultureHourly;
 		const enablePollenHourly = enablePollen && !!this.config.enablePollenHourly;
+		const enableComfort = !!this.config.enableComfort;
+		const enableComfortHourly = enableComfort && !!this.config.enableComfortHourly;
 
 		// Read system.config once for language, timezone and location fallback
 		const sysConfig = await this.getForeignObjectAsync("system.config");
@@ -653,6 +812,8 @@ class Openmeteo extends utils.Adapter {
 					enableAstronomyHourly,
 					enableAgriculture,
 					enableAgricultureHourly,
+					enableComfort,
+					enableComfortHourly,
 					lang,
 				);
 				await this.cleanupLocation(locId, daysCount, hourlyDays);
@@ -1164,7 +1325,7 @@ class Openmeteo extends utils.Adapter {
 				`&current=temperature_2m,apparent_temperature,precipitation,weathercode` +
 				`,windspeed_10m,windgusts_10m,winddirection_10m,cloudcover` +
 				`,relative_humidity_2m,dew_point_2m,pressure_msl,visibility,is_day` +
-				`,rain,snowfall,snow_depth,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance` +
+				`,rain,snowfall,snow_depth,shortwave_radiation,cape,lifted_index,soil_temperature_0cm,global_tilted_irradiance,uv_index` +
 				`&timezone=${encodeURIComponent(timezone)}&forecast_days=${daysCount}` +
 				`&temperature_unit=${temperatureUnit}` +
 				`&windspeed_unit=${windspeedUnit}` +
@@ -1591,6 +1752,8 @@ class Openmeteo extends utils.Adapter {
 	 * @param enableAstronomyHourly
 	 * @param enableAgriculture
 	 * @param enableAgricultureHourly
+	 * @param enableComfort
+	 * @param enableComfortHourly
 	 * @param lang
 	 */
 	async processData(
@@ -1605,6 +1768,8 @@ class Openmeteo extends utils.Adapter {
 		enableAstronomyHourly,
 		enableAgriculture,
 		enableAgricultureHourly,
+		enableComfort,
+		enableComfortHourly,
 		lang,
 	) {
 		const { tempUnit, windUnit, precipUnit, windspeedUnit } = units;
@@ -1821,6 +1986,65 @@ class Openmeteo extends utils.Adapter {
 			} else {
 				try {
 					await this.delObjectAsync(`${locId}.current.agriculture`, { recursive: true });
+				} catch {
+					/* ok */
+				}
+			}
+
+			if (enableComfort) {
+				const isFahrenheit = tempUnit === "°F";
+				const curTempC = unitToCelsius(cur.temperature_2m, isFahrenheit ? "fahrenheit" : "celsius");
+				const curDpC = unitToCelsius(cur.dew_point_2m, isFahrenheit ? "fahrenheit" : "celsius");
+				const curWindKmh = windToKmh(cur.windspeed_10m, windspeedUnit);
+				const heatIdx = calcHeatIndex(curTempC, cur.relative_humidity_2m);
+				const windch = calcWindchill(curTempC, curWindKmh);
+				const humid = calcHumidex(curTempC, curDpC);
+				const unitArg = isFahrenheit ? "fahrenheit" : "celsius";
+				await this.setObjectNotExistsAsync(`${locId}.current.comfort`, {
+					type: "channel",
+					common: { name: "Komfortindizes aktuell" },
+					native: {},
+				});
+				await this.setDP(`${locId}.current.comfort.heat_index`, celsiusToUnit(heatIdx, unitArg), {
+					name: "Hitzeindex",
+					type: "number",
+					unit: tempUnit,
+					role: "value.temperature",
+				});
+				await this.setDP(`${locId}.current.comfort.windchill`, celsiusToUnit(windch, unitArg), {
+					name: "Windchill",
+					type: "number",
+					unit: tempUnit,
+					role: "value.temperature",
+				});
+				await this.setDP(`${locId}.current.comfort.humidex`, celsiusToUnit(humid, unitArg), {
+					name: "Humidex",
+					type: "number",
+					unit: tempUnit,
+					role: "value.temperature",
+				});
+				await this.setDP(`${locId}.current.comfort.humidex_level`, humidexLevel(humid), {
+					name: "Humidex-Stufe (1–5)",
+					type: "number",
+					role: "value",
+				});
+				await this.setDP(
+					`${locId}.current.comfort.uv_index`,
+					cur.uv_index != null ? Math.round(cur.uv_index * 10) / 10 : null,
+					{
+						name: "UV-Index",
+						type: "number",
+						role: "value.uv",
+					},
+				);
+				await this.setDP(`${locId}.current.comfort.uv_level`, uvLevel(cur.uv_index), {
+					name: "UV-Stufe",
+					type: "string",
+					role: "text",
+				});
+			} else {
+				try {
+					await this.delObjectAsync(`${locId}.current.comfort`, { recursive: true });
 				} catch {
 					/* ok */
 				}
@@ -2158,6 +2382,61 @@ class Openmeteo extends utils.Adapter {
 			} else {
 				try {
 					await this.delObjectAsync(`${prefix}.agriculture`, { recursive: true });
+				} catch {
+					/* ok */
+				}
+			}
+			if (enableComfort) {
+				const isFahrenheit = tempUnit === "°F";
+				const unitArg = isFahrenheit ? "fahrenheit" : "celsius";
+				const tMaxC = unitToCelsius(d.temperature_2m_max[i], unitArg);
+				const tMinC = unitToCelsius(d.temperature_2m_min[i], unitArg);
+				const dpMeanC = unitToCelsius(d.dew_point_2m_mean[i], unitArg);
+				const windMaxKmh = windToKmh(d.windspeed_10m_max[i], windspeedUnit);
+				const heatIdxMax = calcHeatIndex(tMaxC, d.relative_humidity_2m_mean[i]);
+				const windchMin = calcWindchill(tMinC, windMaxKmh);
+				const humidMax = calcHumidex(tMaxC, dpMeanC);
+				await this.setObjectNotExistsAsync(`${prefix}.comfort`, {
+					type: "channel",
+					common: { name: `Komfortindizes Tag ${i + 1}` },
+					native: {},
+				});
+				await this.setDP(`${prefix}.comfort.heat_index_max`, celsiusToUnit(heatIdxMax, unitArg), {
+					name: "Hitzeindex Max",
+					type: "number",
+					unit: tempUnit,
+					role: "value.temperature",
+				});
+				await this.setDP(`${prefix}.comfort.windchill_min`, celsiusToUnit(windchMin, unitArg), {
+					name: "Windchill Min",
+					type: "number",
+					unit: tempUnit,
+					role: "value.temperature",
+				});
+				await this.setDP(`${prefix}.comfort.humidex_max`, celsiusToUnit(humidMax, unitArg), {
+					name: "Humidex Max",
+					type: "number",
+					unit: tempUnit,
+					role: "value.temperature",
+				});
+				await this.setDP(`${prefix}.comfort.humidex_level`, humidexLevel(humidMax), {
+					name: "Humidex-Stufe (1–5)",
+					type: "number",
+					role: "value",
+				});
+				await this.setDP(`${prefix}.comfort.uv_index_max`, d.uv_index_max[i], {
+					name: "UV-Index Max",
+					type: "number",
+					role: "value.uv",
+				});
+				await this.setDP(`${prefix}.comfort.uv_level`, uvLevel(d.uv_index_max[i]), {
+					name: "UV-Stufe",
+					type: "string",
+					role: "text",
+				});
+			} else {
+				try {
+					await this.delObjectAsync(`${prefix}.comfort`, { recursive: true });
 				} catch {
 					/* ok */
 				}
@@ -2523,6 +2802,64 @@ class Openmeteo extends utils.Adapter {
 					} else {
 						try {
 							await this.delObjectAsync(`${hPath}.agriculture`, { recursive: true });
+						} catch {
+							/* ok */
+						}
+					}
+					if (enableComfortHourly) {
+						const isFahrenheit = tempUnit === "°F";
+						const unitArg = isFahrenheit ? "fahrenheit" : "celsius";
+						const hTempC = unitToCelsius(hData.temperature, unitArg);
+						const hDpC = unitToCelsius(hData.dew_point, unitArg);
+						const hWindKmh = windToKmh(hData.windspeed, windspeedUnit);
+						const hHeatIdx = calcHeatIndex(hTempC, hData.humidity);
+						const hWindch = calcWindchill(hTempC, hWindKmh);
+						const hHumid = calcHumidex(hTempC, hDpC);
+						await this.setObjectNotExistsAsync(`${hPath}.comfort`, {
+							type: "channel",
+							common: { name: "Komfortindizes" },
+							native: {},
+						});
+						await this.setDP(`${hPath}.comfort.heat_index`, celsiusToUnit(hHeatIdx, unitArg), {
+							name: "Hitzeindex",
+							type: "number",
+							unit: tempUnit,
+							role: "value.temperature",
+						});
+						await this.setDP(`${hPath}.comfort.windchill`, celsiusToUnit(hWindch, unitArg), {
+							name: "Windchill",
+							type: "number",
+							unit: tempUnit,
+							role: "value.temperature",
+						});
+						await this.setDP(`${hPath}.comfort.humidex`, celsiusToUnit(hHumid, unitArg), {
+							name: "Humidex",
+							type: "number",
+							unit: tempUnit,
+							role: "value.temperature",
+						});
+						await this.setDP(`${hPath}.comfort.humidex_level`, humidexLevel(hHumid), {
+							name: "Humidex-Stufe (1–5)",
+							type: "number",
+							role: "value",
+						});
+						await this.setDP(
+							`${hPath}.comfort.uv_index`,
+							hData.uv_index != null ? Math.round(hData.uv_index * 10) / 10 : null,
+							{
+								name: "UV-Index",
+								type: "number",
+								role: "value.uv",
+							},
+						);
+						await this.setDP(`${hPath}.comfort.uv_level`, uvLevel(hData.uv_index), {
+							name: "UV-Stufe",
+							type: "string",
+							role: "text",
+						});
+					} else {
+						try {
+							await this.delObjectAsync(`${hPath}.comfort`, { recursive: true });
 						} catch {
 							/* ok */
 						}

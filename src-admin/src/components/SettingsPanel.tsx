@@ -214,6 +214,24 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                         {I18n.t('enablePollenHelp')}
                     </Typography>
 
+                    {/* Comfort indices */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                        <FormControlLabel
+                            control={<Switch checked={!!native.enableComfort} onChange={e => update('enableComfort', e.target.checked)} />}
+                            label={I18n.t('enableComfort')}
+                            sx={{ minWidth: 280 }}
+                        />
+                        {native.enableComfort && (
+                            <FormControlLabel
+                                control={<Switch checked={!!native.enableComfortHourly} onChange={e => update('enableComfortHourly', e.target.checked)} />}
+                                label={I18n.t('alsoHourly')}
+                            />
+                        )}
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mb: 1 }}>
+                        {I18n.t('enableComfortHelp')}
+                    </Typography>
+
                 </Box>
             </Box>
 

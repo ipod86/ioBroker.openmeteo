@@ -8,6 +8,8 @@
     "daysCountHelp": "Ile dni na pobranie (maks. 16)",
     "enableAgriculture": "Solar & Klimat",
     "enableAgricultureHelp": "Promieniowanie słoneczne, CAPE, temperatura gleby, naświetlenie w *.agriculture",
+    "enableComfort": "Indeksy komfortu",
+    "enableComfortHelp": "Indeks ciepła, odczuwalny chłód, humidex, indeks UV w *.comfort",
     "fahrenheit": "Fahrenheita (°F)",
     "forecast": "Prognoza",
     "hourlyDays": "Dni z danymi godzinowymi (0–16)",
