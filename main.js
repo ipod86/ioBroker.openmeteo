@@ -2044,6 +2044,18 @@ class Openmeteo extends utils.Adapter {
 					}
 				}
 			}
+			{
+				const dayHours = (hoursByDate[d.time[i]] || []).filter(Boolean);
+				const flHeights = dayHours.map(h => h.freezing_level_height).filter(v => v !== null && v !== undefined);
+				if (flHeights.length > 0) {
+					await this.setDP(`${prefix}.freezing_level_height_min`, Math.min(...flHeights), {
+						name: "Tiefste Nullgradgrenze (Tagesminimum)",
+						type: "number",
+						unit: "m",
+						role: "value",
+					});
+				}
+			}
 			if (enableAgriculture) {
 				await this.setObjectNotExistsAsync(`${prefix}.agriculture`, {
 					type: "channel",
