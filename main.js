@@ -214,14 +214,9 @@ function weatherIconUrl(code, iconSet, isDay) {
 		const folder = iconSet === "amcharts_animated" ? "animated" : "static";
 		return `/openmeteo.admin/icons/amcharts/${folder}/${name}.svg`;
 	}
-	// WMO SVG set
-	if (iconSet === "wmo_svg") {
-		const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
-		return `/openmeteo.admin/icons/wmo_svg/wmo_${String(wmoCode).padStart(2, "0")}.svg`;
-	}
-	// WMO PNG set: fall back for codes without icons
+	// WMO SVG set (fallback for unknown iconSet values)
 	const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
-	return `/openmeteo.admin/icons/wmo/wmo_${String(wmoCode).padStart(2, "0")}.png`;
+	return `/openmeteo.admin/icons/wmo_svg/wmo_${String(wmoCode).padStart(2, "0")}.svg`;
 }
 
 /**

@@ -21,7 +21,6 @@ const ICON_SETS = [
     { value: 'basmilius_animated', label: 'Meteocons (animiert SVG)',          ext: 'svg', amcharts: false },
     { value: 'amcharts_animated',  label: 'amCharts (animiert SVG)',           ext: 'svg', amcharts: true  },
     { value: 'amcharts_static',    label: 'amCharts (statisch SVG)',           ext: 'svg', amcharts: true  },
-    { value: 'wmo',                label: 'WMO OGC (meteorologische Symbole, PNG)', ext: 'png', amcharts: false },
     { value: 'wmo_svg',            label: 'WMO OGC (meteorologische Symbole, SVG)', ext: 'svg', amcharts: false },
 ];
 
