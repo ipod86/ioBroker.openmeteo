@@ -9,7 +9,7 @@
     "daysCountHelp": "Cuántos días recuperar (máx. 16)",
     "defaultValue": "por defecto",
     "enableAgriculture": "Agricultura / Solar",
-    "enableAgricultureHelp": "Radiación solar, CAPE, temperatura del suelo, irradiancia en *.agricultura",
+    "enableAgricultureHelp": "Radiación solar, CAPE, temperatura del suelo, irradiancia en *.agriculture",
     "enableAirQuality": "Calidad del aire (ICA, partículas)",
     "enableAirQualityHelp": "european_aqi, PM10, PM2.5, NO₂, CO, polvo, ozono bajo la calidad_del_aire actual",
     "enableAstronomy": "Astronomía (sol y luna)",

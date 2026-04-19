@@ -6,7 +6,7 @@
     "celsius": "Цельсій (°C)",
     "daysCount": "Кількість днів (1–16)",
     "daysCountHelp": "Скільки днів для отримання (макс. 16)",
-    "enableAgricultureHelp": "Сонячна радіація, CAPE, температура ґрунту, освітленість у *.сільгосп",
+    "enableAgricultureHelp": "Сонячна радіація, CAPE, температура ґрунту, освітленість у *.agriculture",
     "fahrenheit": "Фаренгейт (°F)",
     "forecast": "Прогноз",
     "hourlyDays": "Дні з погодинними даними (0–16)",

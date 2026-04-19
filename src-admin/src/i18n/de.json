@@ -9,7 +9,7 @@
     "daysCountHelp": "Wie viele Tage sollen abgerufen werden (max. 16)",
     "defaultValue": "Standard",
     "enableAgriculture": "Landwirtschaft / Solar",
-    "enableAgricultureHelp": "Sonneneinstrahlung, CAPE, Bodentemperatur, Bestrahlungsstärke unter *.Landwirtschaft",
+    "enableAgricultureHelp": "Sonneneinstrahlung, CAPE, Bodentemperatur, Bestrahlungsstärke unter *.agriculture",
     "enableAirQuality": "Luftqualität (AQI, Feinstaub)",
     "enableAirQualityHelp": "European_AQI, PM10, PM2,5, NO₂, CO, Staub, Ozon unter current.air_quality",
     "enableAstronomy": "Astronomie (Sonne & Mond)",

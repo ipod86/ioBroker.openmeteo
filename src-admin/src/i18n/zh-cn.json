@@ -9,7 +9,7 @@
     "daysCountHelp": "获取多少天（最多 16 天）",
     "defaultValue": "默认",
     "enableAgriculture": "农业/太阳能",
-    "enableAgricultureHelp": "太阳辐射、CAPE、土壤温度、辐照度（*.农业）",
+    "enableAgricultureHelp": "太阳辐射、CAPE、土壤温度、辐照度（*.agriculture）",
     "enableAirQuality": "空气质量（AQI、颗粒物）",
     "enableAirQualityHelp": "current.air_quality 下的 european_aqi、PM10、PM2.5、NO2、CO、灰尘、臭氧",
     "enableAstronomy": "天文学（太阳和月亮）",
