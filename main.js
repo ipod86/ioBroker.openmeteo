@@ -1066,7 +1066,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:2px solid ${divColor};` : "";
-				html += `<td style="font-size:11px;color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13)}${dayData[i][4]}<span style="font-size:9px;margin-left:1px;">%</span></td>`;
+				html += `<td style="font-size:11px;color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13, 0)} ${dayData[i][4]}<span style="font-size:9px;margin-left:1px;">%</span></td>`;
 			}
 			html += `</tr></table>`;
 		}
