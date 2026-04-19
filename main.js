@@ -1691,13 +1691,13 @@ class Openmeteo extends utils.Adapter {
 				name: "Schneefall",
 				type: "number",
 				unit: "cm",
-				role: "value.precipitation.snow",
+				role: "value.snow",
 			});
 			await this.setDP(`${locId}.current.snow_depth`, Math.round(cur.snow_depth * 100), {
 				name: "Schneehöhe",
 				type: "number",
 				unit: "cm",
-				role: "value.precipitation.snow",
+				role: "value.snow",
 			});
 			const curWindKmh =
 				windspeedUnit === "ms"
@@ -2020,7 +2020,7 @@ class Openmeteo extends utils.Adapter {
 				name: "Schneefall",
 				type: "number",
 				unit: "cm",
-				role: "value.precipitation.snow",
+				role: "value.snow",
 			});
 			{
 				{
@@ -2038,7 +2038,7 @@ class Openmeteo extends utils.Adapter {
 								name: "Tiefste Schneefallgrenze (Tagesminimum)",
 								type: "number",
 								unit: "m",
-								role: "value",
+								role: "value.snowline",
 							},
 						);
 					}
@@ -2052,7 +2052,7 @@ class Openmeteo extends utils.Adapter {
 						name: "Tiefste Nullgradgrenze (Tagesminimum)",
 						type: "number",
 						unit: "m",
-						role: "value",
+						role: "value.snowline",
 					});
 				}
 			}
@@ -2385,13 +2385,13 @@ class Openmeteo extends utils.Adapter {
 						name: "Schneefall",
 						type: "number",
 						unit: "cm",
-						role: "value.precipitation.snow",
+						role: "value.snow",
 					});
 					await this.setDP(`${hPath}.snow_depth`, hData.snow_depth, {
 						name: "Schneehöhe",
 						type: "number",
 						unit: "cm",
-						role: "value.precipitation.snow",
+						role: "value.snow",
 					});
 					if (hData.snowfall_height !== null && hData.snowfall_height !== undefined) {
 						await this.setDP(
@@ -2401,7 +2401,7 @@ class Openmeteo extends utils.Adapter {
 								name: "Schneefallgrenze",
 								type: "number",
 								unit: "m",
-								role: "value",
+								role: "value.snowline",
 							},
 						);
 					}
@@ -2410,7 +2410,7 @@ class Openmeteo extends utils.Adapter {
 							name: "Nullgradgrenze",
 							type: "number",
 							unit: "m",
-							role: "value",
+							role: "value.snowline",
 						});
 					}
 					if (hData.uv_index !== null && hData.uv_index !== undefined) {
