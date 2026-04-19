@@ -83,7 +83,10 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                             value={native.warnFrostThreshold ?? 0}
                             inputProps={{ min: -20, max: 5, step: 0.5 }}
                             onChange={e => update('warnFrostThreshold', parseFloat(e.target.value))}
-                            helperText={I18n.t('warnFrostThresholdHelp')}
+                            error={(native.warnFrostThreshold ?? 0) < -20 || (native.warnFrostThreshold ?? 0) > 5}
+                            helperText={(native.warnFrostThreshold ?? 0) < -20 || (native.warnFrostThreshold ?? 0) > 5
+                                ? I18n.t('validRange', '−20–5')
+                                : I18n.t('warnFrostThresholdHelp')}
                             sx={{ width: 200, mt: 1, ml: 2 }}
                         />
                     )}
@@ -94,18 +97,16 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                                 type="number"
                                 value={native.warnLeadHours ?? 2}
                                 inputProps={{ min: 1, max: 24 }}
-                                onChange={e => update('warnLeadHours', parseInt(e.target.value) || 2)}
-                                helperText={I18n.t('warnLeadHoursHelp')}
+                                onChange={e => update('warnLeadHours', parseInt(e.target.value))}
+                                error={(native.warnLeadHours ?? 2) < 1 || (native.warnLeadHours ?? 2) > 24}
+                                helperText={(native.warnLeadHours ?? 2) < 1 || (native.warnLeadHours ?? 2) > 24
+                                    ? I18n.t('validRange', '1–24')
+                                    : I18n.t('warnLeadHoursHelp')}
                                 sx={{ width: 200, mt: 1 }}
                             />
                             {(native.updateInterval || 60) > 60 && (
                                 <Alert severity="warning" sx={{ mt: 1 }}>
                                     {I18n.t('warnNeedsHourlyInterval')}
-                                </Alert>
-                            )}
-                            {(native.warnLeadHours ?? 2) > 24 && (
-                                <Alert severity="error" sx={{ mt: 1 }}>
-                                    {I18n.t('warnLeadHoursTooHigh')}
                                 </Alert>
                             )}
                         </>

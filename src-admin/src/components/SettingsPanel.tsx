@@ -39,8 +39,11 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                         type="number"
                         value={native.daysCount ?? 7}
                         inputProps={{ min: 1, max: 16 }}
-                        onChange={e => update('daysCount', parseInt(e.target.value) || 7)}
-                        helperText={I18n.t('daysCountHelp')}
+                        onChange={e => update('daysCount', parseInt(e.target.value))}
+                        error={(native.daysCount ?? 7) < 1 || (native.daysCount ?? 7) > 16}
+                        helperText={(native.daysCount ?? 7) < 1 || (native.daysCount ?? 7) > 16
+                            ? I18n.t('validRange', '1–16')
+                            : I18n.t('daysCountHelp')}
                         sx={{ width: 200 }}
                     />
                     <TextField
@@ -48,8 +51,11 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType }) => {
                         type="number"
                         value={native.hourlyDays ?? 3}
                         inputProps={{ min: 0, max: 16 }}
-                        onChange={e => update('hourlyDays', parseInt(e.target.value) || 0)}
-                        helperText={I18n.t('hourlyDaysHelp')}
+                        onChange={e => update('hourlyDays', parseInt(e.target.value))}
+                        error={(native.hourlyDays ?? 3) < 0 || (native.hourlyDays ?? 3) > (native.daysCount ?? 7)}
+                        helperText={(native.hourlyDays ?? 3) < 0 || (native.hourlyDays ?? 3) > (native.daysCount ?? 7)
+                            ? I18n.t('hourlyDaysExceedsDaysCount')
+                            : I18n.t('hourlyDaysHelp')}
                         sx={{ width: 200 }}
                     />
                 </Box>

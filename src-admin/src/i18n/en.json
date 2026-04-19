@@ -1,4 +1,6 @@
 {
+    "hourlyDaysExceedsDaysCount": "Must not exceed number of forecast days",
     "tabGeneral": "General",
-    "tabNotifications": "Notifications"
+    "tabNotifications": "Notifications",
+    "validRange": "Valid range: %s"
 }
