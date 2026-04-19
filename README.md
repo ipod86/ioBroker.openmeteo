@@ -54,6 +54,7 @@ The adapter generates natural-language weather summaries (`current.summary`, `da
 | **Air Quality** | on | european_aqi, PM10, PM2.5, NO₂, CO, dust, ozone → `current.air_quality` / `hXX.air_quality` |
 | **Astronomy** | on | sunrise, sunset, solar noon, max sun elevation, moon phase, moonrise, moonset → `dayX.astronomy` / `hXX.astronomy` |
 | **Agriculture / Solar** | off | solar radiation, CAPE, soil temperature, irradiance → `*.agriculture` |
+| **Comfort Indices** | off | heat index, windchill, humidex, UV index → `*.comfort` |
 | **Pollen** | off | alder, birch, grass, mugwort, olive, ragweed with level text → `dayX.pollen` / `hXX.pollen` |
 | **DWD warnings** | off | Official warnings from Deutscher Wetterdienst (Germany only) → `location.warnings.*` |
 
@@ -99,6 +100,8 @@ Install via the ioBroker Admin interface (search for "openmeteo-notify").
 | Astronomy – also hourly | Echo astronomy data per hourly slot | off |
 | Agriculture / Solar | Enable radiation, CAPE, soil temp | off |
 | Agriculture – also hourly | Hourly agricultural data | off |
+| Comfort Indices | Enable heat index, windchill, humidex, UV index | off |
+| Comfort – also hourly | Hourly comfort data | off |
 | Pollen | Enable pollen data (Europe only) | off |
 | Pollen – also hourly | Hourly pollen per type | off |
 | DWD weather warnings | Enable DWD data (Germany only) | off |
@@ -142,6 +145,12 @@ The adapter creates data points under `openmeteo-notify.<instance>.<location>`.
 | `air_quality.*` | AQI, PM10, PM2.5, NO₂, CO, dust, ozone *(if enabled)* | |
 | `pollen.*` | Current pollen per type *(if enabled)* | Grains/m³ |
 | `agriculture.*` | Solar radiation, CAPE, soil temperature *(if enabled)* | |
+| `comfort.heat_index` | Heat index – feels-like in heat (valid ≥ 27 °C + ≥ 40 % RH) *(if enabled)* | °C/°F |
+| `comfort.windchill` | Wind chill – feels-like in cold (valid ≤ 10 °C + wind > 4.8 km/h) *(if enabled)* | °C/°F |
+| `comfort.humidex` | Humidex – Canadian humidity-temperature index *(if enabled)* | °C/°F |
+| `comfort.humidex_level` | Humidex discomfort level 1 (none) – 5 (dangerous) *(if enabled)* | |
+| `comfort.uv_index` | Current UV index *(if enabled)* | |
+| `comfort.uv_level` | UV level: `low` / `moderate` / `high` / `very_high` / `extreme` *(if enabled)* | |
 
 ### Daily forecast (`day1` … `day16`)
 
@@ -173,6 +182,10 @@ The adapter creates data points under `openmeteo-notify.<instance>.<location>`.
 | `astronomy.moon_phase_val` / `_text` / `_icon_url` | Moon phase *(if enabled)* | |
 | `astronomy.moonrise` / `astronomy.moonset` | Moon rise / set *(if enabled)* | |
 | `agriculture.solar_radiation_sum` / `.evapotranspiration` | Solar / evapotranspiration *(if enabled)* | |
+| `comfort.heat_index_max` | Max heat index of the day *(if enabled)* | °C/°F |
+| `comfort.windchill_min` | Min wind chill of the day *(if enabled)* | °C/°F |
+| `comfort.humidex_max` / `.humidex_level` | Max humidex / discomfort level *(if enabled)* | |
+| `comfort.uv_index_max` / `.uv_level` | Max UV index / level *(if enabled)* | |
 | `pollen.alder` … `pollen.ragweed` | Daily max pollen + level text *(if enabled, day1–4)* | |
 
 ### Hourly values (`day1.hourly.h00` … `h23`)
@@ -186,6 +199,7 @@ Optional per hour (if enabled + "also hourly"):
 | `hXX.air_quality` | european_aqi, PM10, PM2.5, NO₂, CO, dust, ozone |
 | `hXX.astronomy` | sunrise, sunset, moon_phase_val/text/icon_url, moonrise, moonset |
 | `hXX.agriculture` | solar_radiation, CAPE, soil_temp, irradiance |
+| `hXX.comfort` | heat_index, windchill, humidex, humidex_level, uv_index, uv_level |
 | `hXX.pollen` | alder … ragweed + level text (Keine/Niedrig/Mittel/Hoch) |
 
 ### Official warnings (`warnings`)
