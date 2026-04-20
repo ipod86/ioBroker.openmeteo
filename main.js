@@ -2034,6 +2034,7 @@ class Openmeteo extends utils.Adapter {
 					{
 						name: "UV-Index",
 						type: "number",
+						unit: "UV",
 						role: "value.uv",
 					},
 				);
@@ -2282,6 +2283,7 @@ class Openmeteo extends utils.Adapter {
 			await this.setDP(`${prefix}.uv_index`, d.uv_index_max[i], {
 				name: "UV-Index",
 				type: "number",
+				unit: "UV",
 				role: "value.uv",
 			});
 			await this.setDP(`${prefix}.sunshine_hours`, sunH, {
@@ -2427,6 +2429,7 @@ class Openmeteo extends utils.Adapter {
 				await this.setDP(`${prefix}.comfort.uv_index_max`, d.uv_index_max[i], {
 					name: "UV-Index Max",
 					type: "number",
+					unit: "UV",
 					role: "value.uv",
 				});
 				await this.setDP(`${prefix}.comfort.uv_level`, uvLevel(d.uv_index_max[i]), {
@@ -2480,6 +2483,7 @@ class Openmeteo extends utils.Adapter {
 			await this.setDP(`${prefix}.uv_index_clear_sky`, d.uv_index_clear_sky_max[i], {
 				name: "UV-Index (wolkenlos)",
 				type: "number",
+				unit: "UV",
 				role: "value.uv",
 			});
 
@@ -2758,6 +2762,7 @@ class Openmeteo extends utils.Adapter {
 						await this.setDP(`${hPath}.uv_index`, hData.uv_index, {
 							name: "UV-Index",
 							type: "number",
+							unit: "UV",
 							role: "value.uv",
 						});
 					}
@@ -2849,6 +2854,7 @@ class Openmeteo extends utils.Adapter {
 							{
 								name: "UV-Index",
 								type: "number",
+								unit: "UV",
 								role: "value.uv",
 							},
 						);
