@@ -765,40 +765,60 @@ class Openmeteo extends utils.Adapter {
 		}
 	}
 
-	syncCustomIconsToStatic() {
-		const srcDir = path.join(utils.getAbsoluteDefaultDataDir(), "files", this.namespace, "icons", "custom");
+	async syncCustomIconsToStatic() {
 		const destDir = path.join(__dirname, "admin", "icons", "custom");
 
-		if (!fs.existsSync(srcDir)) {
-			this.log.debug(`Icon sync — source not found: ${srcDir}`);
+		let entries;
+		try {
+			entries = await this.readDirAsync(this.namespace, "icons/custom");
+		} catch (e) {
+			this.log.debug(`Icon sync — DB folder not accessible: ${e.message}`);
+			return;
+		}
+		if (!Array.isArray(entries)) {
+			return;
+		}
+
+		const dbSvgs = new Set(entries.filter(e => !e.isDir && e.file.endsWith(".svg")).map(e => e.file));
+		if (dbSvgs.size === 0) {
 			return;
 		}
 
 		fs.mkdirSync(destDir, { recursive: true });
 
-		const srcFiles = new Set(fs.readdirSync(srcDir).filter(f => f.endsWith(".svg")));
-		if (srcFiles.size === 0) {
-			return;
-		}
-
 		let copied = 0;
-		for (const name of srcFiles) {
+		for (const name of dbSvgs) {
 			try {
-				fs.copyFileSync(path.join(srcDir, name), path.join(destDir, name));
+				const result = await this.readFileAsync(this.namespace, `icons/custom/${name}`);
+				let data;
+				if (Buffer.isBuffer(result)) {
+					data = result;
+				} else if (result && Buffer.isBuffer(result.file)) {
+					data = result.file;
+				} else if (result && typeof result.file === "string") {
+					data = Buffer.from(result.file);
+				} else if (result && Buffer.isBuffer(result.data)) {
+					data = result.data;
+				} else {
+					data = result;
+				}
+				fs.writeFileSync(path.join(destDir, name), data);
 				copied++;
 			} catch (e) {
-				this.log.warn(`Icon copy failed for ${name}: ${e.message}`);
+				this.log.warn(`Icon sync failed for ${name}: ${e.message}`);
 			}
 		}
 
 		let removed = 0;
-		for (const name of fs.readdirSync(destDir)) {
-			if (name.endsWith(".svg") && !srcFiles.has(name)) {
-				try {
-					fs.unlinkSync(path.join(destDir, name));
-					removed++;
-				} catch (e) {
-					this.log.warn(`Icon removal failed for ${name}: ${e.message}`);
+		if (fs.existsSync(destDir)) {
+			for (const name of fs.readdirSync(destDir)) {
+				if (name.endsWith(".svg") && !dbSvgs.has(name)) {
+					try {
+						fs.unlinkSync(path.join(destDir, name));
+						removed++;
+					} catch (e) {
+						this.log.warn(`Icon removal failed for ${name}: ${e.message}`);
+					}
 				}
 			}
 		}
@@ -809,7 +829,7 @@ class Openmeteo extends utils.Adapter {
 	async onReady() {
 		await this.setState("info.connection", false, true);
 		await this.ensureCustomIconsReadme();
-		this.syncCustomIconsToStatic();
+		await this.syncCustomIconsToStatic();
 
 		// Sofort beim Start abrufen
 		await this.runUpdate();
