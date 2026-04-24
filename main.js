@@ -759,8 +759,9 @@ class Openmeteo extends utils.Adapter {
 		}
 	}
 
-	// Copies SVG files from the DB namespace (uploaded by the user via Admin → Files)
-	// into the adapter's static admin/icons/custom/ folder so VIS can serve them.
+	// Syncs SVG files between DB namespace (Admin → Files) and static admin/icons/custom/.
+	// On every startup: copies new/changed files from DB → static, removes orphans from static.
+	// If DB namespace has no SVGs at all, static folder is left untouched.
 	async syncCustomIconsToStatic() {
 		const destDir = path.join(__dirname, "admin", "icons", "custom");
 		let entries;
@@ -769,27 +770,44 @@ class Openmeteo extends utils.Adapter {
 		} catch {
 			return; // folder not yet initialised in DB
 		}
-		if (!Array.isArray(entries) || entries.length === 0) {
+		if (!Array.isArray(entries)) {
 			return;
 		}
+
+		const dbSvgs = new Set(entries.filter(e => !e.isDir && e.file.endsWith(".svg")).map(e => e.file));
+		if (dbSvgs.size === 0) {
+			return;
+		} // DB empty — keep static folder as-is
+
 		fs.mkdirSync(destDir, { recursive: true });
-		let synced = 0;
-		for (const entry of entries) {
-			if (entry.isDir || !entry.file.endsWith(".svg")) {
-				continue;
-			}
+
+		// Copy new / changed files from DB → static
+		let copied = 0;
+		for (const name of dbSvgs) {
 			try {
-				const result = await this.readFileAsync(this.namespace, `icons/custom/${entry.file}`);
+				const result = await this.readFileAsync(this.namespace, `icons/custom/${name}`);
 				const data = result && result.file !== undefined ? result.file : result;
-				fs.writeFileSync(path.join(destDir, entry.file), data);
-				synced++;
+				fs.writeFileSync(path.join(destDir, name), data);
+				copied++;
 			} catch (e) {
-				this.log.debug(`Icon sync failed for ${entry.file}: ${e.message}`);
+				this.log.debug(`Icon sync failed for ${name}: ${e.message}`);
 			}
 		}
-		if (synced > 0) {
-			this.log.debug(`Synced ${synced} custom icon(s) from DB namespace to static folder`);
+
+		// Remove orphaned SVGs from static that no longer exist in DB
+		let removed = 0;
+		try {
+			for (const name of fs.readdirSync(destDir)) {
+				if (name.endsWith(".svg") && !dbSvgs.has(name)) {
+					fs.unlinkSync(path.join(destDir, name));
+					removed++;
+				}
+			}
+		} catch (e) {
+			this.log.debug(`Icon cleanup error: ${e.message}`);
 		}
+
+		this.log.debug(`Custom icons synced: ${copied} copied, ${removed} removed`);
 	}
 
 	async onReady() {
