@@ -1277,7 +1277,9 @@ class Openmeteo extends utils.Adapter {
 	async buildWidgetHtml(widget, locId) {
 		const p = locId;
 		const w = widget.width ?? 450;
-		const s = w / 450;
+		// c(x): converts a design-px value (at 450 px reference width) to a
+		// container-relative cqw unit so every size scales with the actual cell width.
+		const c = x => `${(x / 4.5).toFixed(2)}cqw`;
 		const isLight = widget.theme === "light";
 		const isCustom = widget.theme === "custom";
 
@@ -1310,7 +1312,7 @@ class Openmeteo extends utils.Adapter {
 		const isAmcharts = _iconSet.startsWith("amcharts");
 		const isBasmilius = _iconSet.startsWith("basmilius");
 		const isWmoSvg = _iconSet === "wmo_svg";
-		const mainIconSize = (isAmcharts ? 95 : isBasmilius ? 82 : 75) * s;
+		const mainIconCqw = c(isAmcharts ? 95 : isBasmilius ? 82 : 75);
 		const wmoSvgFilter = isWmoSvg ? (isLight ? "filter:invert(1);" : "") : "";
 		const imgScale = isAmcharts
 			? "transform:scale(1.6);transform-origin:center;"
@@ -1318,8 +1320,9 @@ class Openmeteo extends utils.Adapter {
 				? "transform:scale(1.1);transform-origin:center;"
 				: "";
 
+		// SVG icons use inline CSS width/height so cqw units apply correctly.
 		const mdi = (path, size = 16, ml = 0) =>
-			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size * s}" height="${size * s}" style="vertical-align:middle;fill:${iconColor};flex-shrink:0;margin-left:${ml * s}px;"><path d="${path}"/></svg>`;
+			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;fill:${iconColor};flex-shrink:0;${ml ? `margin-left:${c(ml)};` : ""}"><path d="${path}"/></svg>`;
 
 		const MDI = {
 			wind: "M4,10A1,1 0 0,1 3,9A1,1 0 0,1 4,8H12A2,2 0 0,0 14,6A2,2 0 0,0 12,4C11.45,4 10.95,4.22 10.59,4.59C10.2,5 9.56,5 9.17,4.59C8.78,4.2 8.78,3.56 9.17,3.17C9.9,2.45 10.9,2 12,2A4,4 0 0,1 16,6A4,4 0 0,1 12,10H4M19,12A1,1 0 0,0 20,11A1,1 0 0,0 19,10C18.72,10 18.47,10.11 18.29,10.29C17.9,10.68 17.27,10.68 16.88,10.29C16.5,9.9 16.5,9.27 16.88,8.88C17.42,8.34 18.17,8 19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14H5A1,1 0 0,1 4,13A1,1 0 0,1 5,12H19M18,18H4A1,1 0 0,1 3,17A1,1 0 0,1 4,16H18A3,3 0 0,1 21,19A3,3 0 0,1 18,22C17.17,22 16.42,21.66 15.88,21.12C15.5,20.73 15.5,20.1 15.88,19.71C16.27,19.32 16.9,19.32 17.29,19.71C17.47,19.89 17.72,20 18,20A1,1 0 0,0 19,19A1,1 0 0,0 18,18Z",
@@ -1357,35 +1360,38 @@ class Openmeteo extends utils.Adapter {
 			),
 		);
 
-		let html = `<div style="width:100%;max-width:${w}px;box-sizing:border-box;background:${bgColor};color:${textColor};padding:0 ${5 * s}px;font-family:sans-serif;">`;
+		// Outer div is the cqw query container (container-type:inline-size).
+		// Inner div carries background/padding; its children use cqw for all sizes.
+		let html = `<div style="container-type:inline-size;width:100%;max-width:${w}px;">`;
+		html += `<div style="background:${bgColor};color:${textColor};padding:0 ${c(5)};font-family:sans-serif;">`;
 
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
 <tr>
-<td width="${mainIconSize}px"><img src="${curIcon}" style="width:${mainIconSize}px;height:${mainIconSize}px;display:block;${wmoSvgFilter}"></td>
-<td style="padding-left:${10 * s}px;vertical-align:middle;">
-<div style="font-size:${13 * s}px;font-weight:600;color:${textColor};margin-bottom:${2 * s}px;">${widget.locationName}</div>
-<div style="font-size:${15 * s}px;font-weight:400;color:${subColor};">${curDesc}</div>
-<div style="font-size:${12 * s}px;color:${fadeColor};margin-top:${2 * s}px;">${curSummary}</div>
+<td style="width:${mainIconCqw}"><img src="${curIcon}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
+<td style="padding-left:${c(10)};vertical-align:middle;">
+<div style="font-size:${c(13)};font-weight:600;color:${textColor};margin-bottom:${c(2)};">${widget.locationName}</div>
+<div style="font-size:${c(15)};font-weight:400;color:${subColor};">${curDesc}</div>
+<div style="font-size:${c(12)};color:${fadeColor};margin-top:${c(2)};">${curSummary}</div>
 </td>
-<td style="text-align:right;vertical-align:middle;padding-right:${5 * s}px;">
-<div style="font-size:${42 * s}px;font-weight:300;letter-spacing:${-1 * s}px;color:${textColor};">${curTemp}<span style="font-size:${18 * s}px;vertical-align:top;font-weight:300;margin-left:${2 * s}px;position:relative;top:${6 * s}px;">°C</span></div>
+<td style="text-align:right;vertical-align:middle;padding-right:${c(5)};">
+<div style="font-size:${c(42)};font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="font-size:${c(18)};vertical-align:top;font-weight:300;margin-left:${c(2)};position:relative;top:${c(6)};">°C</span></div>
 </td>
 </tr>
 </table>`;
 
 		// Details
-		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${12 * s}px;font-size:${13 * s}px;color:${subColor};">
+		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(12)};font-size:${c(13)};color:${subColor};">
 <tr>
 <td width="5%"></td>
-<td width="45%" style="text-align:left;padding:${1 * s}px 0;">${mdi(MDI.wind)}<span style="margin-left:${5 * s}px;">${curWind} <span style="font-size:${10 * s}px;color:${fadeColor};">km/h</span></span></td>
-<td width="45%" style="text-align:right;padding:${1 * s}px 0;"><span style="margin-right:${5 * s}px;">${curHum} <span style="font-size:${10 * s}px;color:${fadeColor};">%</span></span>${mdi(MDI.humid)}</td>
+<td width="45%" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.wind)}<span style="margin-left:${c(5)};">${curWind} <span style="font-size:${c(10)};color:${fadeColor};">km/h</span></span></td>
+<td width="45%" style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curHum} <span style="font-size:${c(10)};color:${fadeColor};">%</span></span>${mdi(MDI.humid)}</td>
 <td width="5%"></td>
 </tr>
 <tr>
 <td></td>
-<td style="text-align:left;padding:${1 * s}px 0;">${mdi(MDI.sun)}<span style="margin-left:${5 * s}px;">${sunH} <span style="font-size:${10 * s}px;color:${fadeColor};">h</span></span></td>
-<td style="text-align:right;padding:${1 * s}px 0;"><span style="margin-right:${5 * s}px;">${curPress} <span style="font-size:${10 * s}px;color:${fadeColor};">hPa</span></span>${mdi(MDI.press)}</td>
+<td style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.sun)}<span style="margin-left:${c(5)};">${sunH} <span style="font-size:${c(10)};color:${fadeColor};">h</span></span></td>
+<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curPress} <span style="font-size:${c(10)};color:${fadeColor};">hPa</span></span>${mdi(MDI.press)}</td>
 <td></td>
 </tr>
 </table>`;
@@ -1396,33 +1402,33 @@ class Openmeteo extends utils.Adapter {
 			const end = Math.min(start + batchSize, days);
 			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;text-align:center;"><tr>`;
 			for (let i = start; i < end; i++) {
-				const border = i > start ? `border-left:${2 * s}px solid ${divColor};` : "";
-				html += `<td style="font-size:${12 * s}px;color:${fadeColor};padding-bottom:${2 * s}px;${border}">${dayData[i][0]}</td>`;
+				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
+				html += `<td style="font-size:${c(12)};color:${fadeColor};padding-bottom:${c(2)};${border}">${dayData[i][0]}</td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
-				const border = i > start ? `border-left:${2 * s}px solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${42 * s}px;height:${42 * s}px;display:inline-block;margin:${-2 * s}px 0;${imgScale}${wmoSvgFilter}"></td>`;
+				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
+				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
-				const border = i > start ? `border-left:${2 * s}px solid ${divColor};` : "";
-				html += `<td style="font-size:${14 * s}px;font-weight:600;padding-top:${2 * s}px;color:${textColor};${border}">${dayData[i][2]}<span style="font-size:${10 * s}px;font-weight:400;vertical-align:top;margin-left:${1 * s}px;">°C</span></td>`;
+				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
+				html += `<td style="font-size:${c(14)};font-weight:600;padding-top:${c(2)};color:${textColor};${border}">${dayData[i][2]}<span style="font-size:${c(10)};font-weight:400;vertical-align:top;margin-left:${c(1)};">°C</span></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
-				const border = i > start ? `border-left:${2 * s}px solid ${divColor};` : "";
-				html += `<td style="font-size:${11 * s}px;color:${fadeColor};padding-top:0;${border}">${dayData[i][3]}<span style="font-size:${8 * s}px;vertical-align:top;margin-left:${1 * s}px;">°C</span></td>`;
+				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
+				html += `<td style="font-size:${c(11)};color:${fadeColor};padding-top:0;${border}">${dayData[i][3]}<span style="font-size:${c(8)};vertical-align:top;margin-left:${c(1)};">°C</span></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
-				const border = i > start ? `border-left:${2 * s}px solid ${divColor};` : "";
-				html += `<td style="font-size:${11 * s}px;color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13)} ${dayData[i][4]}<span style="font-size:${9 * s}px;margin-left:${1 * s}px;">%</span></td>`;
+				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
+				html += `<td style="font-size:${c(11)};color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13)} ${dayData[i][4]}<span style="font-size:${c(9)};margin-left:${c(1)};">%</span></td>`;
 			}
 			html += `</tr></table>`;
 		}
 
-		html += `</div>`;
+		html += `</div></div>`;
 		return html;
 	}
 
