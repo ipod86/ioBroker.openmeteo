@@ -1263,7 +1263,6 @@ class Openmeteo extends utils.Adapter {
 			),
 		);
 
-		const oid = `omw-${widget.id}`;
 		let html = `<div style="width:${w}px;background:${bgColor};color:${textColor};padding:0 ${5 * s}px;font-family:sans-serif;">`;
 
 		// Header
