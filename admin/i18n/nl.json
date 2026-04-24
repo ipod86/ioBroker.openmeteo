@@ -37,6 +37,7 @@
     "warnFrostThreshold": "Vorstgrens (°C)",
     "warnFrostThresholdHelp": "Waarschuwing sturen wanneer de temperatuur onder deze waarde daalt",
     "widgetDark": "Donker",
+    "widgetCustom": "Aangepast",
     "widgetWidth": "Breedte",
     "widgetBgColor": "Achtergrond",
     "widgetTextColor": "Tekstkleur",

@@ -67,6 +67,7 @@
     "warningsOpenMeteo": "Berekende waarschuwingen (wereldwijd, uit Open-Meteo-voorspelling)",
     "warningsViaNotificationManager": "via het ioBroker-meldingssysteem",
     "widgetDark": "Donker",
+    "widgetCustom": "Aangepast",
     "widgetWidth": "Breedte",
     "widgetBgColor": "Achtergrond",
     "widgetTextColor": "Tekstkleur",

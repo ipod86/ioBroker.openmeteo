@@ -37,6 +37,7 @@
     "warnFrostThreshold": "Поріг морозу (°C)",
     "warnFrostThresholdHelp": "Надіслати попередження коли температура опуститься нижче цього значення",
     "widgetDark": "Темна",
+    "widgetCustom": "Індивідуальний",
     "widgetWidth": "Ширина",
     "widgetBgColor": "Фон",
     "widgetTextColor": "Колір тексту",

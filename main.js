@@ -1121,7 +1121,7 @@ class Openmeteo extends utils.Adapter {
 		const isLight = widget.theme === "light";
 
 		// Derive all colors from a single base color (hex) + opacity
-		const defaultTextBase = isLight ? "#ffffff" : "#000000";
+		const defaultTextBase = isLight ? "#ffffff" : "#1a1a1a";
 		const textBase = widget.textBase || defaultTextBase;
 		const bgColor = widget.bgColor && widget.bgColor !== "transparent" ? widget.bgColor : "transparent";
 

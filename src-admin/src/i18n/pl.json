@@ -67,6 +67,7 @@
     "warningsOpenMeteo": "Obliczone ostrzeżenia (na całym świecie, na podstawie prognozy Open-Meteo)",
     "warningsViaNotificationManager": "poprzez system powiadomień ioBroker",
     "widgetDark": "Ciemny",
+    "widgetCustom": "Niestandardowy",
     "widgetWidth": "Szerokość",
     "widgetBgColor": "Tło",
     "widgetTextColor": "Kolor tekstu",

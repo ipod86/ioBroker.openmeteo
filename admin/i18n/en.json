@@ -32,6 +32,7 @@
     "warnFrostThreshold": "Frost threshold (°C)",
     "warnFrostThresholdHelp": "Send warning when temperature drops below this value",
     "widgetDark": "Dark",
+    "widgetCustom": "Custom",
     "widgetWidth": "Width",
     "widgetBgColor": "Background",
     "widgetTextColor": "Text color",

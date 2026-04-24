@@ -67,6 +67,7 @@
     "warningsOpenMeteo": "Avisos calculados (a nivel mundial, según la previsión de Open-Meteo)",
     "warningsViaNotificationManager": "a través del sistema de notificación ioBroker",
     "widgetDark": "Oscuro",
+    "widgetCustom": "Personalizado",
     "widgetWidth": "Ancho",
     "widgetBgColor": "Fondo",
     "widgetTextColor": "Color de texto",

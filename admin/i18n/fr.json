@@ -37,6 +37,7 @@
     "warnFrostThreshold": "Seuil de gel (°C)",
     "warnFrostThresholdHelp": "Envoyer une alerte lorsque la température descend sous cette valeur",
     "widgetDark": "Sombre",
+    "widgetCustom": "Personnalisé",
     "widgetWidth": "Largeur",
     "widgetBgColor": "Arrière-plan",
     "widgetTextColor": "Couleur du texte",

@@ -37,6 +37,7 @@
     "warnFrostThreshold": "Umbral de helada (°C)",
     "warnFrostThresholdHelp": "Enviar alerta cuando la temperatura caiga por debajo de este valor",
     "widgetDark": "Oscuro",
+    "widgetCustom": "Personalizado",
     "widgetWidth": "Ancho",
     "widgetBgColor": "Fondo",
     "widgetTextColor": "Color de texto",

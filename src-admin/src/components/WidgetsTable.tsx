@@ -123,50 +123,61 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange
                                     {I18n.t('widgetTheme')}
                                 </Typography>
                                 <ToggleButtonGroup
-                                    value={w.theme}
+                                    value={w.theme ?? 'dark'}
                                     exclusive
                                     size="small"
-                                    onChange={(_, v) => v && update(i, { theme: v, ...PRESETS[v as 'dark' | 'light'] })}
+                                    onChange={(_, v) => {
+                                        if (!v) return;
+                                        if (v === 'custom') {
+                                            // pre-fill from current preset so pickers start with sensible values
+                                            const base = PRESETS[(w.theme as 'dark' | 'light') ?? 'dark'] ?? PRESETS.dark;
+                                            update(i, { theme: 'custom', bgColor: w.bgColor || base.bgColor, textBase: w.textBase || base.textBase });
+                                        } else {
+                                            update(i, { theme: v, ...PRESETS[v as 'dark' | 'light'] });
+                                        }
+                                    }}
                                 >
                                     <ToggleButton value="dark">{I18n.t('widgetDark')}</ToggleButton>
                                     <ToggleButton value="light">{I18n.t('widgetLight')}</ToggleButton>
+                                    <ToggleButton value="custom">{I18n.t('widgetCustom')}</ToggleButton>
                                 </ToggleButtonGroup>
                             </Box>
 
-                            {/* Background color */}
-                            <Box>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    {I18n.t('widgetBgColor')}
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                size="small"
-                                                checked={isTransparent}
-                                                onChange={e => update(i, { bgColor: e.target.checked ? 'transparent' : '#1e1e1e' })}
-                                            />
-                                        }
-                                        label={<Typography variant="caption">{I18n.t('widgetTransparent')}</Typography>}
-                                        sx={{ m: 0 }}
-                                    />
+                            {/* Custom color pickers — only when theme === 'custom' */}
+                            {w.theme === 'custom' && <>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                        {I18n.t('widgetBgColor')}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    size="small"
+                                                    checked={isTransparent}
+                                                    onChange={e => update(i, { bgColor: e.target.checked ? 'transparent' : '#1e1e1e' })}
+                                                />
+                                            }
+                                            label={<Typography variant="caption">{I18n.t('widgetTransparent')}</Typography>}
+                                            sx={{ m: 0 }}
+                                        />
+                                        <ColorSwatch
+                                            value={resolvedBg}
+                                            onChange={v => update(i, { bgColor: v })}
+                                        />
+                                    </Box>
+                                </Box>
+
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                        {I18n.t('widgetTextColor')}
+                                    </Typography>
                                     <ColorSwatch
-                                        value={resolvedBg}
-                                        onChange={v => update(i, { bgColor: v })}
+                                        value={resolvedText}
+                                        onChange={v => update(i, { textBase: v })}
                                     />
                                 </Box>
-                            </Box>
-
-                            {/* Text color */}
-                            <Box>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    {I18n.t('widgetTextColor')}
-                                </Typography>
-                                <ColorSwatch
-                                    value={resolvedText}
-                                    onChange={v => update(i, { textBase: v })}
-                                />
-                            </Box>
+                            </>}
 
                             {/* Width */}
                             <Box sx={{ minWidth: 220 }}>

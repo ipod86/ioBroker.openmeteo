@@ -67,6 +67,7 @@
     "warningsOpenMeteo": "Розраховані попередження (у всьому світі, з прогнозу Open-Meteo)",
     "warningsViaNotificationManager": "через систему сповіщень ioBroker",
     "widgetDark": "Темна",
+    "widgetCustom": "Індивідуальний",
     "widgetWidth": "Ширина",
     "widgetBgColor": "Фон",
     "widgetTextColor": "Колір тексту",

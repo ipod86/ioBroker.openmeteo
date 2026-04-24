@@ -33,6 +33,7 @@
     "warnFrostThreshold": "Frost-Schwellenwert (°C)",
     "warnFrostThresholdHelp": "Warnung senden wenn Temperatur unter diesen Wert fällt",
     "widgetDark": "Dunkel",
+    "widgetCustom": "Individuell",
     "widgetWidth": "Breite",
     "widgetBgColor": "Hintergrund",
     "widgetTextColor": "Textfarbe",
