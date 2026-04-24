@@ -38,7 +38,7 @@
     "warnFrostThresholdHelp": "Waarschuwing sturen wanneer de temperatuur onder deze waarde daalt",
     "widgetDark": "Donker",
     "widgetCustom": "Aangepast",
-    "widgetWidth": "Breedte",
+    "widgetWidth": "Max. breedte",
     "widgetBgColor": "Achtergrond",
     "widgetTextColor": "Tekstkleur",
     "widgetTransparent": "Transparant",

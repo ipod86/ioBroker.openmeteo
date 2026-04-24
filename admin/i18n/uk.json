@@ -38,7 +38,7 @@
     "warnFrostThresholdHelp": "Надіслати попередження коли температура опуститься нижче цього значення",
     "widgetDark": "Темна",
     "widgetCustom": "Індивідуальний",
-    "widgetWidth": "Ширина",
+    "widgetWidth": "Макс. ширина",
     "widgetBgColor": "Фон",
     "widgetTextColor": "Колір тексту",
     "widgetTransparent": "Прозорий",

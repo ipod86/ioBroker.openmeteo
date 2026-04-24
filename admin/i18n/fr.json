@@ -38,7 +38,7 @@
     "warnFrostThresholdHelp": "Envoyer une alerte lorsque la température descend sous cette valeur",
     "widgetDark": "Sombre",
     "widgetCustom": "Personnalisé",
-    "widgetWidth": "Largeur",
+    "widgetWidth": "Largeur max.",
     "widgetBgColor": "Arrière-plan",
     "widgetTextColor": "Couleur du texte",
     "widgetTransparent": "Transparent",

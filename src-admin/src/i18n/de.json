@@ -68,7 +68,7 @@
     "warningsViaNotificationManager": "über das ioBroker-Benachrichtigungssystem",
     "widgetDark": "Dunkel",
     "widgetCustom": "Individuell",
-    "widgetWidth": "Breite",
+    "widgetWidth": "Max. Breite",
     "widgetBgColor": "Hintergrund",
     "widgetTextColor": "Textfarbe",
     "widgetTransparent": "Transparent",

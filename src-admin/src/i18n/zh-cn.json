@@ -68,7 +68,7 @@
     "warningsViaNotificationManager": "通过ioBroker通知系统",
     "widgetDark": "深色",
     "widgetCustom": "自定义",
-    "widgetWidth": "宽度",
+    "widgetWidth": "最大宽度",
     "widgetBgColor": "背景",
     "widgetTextColor": "文字颜色",
     "widgetTransparent": "透明",

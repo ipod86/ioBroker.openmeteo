@@ -1197,7 +1197,7 @@ class Openmeteo extends utils.Adapter {
 			),
 		);
 
-		let html = `<div style="background:${bgColor};color:${textColor};padding:0 ${5 * s}px;font-family:sans-serif;width:${w}px;">`;
+		let html = `<div style="background:${bgColor};color:${textColor};padding:0 ${5 * s}px;font-family:sans-serif;max-width:${w}px;">`;
 
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">

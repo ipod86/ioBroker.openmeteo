@@ -68,7 +68,7 @@
     "warningsViaNotificationManager": "через систему уведомлений ioBroker",
     "widgetDark": "Тёмная",
     "widgetCustom": "Индивидуальный",
-    "widgetWidth": "Ширина",
+    "widgetWidth": "Макс. ширина",
     "widgetBgColor": "Фон",
     "widgetTextColor": "Цвет текста",
     "widgetTransparent": "Прозрачный",
