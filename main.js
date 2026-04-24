@@ -763,47 +763,49 @@ class Openmeteo extends utils.Adapter {
 		}
 	}
 
-	// Syncs SVG files between DB namespace (Admin → Files) and static admin/icons/custom/.
-	// On every startup: copies new/changed files from DB → static, removes orphans from static.
-	// If DB namespace has no SVGs at all, static folder is left untouched.
-	syncCustomIconsToStatic() {
-		const srcDir = path.join(utils.getAbsoluteDefaultDataDir(), "files", this.namespace, "icons", "custom");
+	async syncCustomIconsToStatic() {
 		const destDir = path.join(__dirname, "admin", "icons", "custom");
 
-		this.log.info(`Icon sync — src: ${srcDir}`);
-		this.log.info(`Icon sync — dst: ${destDir}`);
+		let entries;
+		try {
+			entries = await this.readDirAsync(this.namespace, "icons/custom");
+		} catch (e) {
+			this.log.debug(`Icon sync — DB folder not found: ${e.message}`);
+			return;
+		}
+		if (!Array.isArray(entries)) {
+			return;
+		}
 
-		// Source doesn't exist → nothing to sync
-		if (!fs.existsSync(srcDir)) {
-			this.log.warn(`Custom icon source folder not found: ${srcDir}`);
+		const dbSvgs = new Set(entries.filter(e => !e.isDir && e.file.endsWith(".svg")).map(e => e.file));
+		if (dbSvgs.size === 0) {
 			return;
 		}
 
 		fs.mkdirSync(destDir, { recursive: true });
 
-		const srcFiles = new Set(fs.readdirSync(srcDir).filter(f => f.endsWith(".svg")));
-		this.log.info(`Icon sync — found in src: ${[...srcFiles].join(", ") || "(none)"}`);
-
-		// Copy all SVGs from source to dest
 		let copied = 0;
-		for (const name of srcFiles) {
+		for (const name of dbSvgs) {
 			try {
-				fs.copyFileSync(path.join(srcDir, name), path.join(destDir, name));
+				const result = await this.readFileAsync(this.namespace, `icons/custom/${name}`);
+				const data = result?.file !== undefined ? result.file : result;
+				fs.writeFileSync(path.join(destDir, name), data);
 				copied++;
 			} catch (e) {
-				this.log.warn(`Icon copy failed for ${name}: ${e.message}`);
+				this.log.warn(`Icon sync failed for ${name}: ${e.message}`);
 			}
 		}
 
-		// Remove SVGs from dest that no longer exist in source
 		let removed = 0;
-		for (const name of fs.readdirSync(destDir)) {
-			if (name.endsWith(".svg") && !srcFiles.has(name)) {
-				try {
-					fs.unlinkSync(path.join(destDir, name));
-					removed++;
-				} catch (e) {
-					this.log.warn(`Icon removal failed for ${name}: ${e.message}`);
+		if (fs.existsSync(destDir)) {
+			for (const name of fs.readdirSync(destDir)) {
+				if (name.endsWith(".svg") && !dbSvgs.has(name)) {
+					try {
+						fs.unlinkSync(path.join(destDir, name));
+						removed++;
+					} catch (e) {
+						this.log.warn(`Icon removal failed for ${name}: ${e.message}`);
+					}
 				}
 			}
 		}
@@ -815,7 +817,7 @@ class Openmeteo extends utils.Adapter {
 	async onReady() {
 		await this.setState("info.connection", false, true);
 		await this.ensureCustomIconsReadme();
-		this.syncCustomIconsToStatic();
+		await this.syncCustomIconsToStatic();
 
 		// Sofort beim Start abrufen
 		await this.runUpdate();
