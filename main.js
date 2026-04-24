@@ -220,7 +220,10 @@ function weatherIconUrl(code, iconSet, isDay) {
 		const customCode = WMO_CODE_FALLBACK[code] ?? code;
 		const customPadded = String(customCode).padStart(2, "0");
 		if (!isDay && WMO_HAS_NIGHT.has(customCode)) {
-			return `/adapter/openmeteo-notify/icons/custom/wmo_${customPadded}n.svg`;
+			const nightFile = path.join(__dirname, "admin", "icons", "custom", `wmo_${customPadded}n.svg`);
+			if (fs.existsSync(nightFile)) {
+				return `/adapter/openmeteo-notify/icons/custom/wmo_${customPadded}n.svg`;
+			}
 		}
 		return `/adapter/openmeteo-notify/icons/custom/wmo_${customPadded}.svg`;
 	}
