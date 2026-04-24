@@ -1303,6 +1303,7 @@ class Openmeteo extends utils.Adapter {
 		};
 
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
+		const iconSrc = url => (url && url.startsWith("/files/") ? `${url}?v=${Date.now()}` : url);
 
 		const [curTemp, curDesc, curIcon, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
 			gs(`${p}.current.temperature`),
@@ -1338,7 +1339,7 @@ class Openmeteo extends utils.Adapter {
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
 <tr>
-<td style="width:${mainIconCqw}"><img src="${curIcon}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
+<td style="width:${mainIconCqw}"><img src="${iconSrc(curIcon)}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
 <td style="padding-left:${c(10)};vertical-align:middle;">
 <div style="font-size:${c(13)};font-weight:600;color:${textColor};margin-bottom:${c(2)};">${widget.locationName}</div>
 <div style="font-size:${c(15)};font-weight:400;color:${subColor};">${curDesc}</div>
@@ -1378,7 +1379,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
+				html += `<td style="padding:0;${border}"><img src="${iconSrc(dayData[i][1])}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
