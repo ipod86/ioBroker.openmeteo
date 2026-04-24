@@ -702,6 +702,14 @@ class Openmeteo extends utils.Adapter {
 		].join("\n");
 
 		try {
+			const meta = await this.getForeignObjectAsync(this.namespace);
+			if (!meta) {
+				await this.setForeignObjectAsync(this.namespace, {
+					type: "meta",
+					common: { name: `${this.namespace} user files`, type: "meta.user" },
+					native: {},
+				});
+			}
 			await this.writeFileAsync(this.namespace, "icons/custom/README.txt", readme);
 			this.log.debug(`Custom icons README.txt written to ${this.namespace}/icons/custom/`);
 		} catch (e) {
