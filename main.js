@@ -661,7 +661,6 @@ class Openmeteo extends utils.Adapter {
 		this.updateTimeout = null;
 		this.consecutiveFailures = 0;
 		this.warnState = {};
-		this.iconSyncTs = 0;
 		this.on("ready", this.onReady.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
@@ -804,7 +803,6 @@ class Openmeteo extends utils.Adapter {
 			}
 		}
 
-		this.iconSyncTs = Date.now();
 		this.log.info(`Icon sync — done: ${copied} copied, ${removed} removed`);
 	}
 
@@ -1331,8 +1329,7 @@ class Openmeteo extends utils.Adapter {
 		};
 
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
-		const iconSrc = url =>
-			url && this.iconSyncTs && url.includes("/icons/custom/") ? `${url}?v=${this.iconSyncTs}` : url;
+		const iconSrc = url => (url && url.includes("/icons/custom/") ? `${url}?v=${Date.now()}` : url);
 
 		const [curTemp, curDesc, curIcon, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
 			gs(`${p}.current.temperature`),
