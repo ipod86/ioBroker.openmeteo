@@ -763,49 +763,42 @@ class Openmeteo extends utils.Adapter {
 	// Syncs SVG files between DB namespace (Admin → Files) and static admin/icons/custom/.
 	// On every startup: copies new/changed files from DB → static, removes orphans from static.
 	// If DB namespace has no SVGs at all, static folder is left untouched.
-	async syncCustomIconsToStatic() {
+	syncCustomIconsToStatic() {
+		const srcDir = path.join(utils.getAbsoluteDefaultDataDir(), "files", this.namespace, "icons", "custom");
 		const destDir = path.join(__dirname, "admin", "icons", "custom");
-		let entries;
-		try {
-			entries = await this.readDirAsync(this.namespace, "icons/custom");
-		} catch {
-			return; // folder not yet initialised in DB
-		}
-		if (!Array.isArray(entries)) {
-			return;
-		}
 
-		const dbSvgs = new Set(entries.filter(e => !e.isDir && e.file.endsWith(".svg")).map(e => e.file));
-		if (dbSvgs.size === 0) {
+		// Source doesn't exist → nothing to sync
+		if (!fs.existsSync(srcDir)) {
+			this.log.debug(`Custom icon source folder not found: ${srcDir}`);
 			return;
-		} // DB empty — keep static folder as-is
+		}
 
 		fs.mkdirSync(destDir, { recursive: true });
 
-		// Copy new / changed files from DB → static
+		const srcFiles = new Set(fs.readdirSync(srcDir).filter(f => f.endsWith(".svg")));
+
+		// Copy all SVGs from source to dest
 		let copied = 0;
-		for (const name of dbSvgs) {
+		for (const name of srcFiles) {
 			try {
-				const result = await this.readFileAsync(this.namespace, `icons/custom/${name}`);
-				const data = result && result.file !== undefined ? result.file : result;
-				fs.writeFileSync(path.join(destDir, name), data);
+				fs.copyFileSync(path.join(srcDir, name), path.join(destDir, name));
 				copied++;
 			} catch (e) {
-				this.log.debug(`Icon sync failed for ${name}: ${e.message}`);
+				this.log.warn(`Icon copy failed for ${name}: ${e.message}`);
 			}
 		}
 
-		// Remove orphaned SVGs from static that no longer exist in DB
+		// Remove SVGs from dest that no longer exist in source
 		let removed = 0;
-		try {
-			for (const name of fs.readdirSync(destDir)) {
-				if (name.endsWith(".svg") && !dbSvgs.has(name)) {
+		for (const name of fs.readdirSync(destDir)) {
+			if (name.endsWith(".svg") && !srcFiles.has(name)) {
+				try {
 					fs.unlinkSync(path.join(destDir, name));
 					removed++;
+				} catch (e) {
+					this.log.warn(`Icon removal failed for ${name}: ${e.message}`);
 				}
 			}
-		} catch (e) {
-			this.log.debug(`Icon cleanup error: ${e.message}`);
 		}
 
 		this.iconSyncTs = Date.now();
@@ -815,7 +808,7 @@ class Openmeteo extends utils.Adapter {
 	async onReady() {
 		await this.setState("info.connection", false, true);
 		await this.ensureCustomIconsReadme();
-		await this.syncCustomIconsToStatic();
+		this.syncCustomIconsToStatic();
 
 		// Sofort beim Start abrufen
 		await this.runUpdate();
