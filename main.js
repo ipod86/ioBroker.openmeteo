@@ -810,10 +810,22 @@ class Openmeteo extends utils.Adapter {
 		this.log.debug(`Custom icons synced: ${copied} copied, ${removed} removed`);
 	}
 
+	async onFileChange(id, fileName, _size) {
+		if (id === this.namespace && fileName && fileName.startsWith("icons/custom/") && fileName.endsWith(".svg")) {
+			this.log.debug(`Custom icon changed: ${fileName} — re-syncing`);
+			await this.syncCustomIconsToStatic();
+		}
+	}
+
 	async onReady() {
 		await this.setState("info.connection", false, true);
 		await this.ensureCustomIconsReadme();
 		await this.syncCustomIconsToStatic();
+		try {
+			await this.subscribeFiles(this.namespace, "icons/custom/*");
+		} catch (e) {
+			this.log.debug(`subscribeFiles not available: ${e.message}`);
+		}
 
 		// Sofort beim Start abrufen
 		await this.runUpdate();
