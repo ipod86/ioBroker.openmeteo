@@ -6,6 +6,8 @@
 
 const utils = require("@iobroker/adapter-core");
 const https = require("node:https");
+const fs = require("node:fs");
+const path = require("node:path");
 const SunCalc = require("suncalc");
 
 const { I18N_WEEKDAYS, I18N_DESCRIPTIONS, I18N_MOON_PHASES, I18N_POLLEN_LEVELS, I18N_SUMMARY } = require("./lib/i18n");
@@ -709,6 +711,45 @@ class Openmeteo extends utils.Adapter {
 					common: { name: `${this.namespace} user files`, type: "meta.user" },
 					native: {},
 				});
+				// Copy example WMO icons from adapter package into the DB namespace so
+				// they are visible in Admin → Files and serve as a starting point.
+				const srcDir = path.join(__dirname, "admin", "icons", "wmo_svg");
+				const wmoCodes = [
+					"00",
+					"01",
+					"02",
+					"03",
+					"45",
+					"48",
+					"51",
+					"53",
+					"55",
+					"61",
+					"63",
+					"65",
+					"71",
+					"73",
+					"75",
+					"77",
+					"80",
+					"81",
+					"82",
+					"85",
+					"86",
+					"95",
+					"96",
+					"99",
+				];
+				for (const code of wmoCodes) {
+					const svgPath = path.join(srcDir, `wmo_${code}.svg`);
+					try {
+						const svg = fs.readFileSync(svgPath);
+						await this.writeFileAsync(this.namespace, `icons/custom/wmo_${code}.svg`, svg);
+					} catch (iconErr) {
+						this.log.debug(`Could not copy example icon wmo_${code}.svg: ${iconErr.message}`);
+					}
+				}
+				this.log.info(`Example WMO icons written to ${this.namespace}/icons/custom/ — replace with your own.`);
 			}
 			await this.writeFileAsync(this.namespace, "icons/custom/README.txt", readme);
 			this.log.debug(`Custom icons README.txt written to ${this.namespace}/icons/custom/`);
