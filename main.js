@@ -203,20 +203,20 @@ function weatherIconUrl(code, iconSet, isDay) {
 		if (!isDay && WMO_HAS_NIGHT.has(code)) {
 			const ext = iconSet === "basmilius_animated" ? "svg" : "png";
 			const nightSet = iconSet === "basmilius_animated" ? "basmilius_animated_night" : "basmilius_night";
-			return `/openmeteo-notify.admin/icons/${nightSet}/wmo_${padded}.${ext}`;
+			return `/adapter/openmeteo-notify/icons/${nightSet}/wmo_${padded}.${ext}`;
 		}
 		const ext = iconSet === "basmilius_animated" ? "svg" : "png";
-		return `/openmeteo-notify.admin/icons/${iconSet}/wmo_${padded}.${ext}`;
+		return `/adapter/openmeteo-notify/icons/${iconSet}/wmo_${padded}.${ext}`;
 	}
 	if (iconSet === "amcharts_animated" || iconSet === "amcharts_static") {
 		const entry = AMCHARTS_MAP[code] || AMCHARTS_MAP[WMO_CODE_FALLBACK[code]] || { day: "cloudy", night: "cloudy" };
 		const name = isDay ? entry.day : entry.night;
 		const folder = iconSet === "amcharts_animated" ? "animated" : "static";
-		return `/openmeteo-notify.admin/icons/amcharts/${folder}/${name}.svg`;
+		return `/adapter/openmeteo-notify/icons/amcharts/${folder}/${name}.svg`;
 	}
 	// WMO SVG set (fallback for unknown iconSet values)
 	const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
-	return `/openmeteo-notify.admin/icons/wmo_svg/wmo_${String(wmoCode).padStart(2, "0")}.svg`;
+	return `/adapter/openmeteo-notify/icons/wmo_svg/wmo_${String(wmoCode).padStart(2, "0")}.svg`;
 }
 
 /**
@@ -300,7 +300,7 @@ function degreesToEmoji(deg) {
  * @returns {string} Relative URL path to the SVG arrow icon
  */
 function windDirIconUrl(deg) {
-	return `/openmeteo-notify.admin/icons/wind/${degreesToCompass(deg)}.svg`;
+	return `/adapter/openmeteo-notify/icons/wind/${degreesToCompass(deg)}.svg`;
 }
 
 /**
@@ -334,7 +334,7 @@ function speedToBeaufort(speed, unit) {
  * @returns {string} Relative URL path to the Beaufort SVG icon
  */
 function windBeaufortIconUrl(beaufort) {
-	return `/openmeteo-notify.admin/icons/wind/beaufort_${beaufort}.svg`;
+	return `/adapter/openmeteo-notify/icons/wind/beaufort_${beaufort}.svg`;
 }
 
 /**
@@ -844,7 +844,7 @@ class Openmeteo extends utils.Adapter {
 					} catch {
 						/* ok */
 					}
-					for (let d = 1; d <= daysCount; d++) {
+					for (let d = 0; d < daysCount; d++) {
 						try {
 							await this.delObjectAsync(`${locId}.day${d}.pollen`, { recursive: true });
 						} catch {
@@ -856,7 +856,7 @@ class Openmeteo extends utils.Adapter {
 							/* ok */
 						}
 					}
-					for (let d = 1; d <= hourlyDays; d++) {
+					for (let d = 0; d < hourlyDays; d++) {
 						for (let hh = 0; hh < 24; hh++) {
 							const _hk = `h${String(hh).padStart(2, "0")}`;
 							try {
@@ -1115,7 +1115,6 @@ class Openmeteo extends utils.Adapter {
 	 * @returns {Promise<string>} HTML string
 	 */
 	async buildWidgetHtml(widget, locId) {
-		const host = `${widget.protocol}://${widget.host}:${widget.port}`;
 		const p = locId;
 		const isLight = widget.theme === "light";
 		const textColor = isLight ? "rgba(255,255,255,1)" : "rgba(0,0,0,0.87)";
@@ -1159,7 +1158,7 @@ class Openmeteo extends utils.Adapter {
 			gs(`${p}.current.humidity`),
 			gs(`${p}.current.pressure`),
 			gs(`${p}.current.summary`),
-			gs(`${p}.day1.sunshine_hours`),
+			gs(`${p}.day0.sunshine_hours`),
 		]);
 
 		const days = Math.min(widget.days ?? 5, 14);
@@ -1168,11 +1167,11 @@ class Openmeteo extends utils.Adapter {
 		const dayData = await Promise.all(
 			Array.from({ length: days }, (_, i) =>
 				Promise.all([
-					gs(`${p}.day${i + 1}.weekday`),
-					gs(`${p}.day${i + 1}.icon_url`),
-					gs(`${p}.day${i + 1}.temp_max`),
-					gs(`${p}.day${i + 1}.temp_min`),
-					gs(`${p}.day${i + 1}.precipitation_probability`),
+					gs(`${p}.day${i}.weekday`),
+					gs(`${p}.day${i}.icon_url`),
+					gs(`${p}.day${i}.temp_max`),
+					gs(`${p}.day${i}.temp_min`),
+					gs(`${p}.day${i}.precipitation_probability`),
 				]),
 			),
 		);
@@ -1182,7 +1181,7 @@ class Openmeteo extends utils.Adapter {
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
 <tr>
-<td width="${mainIconSize}px"><img src="${host}${curIcon}" style="width:${mainIconSize}px;height:${mainIconSize}px;display:block;${wmoSvgFilter}"></td>
+<td width="${mainIconSize}px"><img src="${curIcon}" style="width:${mainIconSize}px;height:${mainIconSize}px;display:block;${wmoSvgFilter}"></td>
 <td style="padding-left:10px;vertical-align:middle;">
 <div style="font-size:13px;font-weight:600;color:${textColor};margin-bottom:2px;">${widget.locationName}</div>
 <div style="font-size:15px;font-weight:400;color:${subColor};">${curDesc}</div>
@@ -1222,7 +1221,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:2px solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${host}${dayData[i][1]}" style="width:42px;height:42px;display:inline-block;margin:-2px 0;${imgScale}${wmoSvgFilter}"></td>`;
+				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:42px;height:42px;display:inline-block;margin:-2px 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
@@ -2121,7 +2120,8 @@ class Openmeteo extends utils.Adapter {
 			const weekday = weekdays[date.getDay()];
 			const icon = ICONS[d.weathercode[i]] || "🌡️";
 			const desc = descriptions[d.weathercode[i]] || "?";
-			const prefix = `${locId}.day${i + 1}`;
+			const prefix = `${locId}.day${i}`;
+			const fc = `.forecast.${i}`;
 			const tempMax = Math.round(d.temperature_2m_max[i] * 10) / 10;
 			const tempMin = Math.round(d.temperature_2m_min[i] * 10) / 10;
 			const tempMean = Math.round(d.temperature_2m_mean[i] * 10) / 10;
@@ -2134,34 +2134,38 @@ class Openmeteo extends utils.Adapter {
 
 			await this.extendObjectAsync(prefix, {
 				type: "channel",
-				common: { name: `Tag ${i + 1}` },
+				common: { name: i === 0 ? "Heute" : i === 1 ? "Morgen" : `Tag ${i}` },
 				native: {},
 			});
 
-			await this.setDP(`${prefix}.date`, d.time[i], { name: "Datum", type: "string", role: "date" });
+			await this.setDP(`${prefix}.date`, d.time[i], {
+				name: "Datum",
+				type: "string",
+				role: i === 0 ? "date" : `date${fc}`,
+			});
 			await this.setDP(`${prefix}.weekday`, weekday, { name: "Wochentag", type: "string", role: "dayofweek" });
 			await this.setDP(`${prefix}.icon`, icon, { name: "Icon", type: "string", role: "weather.icon.name" });
 			await this.setDP(`${prefix}.icon_url`, weatherIconUrl(d.weathercode[i], iconSet, true), {
 				name: "Icon URL",
 				type: "string",
-				role: "weather.icon",
+				role: `weather.icon${fc}`,
 			});
 			await this.setDP(`${prefix}.description`, desc, {
 				name: "Beschreibung",
 				type: "string",
-				role: "weather.state",
+				role: `weather.state${fc}`,
 			});
 			await this.setDP(`${prefix}.temp_max`, tempMax, {
 				name: "Temp. Max",
 				type: "number",
 				unit: tempUnit,
-				role: "value.temperature.max",
+				role: `value.temperature.max${fc}`,
 			});
 			await this.setDP(`${prefix}.temp_min`, tempMin, {
 				name: "Temp. Min",
 				type: "number",
 				unit: tempUnit,
-				role: "value.temperature.min",
+				role: `value.temperature.min${fc}`,
 			});
 			await this.setDP(`${prefix}.feels_like_max`, feelsMax, {
 				name: "Gefühlt Max",
@@ -2201,19 +2205,19 @@ class Openmeteo extends utils.Adapter {
 				name: "Niederschlag",
 				type: "number",
 				unit: precipUnit,
-				role: "value.precipitation",
+				role: `value.precipitation${fc}`,
 			});
 			await this.setDP(`${prefix}.precipitation_probability`, d.precipitation_probability_max[i], {
 				name: "Niederschlagswahrsch.",
 				type: "number",
 				unit: "%",
-				role: "value.precipitation.chance",
+				role: `value.precipitation.forecast.${i}`,
 			});
 			await this.setDP(`${prefix}.windspeed`, d.windspeed_10m_max[i], {
 				name: "Wind Max",
 				type: "number",
 				unit: windUnit,
-				role: "value.speed.max.wind",
+				role: `value.speed.wind${fc}`,
 			});
 			await this.setDP(`${prefix}.windgusts`, d.windgusts_10m_max[i], {
 				name: "Windböen Max",
@@ -2225,12 +2229,12 @@ class Openmeteo extends utils.Adapter {
 				name: "Windrichtung",
 				type: "number",
 				unit: "°",
-				role: "value.direction.wind",
+				role: `value.direction.wind${fc}`,
 			});
 			await this.setDP(`${prefix}.winddirection_text`, degreesToCompass(d.winddirection_10m_dominant[i]), {
 				name: "Windrichtung Text",
 				type: "string",
-				role: "weather.direction.wind",
+				role: `weather.direction.wind${fc}`,
 			});
 			await this.setDP(`${prefix}.winddirection_icon`, degreesToEmoji(d.winddirection_10m_dominant[i]), {
 				name: "Windrichtung Icon",
@@ -2256,7 +2260,9 @@ class Openmeteo extends utils.Adapter {
 			if (enableAstronomy) {
 				await this.setObjectNotExistsAsync(`${prefix}.astronomy`, {
 					type: "channel",
-					common: { name: `Astronomie Tag ${i + 1}` },
+					common: {
+						name: i === 0 ? "Astronomie Heute" : i === 1 ? "Astronomie Morgen" : `Astronomie Tag ${i}`,
+					},
 					native: {},
 				});
 				await this.setDP(`${prefix}.astronomy.sunrise`, d.sunrise[i], {
@@ -2343,7 +2349,9 @@ class Openmeteo extends utils.Adapter {
 			if (enableAgriculture) {
 				await this.setObjectNotExistsAsync(`${prefix}.agriculture`, {
 					type: "channel",
-					common: { name: `Agrar/Solar Tag ${i + 1}` },
+					common: {
+						name: i === 0 ? "Agrar/Solar Heute" : i === 1 ? "Agrar/Solar Morgen" : `Agrar/Solar Tag ${i}`,
+					},
 					native: {},
 				});
 				await this.setDP(
@@ -2396,7 +2404,14 @@ class Openmeteo extends utils.Adapter {
 				const humidMax = calcHumidex(tMaxC, dpMeanC);
 				await this.setObjectNotExistsAsync(`${prefix}.comfort`, {
 					type: "channel",
-					common: { name: `Komfortindizes Tag ${i + 1}` },
+					common: {
+						name:
+							i === 0
+								? "Komfortindizes Heute"
+								: i === 1
+									? "Komfortindizes Morgen"
+									: `Komfortindizes Tag ${i}`,
+					},
 					native: {},
 				});
 				await this.setDP(`${prefix}.comfort.heat_index_max`, celsiusToUnit(heatIdxMax, unitArg), {
@@ -2456,13 +2471,13 @@ class Openmeteo extends utils.Adapter {
 				name: "Luftfeuchtigkeit Mittel",
 				type: "number",
 				unit: "%",
-				role: "value.humidity",
+				role: `value.humidity${fc}`,
 			});
 			await this.setDP(`${prefix}.pressure_mean`, Math.round(d.pressure_msl_mean[i] * 10) / 10, {
 				name: "Luftdruck Mittel",
 				type: "number",
 				unit: "hPa",
-				role: "value.pressure",
+				role: `value.pressure${fc}`,
 			});
 			await this.setDP(`${prefix}.precipitation_hours`, d.precipitation_hours[i], {
 				name: "Niederschlagsstunden",
@@ -2538,7 +2553,7 @@ class Openmeteo extends utils.Adapter {
 					sunset: d.sunset[i],
 					moon_phase_val: Math.round(moonIllum.phase * 100) / 100,
 					moon_phase_text: moonText,
-					moon_phase_icon_url: `/openmeteo-notify.admin/icons/moon/${moonIdx}.png`,
+					moon_phase_icon_url: `/adapter/openmeteo-notify/icons/moon/${moonIdx}.png`,
 					moonrise: moonTimes.rise ? moonTimes.rise.toISOString() : null,
 					moonset: moonTimes.set ? moonTimes.set.toISOString() : null,
 					solar_noon: solarNoonStr,
@@ -2590,7 +2605,10 @@ class Openmeteo extends utils.Adapter {
 			if (i < hourlyDays) {
 				await this.setObjectNotExistsAsync(`${prefix}.hourly`, {
 					type: "channel",
-					common: { name: `Stundenwerte Tag ${i + 1}` },
+					common: {
+						name:
+							i === 0 ? "Stundenwerte Heute" : i === 1 ? "Stundenwerte Morgen" : `Stundenwerte Tag ${i}`,
+					},
 					native: {},
 				});
 
@@ -2961,8 +2979,8 @@ class Openmeteo extends utils.Adapter {
 	 * @param {number} hourlyDays - Current hourly days count
 	 */
 	async cleanupLocation(locId, daysCount, hourlyDays) {
-		// Delete entire day channels beyond daysCount (up to max 16)
-		for (let i = daysCount + 1; i <= 16; i++) {
+		// Delete entire day channels beyond daysCount (day0..day{daysCount-1} are valid)
+		for (let i = daysCount; i <= 15; i++) {
 			try {
 				await this.delObjectAsync(`${locId}.day${i}`, { recursive: true });
 				this.log.debug(`${locId}: day ${i} deleted`);
@@ -2971,7 +2989,7 @@ class Openmeteo extends utils.Adapter {
 			}
 		}
 		// Delete only hourly sub-channels for days beyond hourlyDays
-		for (let i = hourlyDays + 1; i <= daysCount; i++) {
+		for (let i = hourlyDays; i < daysCount; i++) {
 			try {
 				await this.delObjectAsync(`${locId}.day${i}.hourly`, { recursive: true });
 				this.log.debug(`${locId}: hourly data for day ${i} deleted`);
@@ -3043,7 +3061,7 @@ class Openmeteo extends utils.Adapter {
 			} catch {
 				/* ok */
 			}
-			for (let d = 1; d <= 16; d++) {
+			for (let d = 0; d <= 15; d++) {
 				try {
 					await this.delObjectAsync(`${locId}.day${d}.pollen`, { recursive: true });
 				} catch {
@@ -3142,7 +3160,7 @@ class Openmeteo extends utils.Adapter {
 
 		const dates = Object.keys(byDate).sort();
 		for (let i = 0; i < dates.length; i++) {
-			const dayNum = i + 1;
+			const dayNum = i;
 			const dayData = byDate[dates[i]];
 
 			// Daily max under dayX.pollen (only if pollen enabled)
@@ -3150,7 +3168,14 @@ class Openmeteo extends utils.Adapter {
 				const pollenPrefix = `${locId}.day${dayNum}.pollen`;
 				await this.setObjectNotExistsAsync(pollenPrefix, {
 					type: "channel",
-					common: { name: `Pollen Tag ${dayNum} (Tagesmax)` },
+					common: {
+						name:
+							dayNum === 0
+								? "Pollen Heute (Tagesmax)"
+								: dayNum === 1
+									? "Pollen Morgen (Tagesmax)"
+									: `Pollen Tag ${dayNum} (Tagesmax)`,
+					},
 					native: {},
 				});
 				for (const { key, name } of types) {
@@ -3176,7 +3201,14 @@ class Openmeteo extends utils.Adapter {
 				const aqDayPrefix = `${locId}.day${dayNum}.air_quality`;
 				await this.setObjectNotExistsAsync(aqDayPrefix, {
 					type: "channel",
-					common: { name: `Luftqualität Tag ${dayNum} (Tagesmax)` },
+					common: {
+						name:
+							dayNum === 0
+								? "Luftqualität Heute (Tagesmax)"
+								: dayNum === 1
+									? "Luftqualität Morgen (Tagesmax)"
+									: `Luftqualität Tag ${dayNum} (Tagesmax)`,
+					},
 					native: {},
 				});
 				for (const f of aqHourlyFields) {

@@ -108,6 +108,7 @@ class App extends GenericApp<GenericAppProps, AppState> {
                                 <WidgetsTable
                                     widgets={native.widgets || []}
                                     locations={native.locations || []}
+                                    daysCount={native.daysCount ?? 7}
                                     onChange={wgts => handleChange({ ...native, widgets: wgts })}
                                 />
                             )}

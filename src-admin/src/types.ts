@@ -9,9 +9,6 @@ export interface Widget {
     locationName: string;
     days: 5 | 7 | 14;
     theme: 'light' | 'dark';
-    protocol: 'http' | 'https';
-    host: string;
-    port: number;
 }
 
 export interface OpenMeteoConfig {

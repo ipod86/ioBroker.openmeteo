@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Box, Button, IconButton, TextField, Typography,
+    Box, Button, IconButton, Typography,
     Select, MenuItem, FormControl, InputLabel, ToggleButtonGroup, ToggleButton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,6 +11,7 @@ import { Location, Widget } from '../types';
 interface Props {
     widgets: Widget[];
     locations: Location[];
+    daysCount: number;
     onChange: (widgets: Widget[]) => void;
 }
 
@@ -18,7 +19,7 @@ function makeId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
 
-const WidgetsTable: React.FC<Props> = ({ widgets, locations, onChange }) => {
+const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange }) => {
     const update = (index: number, field: keyof Widget, value: any): void => {
         const updated = widgets.map((w, i) => i === index ? { ...w, [field]: value } : w);
         onChange(updated);
@@ -26,14 +27,12 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, onChange }) => {
 
     const add = (): void => {
         const defaultLoc = locations[0]?.name || '';
+        const defaultDays = ([5, 7, 14] as const).find(d => d <= daysCount) ?? 5;
         onChange([...widgets, {
             id: makeId(),
             locationName: defaultLoc,
-            days: 5,
+            days: defaultDays,
             theme: 'dark',
-            protocol: 'http',
-            host: '',
-            port: 8082,
         }]);
     };
 
@@ -84,9 +83,11 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, onChange }) => {
                                 size="small"
                                 onChange={(_, v) => v && update(i, 'days', v)}
                             >
-                                <ToggleButton value={5}>5</ToggleButton>
-                                <ToggleButton value={7}>7</ToggleButton>
-                                <ToggleButton value={14}>14</ToggleButton>
+                                {([5, 7, 14] as const).map(d => (
+                                    <ToggleButton key={d} value={d} disabled={d > daysCount}>
+                                        {d}
+                                    </ToggleButton>
+                                ))}
                             </ToggleButtonGroup>
                         </Box>
 
@@ -105,41 +106,6 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, onChange }) => {
                                 <ToggleButton value="light">{I18n.t('widgetLight')}</ToggleButton>
                             </ToggleButtonGroup>
                         </Box>
-
-                        {/* Protocol */}
-                        <FormControl size="small" sx={{ width: 90 }}>
-                            <InputLabel>{I18n.t('widgetProtocol')}</InputLabel>
-                            <Select
-                                value={w.protocol}
-                                label={I18n.t('widgetProtocol')}
-                                onChange={e => update(i, 'protocol', e.target.value)}
-                            >
-                                <MenuItem value="http">http</MenuItem>
-                                <MenuItem value="https">https</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        {/* Host */}
-                        <TextField
-                            label={I18n.t('widgetHost')}
-                            value={w.host}
-                            size="small"
-                            sx={{ width: 180 }}
-                            placeholder="192.168.1.100"
-                            helperText={I18n.t('widgetHostHint')}
-                            onChange={e => update(i, 'host', e.target.value)}
-                        />
-
-                        {/* Port */}
-                        <TextField
-                            label={I18n.t('widgetPort')}
-                            type="number"
-                            value={w.port}
-                            size="small"
-                            sx={{ width: 90 }}
-                            inputProps={{ min: 1, max: 65535 }}
-                            onChange={e => update(i, 'port', parseInt(e.target.value) || 8082)}
-                        />
                     </Box>
                 </Box>
             ))}
