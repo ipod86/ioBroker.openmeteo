@@ -1330,7 +1330,7 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		html += `</div></div>`;
-		html += `<script>(function(){var o=document.getElementById('${oid}-o'),n=document.getElementById('${oid}-i');if(!o||!n)return;function r(){var s=o.offsetWidth/${w};if(s<1){n.style.transform='scale('+s+')';o.style.height=(n.scrollHeight*s)+'px';}else{n.style.transform='';o.style.height='';}}r();if(window.ResizeObserver)new ResizeObserver(r).observe(o);else window.addEventListener('resize',r);})();</script>`;
+		html += `<script>(function(){var o=document.getElementById('${oid}-o'),n=document.getElementById('${oid}-i'),W=${w};if(!o||!n)return;function r(){var s=o.offsetWidth/W;if(s<1){if('zoom' in n.style){n.style.zoom=s;n.style.transform='';}else{n.style.transform='scale('+s+')';o.style.height=(n.scrollHeight*s)+'px';}}else{n.style.zoom='';n.style.transform='';o.style.height='';}}r();if(window.ResizeObserver)new ResizeObserver(r).observe(o);else window.addEventListener('resize',r);})();</script>`;
 		return html;
 	}
 
