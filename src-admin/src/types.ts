@@ -10,6 +10,8 @@ export interface Widget {
     days: 5 | 7 | 14;
     theme: 'light' | 'dark';
     width: number;
+    bgColor: string;    // hex '#rrggbb' or 'transparent'
+    textBase: string;   // hex '#rrggbb'
 }
 
 export interface OpenMeteoConfig {

@@ -38,6 +38,9 @@
     "warnFrostThresholdHelp": "Отправить предупреждение когда температура опустится ниже этого значения",
     "widgetDark": "Тёмная",
     "widgetWidth": "Ширина",
+    "widgetBgColor": "Фон",
+    "widgetTextColor": "Цвет текста",
+    "widgetTransparent": "Прозрачный",
     "widgetLight": "Светлая",
     "windspeedUnit": "Единица измерения скорости ветра",
     "hourlyDaysHighWarning": "Каждый почасовой день создаёт много точек данных в зависимости от включённых опций"

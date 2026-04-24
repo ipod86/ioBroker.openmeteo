@@ -33,6 +33,9 @@
     "warnFrostThresholdHelp": "Send warning when temperature drops below this value",
     "widgetDark": "Dark",
     "widgetWidth": "Width",
+    "widgetBgColor": "Background",
+    "widgetTextColor": "Text color",
+    "widgetTransparent": "Transparent",
     "widgetLight": "Light",
     "windspeedUnit": "Wind speed unit",
     "hourlyDaysHighWarning": "Each hourly day generates many datapoints depending on enabled options"

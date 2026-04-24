@@ -38,6 +38,9 @@
     "warnFrostThresholdHelp": "Enviar aviso quando a temperatura cair abaixo deste valor",
     "widgetDark": "Escuro",
     "widgetWidth": "Largura",
+    "widgetBgColor": "Fundo",
+    "widgetTextColor": "Cor do texto",
+    "widgetTransparent": "Transparente",
     "widgetLight": "Claro",
     "windspeedUnit": "Unidade de velocidade do vento",
     "hourlyDaysHighWarning": "Cada dia horário gera muitos pontos de dados dependendo das opções ativadas"

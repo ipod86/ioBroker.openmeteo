@@ -8,6 +8,9 @@
     "validRange": "Valid range: %s",
     "widgetDark": "Dark",
     "widgetWidth": "Width",
+    "widgetBgColor": "Background",
+    "widgetTextColor": "Text color",
+    "widgetTransparent": "Transparent",
     "widgetLight": "Light",
     "hourlyDaysHighWarning": "Each hourly day generates many datapoints depending on enabled options"
 }
