@@ -767,15 +767,19 @@ class Openmeteo extends utils.Adapter {
 		const srcDir = path.join(utils.getAbsoluteDefaultDataDir(), "files", this.namespace, "icons", "custom");
 		const destDir = path.join(__dirname, "admin", "icons", "custom");
 
+		this.log.info(`Icon sync — src: ${srcDir}`);
+		this.log.info(`Icon sync — dst: ${destDir}`);
+
 		// Source doesn't exist → nothing to sync
 		if (!fs.existsSync(srcDir)) {
-			this.log.debug(`Custom icon source folder not found: ${srcDir}`);
+			this.log.warn(`Custom icon source folder not found: ${srcDir}`);
 			return;
 		}
 
 		fs.mkdirSync(destDir, { recursive: true });
 
 		const srcFiles = new Set(fs.readdirSync(srcDir).filter(f => f.endsWith(".svg")));
+		this.log.info(`Icon sync — found in src: ${[...srcFiles].join(", ") || "(none)"}`);
 
 		// Copy all SVGs from source to dest
 		let copied = 0;
@@ -802,7 +806,7 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		this.iconSyncTs = Date.now();
-		this.log.info(`Custom icons synced: ${copied} copied, ${removed} removed`);
+		this.log.info(`Icon sync — done: ${copied} copied, ${removed} removed`);
 	}
 
 	async onReady() {
