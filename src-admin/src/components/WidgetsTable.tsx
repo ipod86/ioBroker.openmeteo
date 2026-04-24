@@ -24,15 +24,17 @@ function makeId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
 
-const ColorSwatch: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => (
+const ColorSwatch: React.FC<{ value: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, onChange, disabled }) => (
     <Box
         component="input"
         type="color"
         value={value}
+        disabled={disabled}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         sx={{
-            width: 36, height: 36, border: '1px solid', borderColor: 'divider',
-            borderRadius: 1, padding: '2px', cursor: 'pointer', background: 'none',
+            width: 32, height: 32, border: '1px solid', borderColor: 'divider',
+            borderRadius: 1, padding: '2px', cursor: disabled ? 'default' : 'pointer',
+            background: 'none', opacity: disabled ? 0.35 : 1, flexShrink: 0,
         }}
     />
 );
@@ -144,40 +146,86 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange
                             </Box>
 
                             {/* Custom color pickers — only when theme === 'custom' */}
-                            {w.theme === 'custom' && <>
-                                <Box>
-                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                        {I18n.t('widgetBgColor')}
-                                    </Typography>
+                            {w.theme === 'custom' && (
+                                <Box sx={{
+                                    display: 'flex', flexDirection: 'column', gap: 1,
+                                    p: 1.5, border: '1px solid', borderColor: 'divider',
+                                    borderRadius: 1, bgcolor: 'action.hover', minWidth: 280,
+                                }}>
+                                    {/* Background row */}
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch
-                                                    size="small"
-                                                    checked={isTransparent}
-                                                    onChange={e => update(i, { bgColor: e.target.checked ? 'transparent' : '#1e1e1e' })}
-                                                />
-                                            }
-                                            label={<Typography variant="caption">{I18n.t('widgetTransparent')}</Typography>}
-                                            sx={{ m: 0 }}
+                                        <Typography variant="caption" color="text.secondary" sx={{ width: 36, flexShrink: 0 }}>
+                                            {I18n.t('widgetBgColor')}
+                                        </Typography>
+                                        <Switch
+                                            size="small"
+                                            checked={isTransparent}
+                                            onChange={e => update(i, { bgColor: e.target.checked ? 'transparent' : '#1e1e1e' })}
                                         />
+                                        <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
+                                            {I18n.t('widgetTransparent')}
+                                        </Typography>
                                         <ColorSwatch
                                             value={resolvedBg}
                                             onChange={v => update(i, { bgColor: v })}
+                                            disabled={isTransparent}
+                                        />
+                                        <TextField
+                                            value={isTransparent ? 'transparent' : (w.bgColor ?? '#1e1e1e')}
+                                            size="small"
+                                            disabled={isTransparent}
+                                            sx={{ width: 100 }}
+                                            inputProps={{ style: { fontFamily: 'monospace', fontSize: 12, padding: '4px 8px' } }}
+                                            onChange={e => {
+                                                const v = e.target.value;
+                                                if (/^#[0-9a-fA-F]{0,6}$/.test(v)) update(i, { bgColor: v });
+                                            }}
+                                            onBlur={e => {
+                                                const v = e.target.value;
+                                                if (/^#[0-9a-fA-F]{6}$/.test(v)) update(i, { bgColor: v });
+                                            }}
                                         />
                                     </Box>
-                                </Box>
 
-                                <Box>
-                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                        {I18n.t('widgetTextColor')}
-                                    </Typography>
-                                    <ColorSwatch
-                                        value={resolvedText}
-                                        onChange={v => update(i, { textBase: v })}
-                                    />
+                                    {/* Text color row */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="caption" color="text.secondary" sx={{ width: 36, flexShrink: 0 }}>
+                                            {I18n.t('widgetTextColor')}
+                                        </Typography>
+                                        {/* spacer to align with bg row */}
+                                        <Box sx={{ width: 58, flexShrink: 0 }} />
+                                        <ColorSwatch
+                                            value={resolvedText}
+                                            onChange={v => update(i, { textBase: v })}
+                                        />
+                                        <TextField
+                                            value={w.textBase ?? '#000000'}
+                                            size="small"
+                                            sx={{ width: 100 }}
+                                            inputProps={{ style: { fontFamily: 'monospace', fontSize: 12, padding: '4px 8px' } }}
+                                            onChange={e => {
+                                                const v = e.target.value;
+                                                if (/^#[0-9a-fA-F]{0,6}$/.test(v)) update(i, { textBase: v });
+                                            }}
+                                            onBlur={e => {
+                                                const v = e.target.value;
+                                                if (/^#[0-9a-fA-F]{6}$/.test(v)) update(i, { textBase: v });
+                                            }}
+                                        />
+                                        {/* Live preview */}
+                                        <Box sx={{
+                                            ml: 'auto', px: 1.5, height: 28, borderRadius: 1,
+                                            bgcolor: isTransparent ? 'transparent' : (w.bgColor || '#1e1e1e'),
+                                            border: '1px solid', borderColor: 'divider',
+                                            display: 'flex', alignItems: 'center',
+                                        }}>
+                                            <Typography variant="caption" sx={{ color: resolvedText, fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                                Abc 123
+                                            </Typography>
+                                        </Box>
+                                    </Box>
                                 </Box>
-                            </>}
+                            )}
 
                             {/* Width */}
                             <Box sx={{ minWidth: 220 }}>
