@@ -216,17 +216,6 @@ function weatherIconUrl(code, iconSet, isDay) {
 		const folder = iconSet === "amcharts_animated" ? "animated" : "static";
 		return `/adapter/openmeteo-notify/icons/amcharts/${folder}/${name}.svg`;
 	}
-	if (iconSet === "custom") {
-		const customCode = WMO_CODE_FALLBACK[code] ?? code;
-		const customPadded = String(customCode).padStart(2, "0");
-		if (!isDay && WMO_HAS_NIGHT.has(customCode)) {
-			const nightFile = path.join(__dirname, "admin", "icons", "custom", `wmo_${customPadded}n.svg`);
-			if (fs.existsSync(nightFile)) {
-				return `/adapter/openmeteo-notify/icons/custom/wmo_${customPadded}n.svg`;
-			}
-		}
-		return `/adapter/openmeteo-notify/icons/custom/wmo_${customPadded}.svg`;
-	}
 	// WMO SVG set (fallback for unknown iconSet values)
 	const wmoCode = WMO_CODE_FALLBACK[code] ?? code;
 	return `/adapter/openmeteo-notify/icons/wmo_svg/wmo_${String(wmoCode).padStart(2, "0")}.svg`;
@@ -661,6 +650,7 @@ class Openmeteo extends utils.Adapter {
 		this.updateTimeout = null;
 		this.consecutiveFailures = 0;
 		this.warnState = {};
+		this.customNightIcons = new Set();
 		this.on("ready", this.onReady.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
@@ -784,6 +774,8 @@ class Openmeteo extends utils.Adapter {
 			return;
 		}
 
+		this.customNightIcons = new Set([...dbSvgs].filter(n => n.endsWith("n.svg")));
+
 		fs.mkdirSync(destDir, { recursive: true });
 
 		let copied = 0;
@@ -824,6 +816,18 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		this.log.info(`Icon sync — done: ${copied} copied, ${removed} removed`);
+	}
+
+	_weatherIconUrl(code, iconSet, isDay) {
+		if (iconSet === "custom") {
+			const customCode = WMO_CODE_FALLBACK[code] ?? code;
+			const customPadded = String(customCode).padStart(2, "0");
+			if (!isDay && WMO_HAS_NIGHT.has(customCode) && this.customNightIcons.has(`wmo_${customPadded}n.svg`)) {
+				return `/files/${this.namespace}/icons/custom/wmo_${customPadded}n.svg`;
+			}
+			return `/files/${this.namespace}/icons/custom/wmo_${customPadded}.svg`;
+		}
+		return weatherIconUrl(code, iconSet, isDay);
 	}
 
 	async onReady() {
@@ -1349,7 +1353,6 @@ class Openmeteo extends utils.Adapter {
 		};
 
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
-		const iconSrc = url => (url && url.includes("/icons/custom/") ? `${url}?v=${Date.now()}` : url);
 
 		const [curTemp, curDesc, curIcon, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
 			gs(`${p}.current.temperature`),
@@ -1385,7 +1388,7 @@ class Openmeteo extends utils.Adapter {
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
 <tr>
-<td style="width:${mainIconCqw}"><img src="${iconSrc(curIcon)}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
+<td style="width:${mainIconCqw}"><img src="${curIcon}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
 <td style="padding-left:${c(10)};vertical-align:middle;">
 <div style="font-size:${c(13)};font-weight:600;color:${textColor};margin-bottom:${c(2)};">${widget.locationName}</div>
 <div style="font-size:${c(15)};font-weight:400;color:${subColor};">${curDesc}</div>
@@ -1425,7 +1428,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${iconSrc(dayData[i][1])}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
+				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
@@ -2012,7 +2015,7 @@ class Openmeteo extends utils.Adapter {
 				type: "string",
 				role: "weather.icon.name",
 			});
-			await this.setDP(`${locId}.current.icon_url`, weatherIconUrl(curCode, iconSet, cur.is_day === 1), {
+			await this.setDP(`${locId}.current.icon_url`, this._weatherIconUrl(curCode, iconSet, cur.is_day === 1), {
 				name: "Icon URL",
 				type: "string",
 				role: "weather.icon",
@@ -2349,7 +2352,7 @@ class Openmeteo extends utils.Adapter {
 			});
 			await this.setDP(`${prefix}.weekday`, weekday, { name: "Wochentag", type: "string", role: "dayofweek" });
 			await this.setDP(`${prefix}.icon`, icon, { name: "Icon", type: "string", role: "weather.icon.name" });
-			await this.setDP(`${prefix}.icon_url`, weatherIconUrl(d.weathercode[i], iconSet, true), {
+			await this.setDP(`${prefix}.icon_url`, this._weatherIconUrl(d.weathercode[i], iconSet, true), {
 				name: "Icon URL",
 				type: "string",
 				role: `weather.icon${fc}`,
@@ -3098,7 +3101,7 @@ class Openmeteo extends utils.Adapter {
 						type: "string",
 						role: "weather.icon.name",
 					});
-					await this.setDP(`${hPath}.icon_url`, weatherIconUrl(hData.weathercode, iconSet, hData.is_day), {
+					await this.setDP(`${hPath}.icon_url`, this._weatherIconUrl(hData.weathercode, iconSet, hData.is_day), {
 						name: "Icon URL",
 						type: "string",
 						role: "weather.icon",
