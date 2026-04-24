@@ -755,67 +755,17 @@ class Openmeteo extends utils.Adapter {
 		}
 	}
 
-	async syncCustomIconsToStatic() {
-		const destDir = path.join(__dirname, "admin", "icons", "custom");
-
+	async _loadCustomNightIcons() {
 		let entries;
 		try {
 			entries = await this.readDirAsync(this.namespace, "icons/custom");
-		} catch (e) {
-			this.log.debug(`Icon sync — DB folder not accessible: ${e.message}`);
+		} catch {
 			return;
 		}
 		if (!Array.isArray(entries)) {
 			return;
 		}
-
-		const dbSvgs = new Set(entries.filter(e => !e.isDir && e.file.endsWith(".svg")).map(e => e.file));
-		if (dbSvgs.size === 0) {
-			return;
-		}
-
-		this.customNightIcons = new Set([...dbSvgs].filter(n => n.endsWith("n.svg")));
-
-		fs.mkdirSync(destDir, { recursive: true });
-
-		let copied = 0;
-		for (const name of dbSvgs) {
-			try {
-				const result = await this.readFileAsync(this.namespace, `icons/custom/${name}`);
-				let data;
-				if (Buffer.isBuffer(result)) {
-					data = result;
-				} else if (result && Buffer.isBuffer(result.file)) {
-					data = result.file;
-				} else if (result && typeof result.file === "string") {
-					data = Buffer.from(result.file);
-				} else if (result && Buffer.isBuffer(result.data)) {
-					data = result.data;
-				} else {
-					data = result;
-				}
-				fs.writeFileSync(path.join(destDir, name), data);
-				copied++;
-			} catch (e) {
-				this.log.warn(`Icon sync failed for ${name}: ${e.message}`);
-			}
-		}
-
-		let removed = 0;
-		if (fs.existsSync(destDir)) {
-			for (const name of fs.readdirSync(destDir)) {
-				if (name.endsWith(".svg") && !dbSvgs.has(name)) {
-					try {
-						fs.unlinkSync(path.join(destDir, name));
-						removed++;
-					} catch (e) {
-						this.log.warn(`Icon removal failed for ${name}: ${e.message}`);
-					}
-				}
-			}
-		}
-
-		this.log.info(`Icon sync — done: ${copied} copied, ${removed} removed`);
+		this.customNightIcons = new Set(entries.filter(e => !e.isDir && e.file.endsWith("n.svg")).map(e => e.file));
 	}
 
 	_weatherIconUrl(code, iconSet, isDay) {
@@ -833,7 +783,7 @@ class Openmeteo extends utils.Adapter {
 	async onReady() {
 		await this.setState("info.connection", false, true);
 		await this.ensureCustomIconsReadme();
-		await this.syncCustomIconsToStatic();
+		await this._loadCustomNightIcons();
 
 		// Sofort beim Start abrufen
 		await this.runUpdate();
@@ -3101,11 +3051,15 @@ class Openmeteo extends utils.Adapter {
 						type: "string",
 						role: "weather.icon.name",
 					});
-					await this.setDP(`${hPath}.icon_url`, this._weatherIconUrl(hData.weathercode, iconSet, hData.is_day), {
-						name: "Icon URL",
-						type: "string",
-						role: "weather.icon",
-					});
+					await this.setDP(
+						`${hPath}.icon_url`,
+						this._weatherIconUrl(hData.weathercode, iconSet, hData.is_day),
+						{
+							name: "Icon URL",
+							type: "string",
+							role: "weather.icon",
+						},
+					);
 					await this.setDP(`${hPath}.description`, hData.description, {
 						name: "Beschreibung",
 						type: "string",
