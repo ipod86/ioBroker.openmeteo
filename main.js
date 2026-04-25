@@ -1303,9 +1303,41 @@ class Openmeteo extends utils.Adapter {
 		};
 
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
-		const iconSrc = url => (url && url.startsWith("/files/") ? `${url}?v=${Date.now()}` : url);
 
-		const [curTemp, curDesc, curIcon, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
+		// For custom icons: resolve /files/ URLs to base64 data URLs so they work
+		// outside admin context (VIS, jarvis, etc. don't have access to /files/).
+		const iconCache = new Map();
+		const resolveIcon = async url => {
+			if (!url || !url.startsWith("/files/")) {
+				return url;
+			}
+			const filePath = url.split("?")[0].replace(`/files/${this.namespace}/`, "");
+			if (iconCache.has(filePath)) {
+				return iconCache.get(filePath);
+			}
+			try {
+				const raw = await this.readFileAsync(this.namespace, filePath);
+				const buf = Buffer.isBuffer(raw)
+					? raw
+					: raw?.file instanceof Buffer
+						? raw.file
+						: typeof raw?.file === "string"
+							? Buffer.from(raw.file)
+							: raw?.data instanceof Buffer
+								? raw.data
+								: null;
+				if (!buf) {
+					return url;
+				}
+				const dataUrl = `data:image/svg+xml;base64,${buf.toString("base64")}`;
+				iconCache.set(filePath, dataUrl);
+				return dataUrl;
+			} catch {
+				return url;
+			}
+		};
+
+		const [curTemp, curDesc, curIconRaw, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
 			gs(`${p}.current.temperature`),
 			gs(`${p}.current.description`),
 			gs(`${p}.current.icon_url`),
@@ -1315,11 +1347,12 @@ class Openmeteo extends utils.Adapter {
 			gs(`${p}.current.summary`),
 			gs(`${p}.day0.sunshine_hours`),
 		]);
+		const curIcon = await resolveIcon(curIconRaw);
 
 		const days = Math.min(widget.days ?? 5, 14);
 
-		// Fetch day data in parallel
-		const dayData = await Promise.all(
+		// Fetch day data in parallel, then resolve custom icon URLs
+		const dayDataRaw = await Promise.all(
 			Array.from({ length: days }, (_, i) =>
 				Promise.all([
 					gs(`${p}.day${i}.weekday`),
@@ -1330,6 +1363,12 @@ class Openmeteo extends utils.Adapter {
 				]),
 			),
 		);
+		const dayData = await Promise.all(
+			dayDataRaw.map(async row => {
+				const resolved = await resolveIcon(row[1]);
+				return [row[0], resolved, row[2], row[3], row[4]];
+			}),
+		);
 
 		// Outer div is the cqw query container (container-type:inline-size).
 		// Inner div carries background/padding; its children use cqw for all sizes.
@@ -1339,7 +1378,7 @@ class Openmeteo extends utils.Adapter {
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
 <tr>
-<td style="width:${mainIconCqw}"><img src="${iconSrc(curIcon)}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
+<td style="width:${mainIconCqw}"><img src="${curIcon}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
 <td style="padding-left:${c(10)};vertical-align:middle;">
 <div style="font-size:${c(13)};font-weight:600;color:${textColor};margin-bottom:${c(2)};">${widget.locationName}</div>
 <div style="font-size:${c(15)};font-weight:400;color:${subColor};">${curDesc}</div>
@@ -1379,7 +1418,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${iconSrc(dayData[i][1])}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
+				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
