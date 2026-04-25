@@ -255,7 +255,7 @@ Dieser Adapter verwendet die Open-Meteo API. Der Name und das Logo von Open-Mete
 
 ## Changelog
 
-### **WORK IN PROGRESS**
+### 0.1.3 (2026-04-25)
 * (ipod86) Eigenes SVG-Icon-Set mit Nacht-Icons und Base64-Einbettung im Widget-HTML
 * (ipod86) WMO OGC SVG-Icons mit themenabhängiger Farbinvertierung
 * (ipod86) Widget: responsives Layout via CSS Container Queries, konfigurierbare Breite, eigenes Farbschema, MDI-SVG-Icons
