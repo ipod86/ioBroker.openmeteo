@@ -254,7 +254,7 @@ This adapter uses the Open-Meteo API. The Open-Meteo name and logo are property 
 ### 0.1.3 (2026-04-25)
 * (ipod86) Custom SVG icon set with night icon support and Base64 embedding in widget HTML
 * (ipod86) WMO OGC SVG icon set with theme-aware color inversion
-* (ipod86) Widget: responsive layout via CSS container queries, configurable width, custom color theme, MDI SVG icons
+* (ipod86) Widget: responsive layout via CSS container queries; configurable width (200–900 px); custom color theme with background and text color pickers; MDI SVG icons
 * (ipod86) Comfort indices: heat index, windchill, humidex, UV index (optional, hourly option)
 * (ipod86) Settings: inline validation, save blocked on invalid config
 
