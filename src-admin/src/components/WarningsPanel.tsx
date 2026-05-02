@@ -42,6 +42,9 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
                                 {I18n.t('warnOfficialMinLevelHelp')}
                             </Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25 }}>
+                                {I18n.t(`warnLevelDesc${native.warnOfficialMinLevel ?? 2}`)}
+                            </Typography>
                         </FormControl>
                     )}
                 </Box>

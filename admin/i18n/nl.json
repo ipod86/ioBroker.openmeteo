@@ -48,5 +48,9 @@
   "iconSetCustomHint": "Uploaden naar: Admin → Bestanden → openmeteo-notify.0/icons/custom/\nVereiste dagpictogrammen (24):\nwmo_00  wmo_01  wmo_02  wmo_03  wmo_45  wmo_48\nwmo_51  wmo_53  wmo_55  wmo_61  wmo_63  wmo_65\nwmo_71  wmo_73  wmo_75  wmo_77  wmo_80  wmo_81\nwmo_82  wmo_85  wmo_86  wmo_95  wmo_96  wmo_99\nNachtpictogrammen optioneel (achtervoegsel n): wmo_00n.svg, wmo_01n.svg …",
   "iconSetCustomPreviewHint": "Voorbeeld dagpictogrammen (ontbrekende verborgen)",
   "warnOfficialMinLevel": "Minimaal waarschuwingsniveau (officieel)",
-  "warnOfficialMinLevelHelp": "Stuur melding alleen vanaf dit waarschuwingsniveau"
+  "warnOfficialMinLevelHelp": "Stuur melding alleen vanaf dit waarschuwingsniveau",
+  "warnLevelDesc1": "Alle waarschuwingen, inclusief voorinformaties",
+  "warnLevelDesc2": "Standaard waarschuwingen en hoger – bijv. vorst, wind, gladheid",
+  "warnLevelDesc3": "Ernstige waarschuwingen en hoger – bijv. storm, zware regen",
+  "warnLevelDesc4": "Alleen extreme waarschuwingen – hoogste gevaarsniveau"
 }

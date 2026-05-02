@@ -48,5 +48,9 @@
   "iconSetCustomHint": "Carregar em: Admin → Ficheiros → openmeteo-notify.0/icons/custom/\nÍcones diurnos necessários (24):\nwmo_00  wmo_01  wmo_02  wmo_03  wmo_45  wmo_48\nwmo_51  wmo_53  wmo_55  wmo_61  wmo_63  wmo_65\nwmo_71  wmo_73  wmo_75  wmo_77  wmo_80  wmo_81\nwmo_82  wmo_85  wmo_86  wmo_95  wmo_96  wmo_99\nÍcones nocturnos opcionais (sufixo n): wmo_00n.svg, wmo_01n.svg …",
   "iconSetCustomPreviewHint": "Pré-visualização ícones diurnos (em falta ocultos)",
   "warnOfficialMinLevel": "Nível mínimo de alerta (oficial)",
-  "warnOfficialMinLevelHelp": "Enviar notificação apenas a partir deste nível de alerta"
+  "warnOfficialMinLevelHelp": "Enviar notificação apenas a partir deste nível de alerta",
+  "warnLevelDesc1": "Todos os avisos, incluindo pré-informações",
+  "warnLevelDesc2": "Avisos padrão e acima – ex. geada, vento, gelo",
+  "warnLevelDesc3": "Avisos severos e acima – ex. tempestade, chuva intensa",
+  "warnLevelDesc4": "Apenas avisos extremos – nível de perigo máximo"
 }
