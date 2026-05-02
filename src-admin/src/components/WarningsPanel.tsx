@@ -27,15 +27,25 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                         {I18n.t('warnOfficialHelp')}
                     </Typography>
                     {native.warnOfficial && (
-                        <TextField
-                            label={I18n.t('warnExcludeKeywords')}
-                            value={native.warnExcludeKeywords ?? ''}
-                            onChange={e => update('warnExcludeKeywords', e.target.value)}
-                            placeholder={I18n.t('warnExcludeKeywordsPlaceholder')}
-                            helperText={I18n.t('warnExcludeKeywordsHelp')}
-                            sx={{ width: 360, ml: 2, mt: 1 }}
-                            size="small"
-                        />
+                        <FormControl sx={{ width: 360, ml: 2, mt: 1 }} size="small">
+                            <InputLabel>{I18n.t('warnOfficialMinLevel')}</InputLabel>
+                            <Select
+                                value={native.warnOfficialMinLevel ?? 2}
+                                label={I18n.t('warnOfficialMinLevel')}
+                                onChange={e => update('warnOfficialMinLevel', Number(e.target.value))}
+                            >
+                                <MenuItem value={1}>1 – Vorinformation / Minor</MenuItem>
+                                <MenuItem value={2}>2 – Warnung / Moderate</MenuItem>
+                                <MenuItem value={3}>3 – Markante Warnung / Severe</MenuItem>
+                                <MenuItem value={4}>4 – Extreme Warnung / Extreme</MenuItem>
+                            </Select>
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                                {I18n.t('warnOfficialMinLevelHelp')}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25 }}>
+                                {I18n.t(`warnLevelDesc${native.warnOfficialMinLevel ?? 2}`)}
+                            </Typography>
+                        </FormControl>
                     )}
                     {native.warnOfficial && (
                         <FormControl sx={{ width: 240, ml: 2, mt: 1 }} size="small">
@@ -67,25 +77,15 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                         </Box>
                     )}
                     {native.warnOfficial && (
-                        <FormControl sx={{ width: 360, ml: 2, mt: 1 }} size="small">
-                            <InputLabel>{I18n.t('warnOfficialMinLevel')}</InputLabel>
-                            <Select
-                                value={native.warnOfficialMinLevel ?? 2}
-                                label={I18n.t('warnOfficialMinLevel')}
-                                onChange={e => update('warnOfficialMinLevel', Number(e.target.value))}
-                            >
-                                <MenuItem value={1}>1 – Vorinformation / Minor</MenuItem>
-                                <MenuItem value={2}>2 – Warnung / Moderate</MenuItem>
-                                <MenuItem value={3}>3 – Markante Warnung / Severe</MenuItem>
-                                <MenuItem value={4}>4 – Extreme Warnung / Extreme</MenuItem>
-                            </Select>
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                                {I18n.t('warnOfficialMinLevelHelp')}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25 }}>
-                                {I18n.t(`warnLevelDesc${native.warnOfficialMinLevel ?? 2}`)}
-                            </Typography>
-                        </FormControl>
+                        <TextField
+                            label={I18n.t('warnExcludeKeywords')}
+                            value={native.warnExcludeKeywords ?? ''}
+                            onChange={e => update('warnExcludeKeywords', e.target.value)}
+                            placeholder={I18n.t('warnExcludeKeywordsPlaceholder')}
+                            helperText={I18n.t('warnExcludeKeywordsHelp')}
+                            sx={{ width: 360, ml: 2, mt: 1 }}
+                            size="small"
+                        />
                     )}
                 </Box>
             </Box>
