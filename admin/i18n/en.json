@@ -47,5 +47,8 @@
   "warnLevelDesc1": "All warnings – including preliminary information and notices",
   "warnLevelDesc2": "Standard warnings and above – e.g. frost, wind, slippery roads",
   "warnLevelDesc3": "Severe warnings and above – e.g. storm, heavy rain, severe weather",
-  "warnLevelDesc4": "Extreme warnings only – highest danger level"
+  "warnLevelDesc4": "Extreme warnings only – highest danger level",
+  "warnExcludeKeywords": "Exclude keywords",
+  "warnExcludeKeywordsPlaceholder": "Frost, Fog, Snow",
+  "warnExcludeKeywordsHelp": "Comma-separated keywords – warnings containing any of these will not trigger a notification"
 }

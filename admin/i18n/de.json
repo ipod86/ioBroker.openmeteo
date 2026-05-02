@@ -48,5 +48,8 @@
   "warnLevelDesc1": "Alle Warnungen – auch einfache Vorinformationen und Hinweise",
   "warnLevelDesc2": "Normale Warnungen und höher – z. B. Frost, Wind, Glätte",
   "warnLevelDesc3": "Markante Warnungen und höher – z. B. Sturm, Starkregen, Unwetter",
-  "warnLevelDesc4": "Nur extreme Warnungen – höchste Gefahrenstufe"
+  "warnLevelDesc4": "Nur extreme Warnungen – höchste Gefahrenstufe",
+  "warnExcludeKeywords": "Ausschluss-Stichwörter",
+  "warnExcludeKeywordsPlaceholder": "Frost, Glätte, Nebel",
+  "warnExcludeKeywordsHelp": "Kommagetrennte Begriffe – Meldungen die einen dieser Begriffe enthalten werden nicht benachrichtigt"
 }

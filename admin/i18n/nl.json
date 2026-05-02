@@ -52,5 +52,8 @@
   "warnLevelDesc1": "Alle waarschuwingen, inclusief voorinformaties",
   "warnLevelDesc2": "Standaard waarschuwingen en hoger – bijv. vorst, wind, gladheid",
   "warnLevelDesc3": "Ernstige waarschuwingen en hoger – bijv. storm, zware regen",
-  "warnLevelDesc4": "Alleen extreme waarschuwingen – hoogste gevaarsniveau"
+  "warnLevelDesc4": "Alleen extreme waarschuwingen – hoogste gevaarsniveau",
+  "warnExcludeKeywords": "Uitsluitingszoekwoorden",
+  "warnExcludeKeywordsPlaceholder": "Vorst, Mist, Sneeuw",
+  "warnExcludeKeywordsHelp": "Door komma's gescheiden woorden – waarschuwingen met een van deze woorden sturen geen melding"
 }

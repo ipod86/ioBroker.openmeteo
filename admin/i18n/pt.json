@@ -52,5 +52,8 @@
   "warnLevelDesc1": "Todos os avisos, incluindo pré-informações",
   "warnLevelDesc2": "Avisos padrão e acima – ex. geada, vento, gelo",
   "warnLevelDesc3": "Avisos severos e acima – ex. tempestade, chuva intensa",
-  "warnLevelDesc4": "Apenas avisos extremos – nível de perigo máximo"
+  "warnLevelDesc4": "Apenas avisos extremos – nível de perigo máximo",
+  "warnExcludeKeywords": "Palavras-chave excluídas",
+  "warnExcludeKeywordsPlaceholder": "Geada, Nevoeiro, Neve",
+  "warnExcludeKeywordsHelp": "Palavras separadas por vírgulas – alertas com alguma delas não enviarão notificação"
 }

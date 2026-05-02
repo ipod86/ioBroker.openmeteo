@@ -52,5 +52,8 @@
   "warnLevelDesc1": "Todas las advertencias, incluidas las informaciones previas",
   "warnLevelDesc2": "Advertencias estándar y superiores – p. ej. heladas, viento, hielo",
   "warnLevelDesc3": "Advertencias graves y superiores – p. ej. tormenta, lluvias intensas",
-  "warnLevelDesc4": "Solo advertencias extremas – nivel de peligro máximo"
+  "warnLevelDesc4": "Solo advertencias extremas – nivel de peligro máximo",
+  "warnExcludeKeywords": "Palabras clave excluidas",
+  "warnExcludeKeywordsPlaceholder": "Helada, Niebla, Nieve",
+  "warnExcludeKeywordsHelp": "Palabras separadas por comas – las alertas que contengan alguna de ellas no generarán notificación"
 }

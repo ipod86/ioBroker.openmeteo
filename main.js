@@ -1811,13 +1811,19 @@ class Openmeteo extends utils.Adapter {
 
 		// Send notifications for new DWD warnings
 		const minLevel = this.config.warnOfficialMinLevel ?? 2;
+		const excludeKeywords = (this.config.warnExcludeKeywords || "")
+			.split(",")
+			.map(k => k.trim().toLowerCase())
+			.filter(k => k.length > 0);
 		const activeKeys = new Set();
 		for (const w of warnings) {
 			const key = `${locId}_dwd_${w.event}_${w.start}`;
 			activeKeys.add(key);
 			if (!this.warnState[key]) {
 				this.warnState[key] = true;
-				if ((w.level || 0) >= minLevel) {
+				const text = `${w.headline || ""} ${w.event || ""}`.toLowerCase();
+				const excluded = excludeKeywords.some(k => text.includes(k));
+				if ((w.level || 0) >= minLevel && !excluded) {
 					const levelTexts = {
 						1: "Vorinformation",
 						2: "Warnung",
@@ -1911,13 +1917,19 @@ class Openmeteo extends utils.Adapter {
 
 		// Send notifications for new MeteoAlarm warnings
 		const minLevel = this.config.warnOfficialMinLevel ?? 2;
+		const excludeKeywords = (this.config.warnExcludeKeywords || "")
+			.split(",")
+			.map(k => k.trim().toLowerCase())
+			.filter(k => k.length > 0);
 		const activeKeys = new Set();
 		for (const w of warnings) {
 			const key = `${locId}_meteoalarm_${w.event}_${w.onset}`;
 			activeKeys.add(key);
 			if (!this.warnState[key]) {
 				this.warnState[key] = true;
-				if ((METEOALARM_SEVERITY[w.severity] || 0) >= minLevel) {
+				const text = `${w.headline || ""} ${w.event || ""}`.toLowerCase();
+				const excluded = excludeKeywords.some(k => text.includes(k));
+				if ((METEOALARM_SEVERITY[w.severity] || 0) >= minLevel && !excluded) {
 					const msg = `MeteoAlarm ${w.severity} für ${locId}: ${w.headline || w.event}`;
 					this.log.warn(msg);
 					await this.registerNotification("openmeteo-notify", "official_warning", msg);

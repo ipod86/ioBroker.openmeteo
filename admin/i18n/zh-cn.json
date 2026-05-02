@@ -52,5 +52,8 @@
   "warnLevelDesc1": "所有警报，包括预先通知",
   "warnLevelDesc2": "标准警报及以上 – 如霜冻、大风、路面结冰",
   "warnLevelDesc3": "严重警报及以上 – 如风暴、暴雨、恶劣天气",
-  "warnLevelDesc4": "仅极端警报 – 最高危险级别"
+  "warnLevelDesc4": "仅极端警报 – 最高危险级别",
+  "warnExcludeKeywords": "排除关键词",
+  "warnExcludeKeywordsPlaceholder": "霜冻, 大雾, 降雪",
+  "warnExcludeKeywordsHelp": "逗号分隔的关键词 – 包含这些词的警报不会触发通知"
 }

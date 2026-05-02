@@ -52,5 +52,8 @@
   "warnLevelDesc1": "Wszystkie ostrzeżenia, w tym wstępne informacje",
   "warnLevelDesc2": "Standardowe ostrzeżenia i wyższe – np. mróz, wiatr, gołoledź",
   "warnLevelDesc3": "Poważne ostrzeżenia i wyższe – np. burza, ulewny deszcz",
-  "warnLevelDesc4": "Tylko ekstremalne ostrzeżenia – najwyższy poziom zagrożenia"
+  "warnLevelDesc4": "Tylko ekstremalne ostrzeżenia – najwyższy poziom zagrożenia",
+  "warnExcludeKeywords": "Wykluczone słowa kluczowe",
+  "warnExcludeKeywordsPlaceholder": "Mróz, Mgła, Śnieg",
+  "warnExcludeKeywordsHelp": "Słowa oddzielone przecinkami – ostrzeżenia zawierające któreś z nich nie wyślą powiadomienia"
 }

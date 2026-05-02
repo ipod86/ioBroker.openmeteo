@@ -27,6 +27,17 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                         {I18n.t('warnOfficialHelp')}
                     </Typography>
                     {native.warnOfficial && (
+                        <TextField
+                            label={I18n.t('warnExcludeKeywords')}
+                            value={native.warnExcludeKeywords ?? ''}
+                            onChange={e => update('warnExcludeKeywords', e.target.value)}
+                            placeholder={I18n.t('warnExcludeKeywordsPlaceholder')}
+                            helperText={I18n.t('warnExcludeKeywordsHelp')}
+                            sx={{ width: 360, ml: 2, mt: 1 }}
+                            size="small"
+                        />
+                    )}
+                    {native.warnOfficial && (
                         <FormControl sx={{ width: 360, ml: 2, mt: 1 }} size="small">
                             <InputLabel>{I18n.t('warnOfficialMinLevel')}</InputLabel>
                             <Select

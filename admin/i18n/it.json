@@ -52,5 +52,8 @@
   "warnLevelDesc1": "Tutti gli avvisi, comprese le preinformazioni",
   "warnLevelDesc2": "Avvisi standard e superiori – es. gelate, vento, ghiaccio",
   "warnLevelDesc3": "Avvisi gravi e superiori – es. tempesta, forti piogge",
-  "warnLevelDesc4": "Solo avvisi estremi – massimo livello di pericolo"
+  "warnLevelDesc4": "Solo avvisi estremi – massimo livello di pericolo",
+  "warnExcludeKeywords": "Parole chiave escluse",
+  "warnExcludeKeywordsPlaceholder": "Gelo, Nebbia, Neve",
+  "warnExcludeKeywordsHelp": "Parole separate da virgole – gli avvisi contenenti una di esse non invieranno notifiche"
 }
