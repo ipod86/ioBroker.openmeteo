@@ -57,5 +57,7 @@
   "warnExcludeKeywordsPlaceholder": "Gel, Brouillard, Neige",
   "warnExcludeKeywordsHelp": "Mots séparés par des virgules – les alertes contenant l'un d'eux ne déclencheront pas de notification",
   "warnIntervalMinutes": "Intervalle de vérification pour les alertes officielles",
-  "warnIntervalMinutesHelp": "Fréquence d'interrogation de DWD / MeteoAlarm – indépendante de l'intervalle de mise à jour météo"
+  "warnIntervalMinutesHelp": "Fréquence d'interrogation de DWD / MeteoAlarm – indépendante de l'intervalle de mise à jour météo",
+  "warnNotifyLift": "Notifier lorsqu'une alerte est levée",
+  "warnNotifyLiftHelp": "Envoie une notification lorsqu'une alerte précédemment signalée est annulée ou expire"
 }

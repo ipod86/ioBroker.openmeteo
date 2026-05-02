@@ -56,6 +56,17 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                         </FormControl>
                     )}
                     {native.warnOfficial && (
+                        <Box sx={{ ml: 2, mt: 1 }}>
+                            <FormControlLabel
+                                control={<Switch checked={!!native.warnNotifyLift} onChange={e => update('warnNotifyLift', e.target.checked)} />}
+                                label={I18n.t('warnNotifyLift')}
+                            />
+                            <Typography variant="caption" color="text.secondary" display="block" sx={{ ml: 4 }}>
+                                {I18n.t('warnNotifyLiftHelp')}
+                            </Typography>
+                        </Box>
+                    )}
+                    {native.warnOfficial && (
                         <FormControl sx={{ width: 360, ml: 2, mt: 1 }} size="small">
                             <InputLabel>{I18n.t('warnOfficialMinLevel')}</InputLabel>
                             <Select

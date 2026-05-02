@@ -37,6 +37,7 @@ export interface OpenMeteoConfig {
     warnOfficialMinLevel: number;
     warnExcludeKeywords: string;
     warnIntervalMinutes: number;
+    warnNotifyLift: boolean;
     widgets: Widget[];
     warnStorm: boolean;
     warnStormBft: number;

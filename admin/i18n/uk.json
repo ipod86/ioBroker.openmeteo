@@ -57,5 +57,7 @@
   "warnExcludeKeywordsPlaceholder": "Мороз, Туман, Сніг",
   "warnExcludeKeywordsHelp": "Слова через кому – попередження з такими словами не надсилатимуть сповіщення",
   "warnIntervalMinutes": "Інтервал перевірки офіційних попереджень",
-  "warnIntervalMinutesHelp": "Як часто опитується DWD / MeteoAlarm – незалежно від інтервалу оновлення погоди"
+  "warnIntervalMinutesHelp": "Як часто опитується DWD / MeteoAlarm – незалежно від інтервалу оновлення погоди",
+  "warnNotifyLift": "Сповіщати про скасування попередження",
+  "warnNotifyLiftHelp": "Надсилає сповіщення коли раніше надіслане попередження скасовано або закінчилось"
 }

@@ -57,5 +57,7 @@
   "warnExcludeKeywordsPlaceholder": "Geada, Nevoeiro, Neve",
   "warnExcludeKeywordsHelp": "Palavras separadas por vírgulas – alertas com alguma delas não enviarão notificação",
   "warnIntervalMinutes": "Intervalo de verificação para alertas oficiais",
-  "warnIntervalMinutesHelp": "Com que frequência o DWD / MeteoAlarm é consultado – independente do intervalo de atualização meteorológica"
+  "warnIntervalMinutesHelp": "Com que frequência o DWD / MeteoAlarm é consultado – independente do intervalo de atualização meteorológica",
+  "warnNotifyLift": "Notificar quando um aviso é levantado",
+  "warnNotifyLiftHelp": "Envia uma notificação quando um aviso anteriormente reportado é cancelado ou expira"
 }

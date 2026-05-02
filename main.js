@@ -1843,15 +1843,17 @@ class Openmeteo extends utils.Adapter {
 			.split(",")
 			.map(k => k.trim().toLowerCase())
 			.filter(k => k.length > 0);
+		const warnNotifyLift = !!this.config.warnNotifyLift;
 		const activeKeys = new Set();
 		for (const w of warnings) {
 			const key = `${locId}_dwd_${w.event}_${w.start}`;
 			activeKeys.add(key);
 			if (!this.warnState[key]) {
-				this.warnState[key] = true;
 				const text = `${w.headline || ""} ${w.event || ""}`.toLowerCase();
 				const excluded = excludeKeywords.some(k => text.includes(k));
-				if ((w.level || 0) >= minLevel && !excluded) {
+				const passes = (w.level || 0) >= minLevel && !excluded;
+				this.warnState[key] = { headline: w.headline || w.event, sent: passes };
+				if (passes) {
 					const levelTexts = {
 						1: "Vorinformation",
 						2: "Warnung",
@@ -1867,6 +1869,11 @@ class Openmeteo extends utils.Adapter {
 		}
 		for (const key of Object.keys(this.warnState)) {
 			if (key.startsWith(`${locId}_dwd_`) && !activeKeys.has(key)) {
+				if (warnNotifyLift && this.warnState[key].sent) {
+					const msg = `DWD Warnung aufgehoben für ${locId}: ${this.warnState[key].headline}`;
+					this.log.info(msg);
+					await this.registerNotification("openmeteo-notify", "official_warning", msg);
+				}
 				delete this.warnState[key];
 			}
 		}
@@ -1949,15 +1956,17 @@ class Openmeteo extends utils.Adapter {
 			.split(",")
 			.map(k => k.trim().toLowerCase())
 			.filter(k => k.length > 0);
+		const warnNotifyLift = !!this.config.warnNotifyLift;
 		const activeKeys = new Set();
 		for (const w of warnings) {
 			const key = `${locId}_meteoalarm_${w.event}_${w.onset}`;
 			activeKeys.add(key);
 			if (!this.warnState[key]) {
-				this.warnState[key] = true;
 				const text = `${w.headline || ""} ${w.event || ""}`.toLowerCase();
 				const excluded = excludeKeywords.some(k => text.includes(k));
-				if ((METEOALARM_SEVERITY[w.severity] || 0) >= minLevel && !excluded) {
+				const passes = (METEOALARM_SEVERITY[w.severity] || 0) >= minLevel && !excluded;
+				this.warnState[key] = { headline: w.headline || w.event, sent: passes };
+				if (passes) {
 					const msg = `MeteoAlarm ${w.severity} für ${locId}: ${w.headline || w.event}`;
 					this.log.warn(msg);
 					await this.registerNotification("openmeteo-notify", "official_warning", msg);
@@ -1966,6 +1975,11 @@ class Openmeteo extends utils.Adapter {
 		}
 		for (const key of Object.keys(this.warnState)) {
 			if (key.startsWith(`${locId}_meteoalarm_`) && !activeKeys.has(key)) {
+				if (warnNotifyLift && this.warnState[key].sent) {
+					const msg = `MeteoAlarm Warnung aufgehoben für ${locId}: ${this.warnState[key].headline}`;
+					this.log.info(msg);
+					await this.registerNotification("openmeteo-notify", "official_warning", msg);
+				}
 				delete this.warnState[key];
 			}
 		}

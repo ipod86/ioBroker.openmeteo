@@ -57,5 +57,7 @@
   "warnExcludeKeywordsPlaceholder": "Gelo, Nebbia, Neve",
   "warnExcludeKeywordsHelp": "Parole separate da virgole – gli avvisi contenenti una di esse non invieranno notifiche",
   "warnIntervalMinutes": "Intervallo di controllo per avvisi ufficiali",
-  "warnIntervalMinutesHelp": "Ogni quanto viene interrogato DWD / MeteoAlarm – indipendentemente dall'intervallo di aggiornamento meteo"
+  "warnIntervalMinutesHelp": "Ogni quanto viene interrogato DWD / MeteoAlarm – indipendentemente dall'intervallo di aggiornamento meteo",
+  "warnNotifyLift": "Notifica quando un avviso viene revocato",
+  "warnNotifyLiftHelp": "Invia una notifica quando un avviso precedentemente segnalato viene annullato o scade"
 }

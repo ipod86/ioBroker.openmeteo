@@ -94,5 +94,7 @@
   "warnExcludeKeywordsPlaceholder": "Frost, Glätte, Nebel",
   "warnExcludeKeywordsHelp": "Kommagetrennte Begriffe – Meldungen die einen dieser Begriffe enthalten werden nicht benachrichtigt",
   "warnIntervalMinutes": "Prüfintervall für amtliche Warnungen",
-  "warnIntervalMinutesHelp": "Wie oft DWD / MeteoAlarm abgefragt wird – unabhängig vom Wetter-Aktualisierungsintervall"
+  "warnIntervalMinutesHelp": "Wie oft DWD / MeteoAlarm abgefragt wird – unabhängig vom Wetter-Aktualisierungsintervall",
+  "warnNotifyLift": "Benachrichtigung bei Aufhebung einer Warnung",
+  "warnNotifyLiftHelp": "Sendet eine Benachrichtigung wenn eine zuvor gemeldete Warnung aufgehoben wird oder abläuft"
 }

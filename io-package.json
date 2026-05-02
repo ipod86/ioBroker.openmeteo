@@ -149,7 +149,8 @@
     "warnStormBft": 8,
     "warnOfficialMinLevel": 2,
     "warnExcludeKeywords": "",
-    "warnIntervalMinutes": 15
+    "warnIntervalMinutes": 15,
+    "warnNotifyLift": false
   },
   "notifications": [
     {

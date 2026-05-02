@@ -57,5 +57,7 @@
   "warnExcludeKeywordsPlaceholder": "Vorst, Mist, Sneeuw",
   "warnExcludeKeywordsHelp": "Door komma's gescheiden woorden – waarschuwingen met een van deze woorden sturen geen melding",
   "warnIntervalMinutes": "Controle-interval voor officiële waarschuwingen",
-  "warnIntervalMinutesHelp": "Hoe vaak DWD / MeteoAlarm wordt bevraagd – onafhankelijk van het weerupdate-interval"
+  "warnIntervalMinutesHelp": "Hoe vaak DWD / MeteoAlarm wordt bevraagd – onafhankelijk van het weerupdate-interval",
+  "warnNotifyLift": "Melding bij opheffing van een waarschuwing",
+  "warnNotifyLiftHelp": "Stuurt een melding wanneer een eerder gerapporteerde waarschuwing wordt opgeheven of verloopt"
 }

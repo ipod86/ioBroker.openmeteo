@@ -57,5 +57,7 @@
   "warnExcludeKeywordsPlaceholder": "Helada, Niebla, Nieve",
   "warnExcludeKeywordsHelp": "Palabras separadas por comas – las alertas que contengan alguna de ellas no generarán notificación",
   "warnIntervalMinutes": "Intervalo de comprobación para avisos oficiales",
-  "warnIntervalMinutesHelp": "Con qué frecuencia se consulta DWD / MeteoAlarm, independientemente del intervalo de actualización meteorológica"
+  "warnIntervalMinutesHelp": "Con qué frecuencia se consulta DWD / MeteoAlarm, independientemente del intervalo de actualización meteorológica",
+  "warnNotifyLift": "Notificar cuando se levante una advertencia",
+  "warnNotifyLiftHelp": "Envía una notificación cuando una advertencia previamente informada se cancela o vence"
 }
