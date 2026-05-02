@@ -50,5 +50,7 @@
   "warnLevelDesc4": "Extreme warnings only – highest danger level",
   "warnExcludeKeywords": "Exclude keywords",
   "warnExcludeKeywordsPlaceholder": "Frost, Fog, Snow",
-  "warnExcludeKeywordsHelp": "Comma-separated keywords – warnings containing any of these will not trigger a notification"
+  "warnExcludeKeywordsHelp": "Comma-separated keywords – warnings containing any of these will not trigger a notification",
+  "warnIntervalMinutes": "Check interval for official warnings",
+  "warnIntervalMinutesHelp": "How often DWD / MeteoAlarm is queried – independent of the weather update interval"
 }

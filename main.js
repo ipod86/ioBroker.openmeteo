@@ -648,6 +648,7 @@ class Openmeteo extends utils.Adapter {
 		});
 		this.updateInterval = null;
 		this.updateTimeout = null;
+		this.warnInterval = null;
 		this.consecutiveFailures = 0;
 		this.warnState = {};
 		this.customNightIcons = new Set();
@@ -793,8 +794,9 @@ class Openmeteo extends utils.Adapter {
 
 		// Sofort beim Start abrufen
 		await this.runUpdate();
+		await this.runWarnUpdate();
 
-		// Schedule repeating updates
+		// Schedule repeating weather updates
 		const intervalMinutes = this.config.updateInterval || 60;
 		if (intervalMinutes >= 1440) {
 			// Daily at 01:00
@@ -823,6 +825,17 @@ class Openmeteo extends utils.Adapter {
 					await this.runUpdate();
 				},
 				intervalMinutes * 60 * 1000,
+			);
+		}
+
+		// Schedule separate official warning updates
+		if (this.config.warnOfficial) {
+			const warnIntervalMinutes = this.config.warnIntervalMinutes || 15;
+			this.warnInterval = this.setInterval(
+				async () => {
+					await this.runWarnUpdate();
+				},
+				warnIntervalMinutes * 60 * 1000,
 			);
 		}
 	}
@@ -1011,29 +1024,7 @@ class Openmeteo extends utils.Adapter {
 					}
 				}
 
-				if (warnOfficial) {
-					try {
-						const locInfo = await this.fetchLocationInfo(loc.lat, loc.lon);
-						this.log.debug(
-							`Location info for "${loc.name}": country=${locInfo.countryCode}, warnCell=${locInfo.warncellId}`,
-						);
-						if (locInfo.countryCode === "de" && locInfo.warncellId) {
-							const dwdWarnings = await this.fetchDwdWarnings(locInfo.warncellId);
-							this.log.debug(`DWD: ${dwdWarnings.length} warning(s) for "${loc.name}"`);
-							await this.processDwdWarnings(dwdWarnings, locId);
-						} else if (METEOALARM_COUNTRIES[locInfo.countryCode]) {
-							const warnings = await this.fetchMeteoAlarmWarnings(loc.lat, loc.lon, locInfo.countryCode);
-							this.log.debug(`MeteoAlarm: ${warnings.length} warning(s) for "${loc.name}"`);
-							await this.processMeteoAlarmWarnings(warnings, locId);
-						} else {
-							this.log.debug(
-								`Official warnings: no supported service for country "${locInfo.countryCode}" (${loc.name})`,
-							);
-						}
-					} catch (err) {
-						this.log.warn(`Official warnings not available for "${loc.name}": ${err.message}`);
-					}
-				} else {
+				if (!warnOfficial) {
 					try {
 						await this.delObjectAsync(`${locId}.warnings`, { recursive: true });
 					} catch {
@@ -1102,6 +1093,43 @@ class Openmeteo extends utils.Adapter {
 		// Weather warnings
 		if (anySuccess) {
 			await this.checkWeatherWarnings(locations);
+		}
+	}
+
+	async runWarnUpdate() {
+		if (!this.config.warnOfficial) {
+			return;
+		}
+		const locations = this.config.locations;
+		if (!locations || !locations.length) {
+			return;
+		}
+		for (const loc of locations) {
+			const locId = normalizeId(loc.name);
+			if (!locId) {
+				continue;
+			}
+			try {
+				const locInfo = await this.fetchLocationInfo(loc.lat, loc.lon);
+				this.log.debug(
+					`Location info for "${loc.name}": country=${locInfo.countryCode}, warnCell=${locInfo.warncellId}`,
+				);
+				if (locInfo.countryCode === "de" && locInfo.warncellId) {
+					const dwdWarnings = await this.fetchDwdWarnings(locInfo.warncellId);
+					this.log.debug(`DWD: ${dwdWarnings.length} warning(s) for "${loc.name}"`);
+					await this.processDwdWarnings(dwdWarnings, locId);
+				} else if (METEOALARM_COUNTRIES[locInfo.countryCode]) {
+					const warnings = await this.fetchMeteoAlarmWarnings(loc.lat, loc.lon, locInfo.countryCode);
+					this.log.debug(`MeteoAlarm: ${warnings.length} warning(s) for "${loc.name}"`);
+					await this.processMeteoAlarmWarnings(warnings, locId);
+				} else {
+					this.log.debug(
+						`Official warnings: no supported service for country "${locInfo.countryCode}" (${loc.name})`,
+					);
+				}
+			} catch (err) {
+				this.log.warn(`Official warnings not available for "${loc.name}": ${err.message}`);
+			}
 		}
 	}
 
@@ -3611,6 +3639,9 @@ class Openmeteo extends utils.Adapter {
 			}
 			if (this.updateInterval) {
 				this.clearInterval(this.updateInterval);
+			}
+			if (this.warnInterval) {
+				this.clearInterval(this.warnInterval);
 			}
 			callback();
 		} catch (error) {

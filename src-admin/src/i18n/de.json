@@ -92,5 +92,7 @@
   "warnLevelDesc4": "Nur extreme Warnungen – höchste Gefahrenstufe",
   "warnExcludeKeywords": "Ausschluss-Stichwörter",
   "warnExcludeKeywordsPlaceholder": "Frost, Glätte, Nebel",
-  "warnExcludeKeywordsHelp": "Kommagetrennte Begriffe – Meldungen die einen dieser Begriffe enthalten werden nicht benachrichtigt"
+  "warnExcludeKeywordsHelp": "Kommagetrennte Begriffe – Meldungen die einen dieser Begriffe enthalten werden nicht benachrichtigt",
+  "warnIntervalMinutes": "Prüfintervall für amtliche Warnungen",
+  "warnIntervalMinutesHelp": "Wie oft DWD / MeteoAlarm abgefragt wird – unabhängig vom Wetter-Aktualisierungsintervall"
 }

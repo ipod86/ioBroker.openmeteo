@@ -55,5 +55,7 @@
   "warnLevelDesc4": "仅极端警报 – 最高危险级别",
   "warnExcludeKeywords": "排除关键词",
   "warnExcludeKeywordsPlaceholder": "霜冻, 大雾, 降雪",
-  "warnExcludeKeywordsHelp": "逗号分隔的关键词 – 包含这些词的警报不会触发通知"
+  "warnExcludeKeywordsHelp": "逗号分隔的关键词 – 包含这些词的警报不会触发通知",
+  "warnIntervalMinutes": "官方预警检查间隔",
+  "warnIntervalMinutesHelp": "DWD / MeteoAlarm 的查询频率 – 与天气更新间隔无关"
 }

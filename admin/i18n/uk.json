@@ -55,5 +55,7 @@
   "warnLevelDesc4": "Лише екстремальні попередження – найвищий рівень небезпеки",
   "warnExcludeKeywords": "Виключені ключові слова",
   "warnExcludeKeywordsPlaceholder": "Мороз, Туман, Сніг",
-  "warnExcludeKeywordsHelp": "Слова через кому – попередження з такими словами не надсилатимуть сповіщення"
+  "warnExcludeKeywordsHelp": "Слова через кому – попередження з такими словами не надсилатимуть сповіщення",
+  "warnIntervalMinutes": "Інтервал перевірки офіційних попереджень",
+  "warnIntervalMinutesHelp": "Як часто опитується DWD / MeteoAlarm – незалежно від інтервалу оновлення погоди"
 }

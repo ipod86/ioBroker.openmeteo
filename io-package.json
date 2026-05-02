@@ -148,7 +148,8 @@
     "warnLeadHours": 2,
     "warnStormBft": 8,
     "warnOfficialMinLevel": 2,
-    "warnExcludeKeywords": ""
+    "warnExcludeKeywords": "",
+    "warnIntervalMinutes": 15
   },
   "notifications": [
     {

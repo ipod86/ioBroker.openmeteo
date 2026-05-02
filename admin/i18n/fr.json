@@ -55,5 +55,7 @@
   "warnLevelDesc4": "Alertes extrêmes uniquement – niveau de danger maximum",
   "warnExcludeKeywords": "Mots-clés exclus",
   "warnExcludeKeywordsPlaceholder": "Gel, Brouillard, Neige",
-  "warnExcludeKeywordsHelp": "Mots séparés par des virgules – les alertes contenant l'un d'eux ne déclencheront pas de notification"
+  "warnExcludeKeywordsHelp": "Mots séparés par des virgules – les alertes contenant l'un d'eux ne déclencheront pas de notification",
+  "warnIntervalMinutes": "Intervalle de vérification pour les alertes officielles",
+  "warnIntervalMinutesHelp": "Fréquence d'interrogation de DWD / MeteoAlarm – indépendante de l'intervalle de mise à jour météo"
 }

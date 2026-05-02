@@ -55,5 +55,7 @@
   "warnLevelDesc4": "Alleen extreme waarschuwingen – hoogste gevaarsniveau",
   "warnExcludeKeywords": "Uitsluitingszoekwoorden",
   "warnExcludeKeywordsPlaceholder": "Vorst, Mist, Sneeuw",
-  "warnExcludeKeywordsHelp": "Door komma's gescheiden woorden – waarschuwingen met een van deze woorden sturen geen melding"
+  "warnExcludeKeywordsHelp": "Door komma's gescheiden woorden – waarschuwingen met een van deze woorden sturen geen melding",
+  "warnIntervalMinutes": "Controle-interval voor officiële waarschuwingen",
+  "warnIntervalMinutesHelp": "Hoe vaak DWD / MeteoAlarm wordt bevraagd – onafhankelijk van het weerupdate-interval"
 }

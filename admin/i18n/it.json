@@ -55,5 +55,7 @@
   "warnLevelDesc4": "Solo avvisi estremi – massimo livello di pericolo",
   "warnExcludeKeywords": "Parole chiave escluse",
   "warnExcludeKeywordsPlaceholder": "Gelo, Nebbia, Neve",
-  "warnExcludeKeywordsHelp": "Parole separate da virgole – gli avvisi contenenti una di esse non invieranno notifiche"
+  "warnExcludeKeywordsHelp": "Parole separate da virgole – gli avvisi contenenti una di esse non invieranno notifiche",
+  "warnIntervalMinutes": "Intervallo di controllo per avvisi ufficiali",
+  "warnIntervalMinutesHelp": "Ogni quanto viene interrogato DWD / MeteoAlarm – indipendentemente dall'intervallo di aggiornamento meteo"
 }

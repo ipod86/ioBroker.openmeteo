@@ -55,5 +55,7 @@
   "warnLevelDesc4": "Solo advertencias extremas – nivel de peligro máximo",
   "warnExcludeKeywords": "Palabras clave excluidas",
   "warnExcludeKeywordsPlaceholder": "Helada, Niebla, Nieve",
-  "warnExcludeKeywordsHelp": "Palabras separadas por comas – las alertas que contengan alguna de ellas no generarán notificación"
+  "warnExcludeKeywordsHelp": "Palabras separadas por comas – las alertas que contengan alguna de ellas no generarán notificación",
+  "warnIntervalMinutes": "Intervalo de comprobación para avisos oficiales",
+  "warnIntervalMinutesHelp": "Con qué frecuencia se consulta DWD / MeteoAlarm, independientemente del intervalo de actualización meteorológica"
 }

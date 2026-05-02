@@ -55,5 +55,7 @@
   "warnLevelDesc4": "Tylko ekstremalne ostrzeżenia – najwyższy poziom zagrożenia",
   "warnExcludeKeywords": "Wykluczone słowa kluczowe",
   "warnExcludeKeywordsPlaceholder": "Mróz, Mgła, Śnieg",
-  "warnExcludeKeywordsHelp": "Słowa oddzielone przecinkami – ostrzeżenia zawierające któreś z nich nie wyślą powiadomienia"
+  "warnExcludeKeywordsHelp": "Słowa oddzielone przecinkami – ostrzeżenia zawierające któreś z nich nie wyślą powiadomienia",
+  "warnIntervalMinutes": "Interwał sprawdzania oficjalnych ostrzeżeń",
+  "warnIntervalMinutesHelp": "Jak często jest odpytywany DWD / MeteoAlarm – niezależnie od interwału aktualizacji pogody"
 }
