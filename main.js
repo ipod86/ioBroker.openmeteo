@@ -2038,6 +2038,7 @@ class Openmeteo extends utils.Adapter {
 		const { tempUnit, windUnit, precipUnit, windspeedUnit } = units;
 		const descriptions = I18N_DESCRIPTIONS[lang] || I18N_DESCRIPTIONS.en;
 		const weekdays = I18N_WEEKDAYS[lang] || I18N_WEEKDAYS.en;
+		const summaryT = I18N_SUMMARY[lang] || I18N_SUMMARY.en;
 		const d = data.daily;
 		const h = data.hourly;
 		const cur = data.current;
@@ -2423,6 +2424,25 @@ class Openmeteo extends utils.Adapter {
 				type: "string",
 				role: `weather.state${fc}`,
 			});
+			{
+				const dayLabel =
+					i === 0
+						? summaryT.today
+						: i === 1
+							? summaryT.tomorrow
+							: i === 2
+								? summaryT.day_after_tomorrow
+								: weekday;
+				const tempStr = tempMin === tempMax ? `${tempMax} ${tempUnit}` : `${tempMin}–${tempMax} ${tempUnit}`;
+				const precipSum = d.precipitation_sum[i];
+				const precipStr =
+					precipSum != null && precipSum >= 0.5 ? `, ${Math.round(precipSum * 10) / 10} ${precipUnit}` : "";
+				await this.setDP(`${prefix}.summary`, `${dayLabel}: ${desc}, ${tempStr}${precipStr}`, {
+					name: "Zusammenfassung",
+					type: "string",
+					role: "weather.state",
+				});
+			}
 			await this.setDP(`${prefix}.temp_max`, tempMax, {
 				name: "Temp. Max",
 				type: "number",
