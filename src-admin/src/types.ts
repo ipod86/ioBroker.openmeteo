@@ -34,6 +34,7 @@ export interface OpenMeteoConfig {
     enableComfort: boolean;
     enableComfortHourly: boolean;
     warnOfficial: boolean;
+    warnOfficialMinLevel: number;
     widgets: Widget[];
     warnStorm: boolean;
     warnStormBft: number;

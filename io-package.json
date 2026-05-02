@@ -146,7 +146,8 @@
     "warnFrost": false,
     "warnFrostThreshold": 0,
     "warnLeadHours": 2,
-    "warnStormBft": 8
+    "warnStormBft": 8,
+    "warnOfficialMinLevel": 2
   },
   "notifications": [
     {

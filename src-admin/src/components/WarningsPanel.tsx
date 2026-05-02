@@ -26,6 +26,24 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                     <Typography variant="caption" color="text.secondary" sx={{ ml: 4 }}>
                         {I18n.t('warnOfficialHelp')}
                     </Typography>
+                    {native.warnOfficial && (
+                        <FormControl sx={{ width: 360, ml: 2, mt: 1 }} size="small">
+                            <InputLabel>{I18n.t('warnOfficialMinLevel')}</InputLabel>
+                            <Select
+                                value={native.warnOfficialMinLevel ?? 2}
+                                label={I18n.t('warnOfficialMinLevel')}
+                                onChange={e => update('warnOfficialMinLevel', Number(e.target.value))}
+                            >
+                                <MenuItem value={1}>1 – Vorinformation / Minor</MenuItem>
+                                <MenuItem value={2}>2 – Warnung / Moderate</MenuItem>
+                                <MenuItem value={3}>3 – Markante Warnung / Severe</MenuItem>
+                                <MenuItem value={4}>4 – Extreme Warnung / Extreme</MenuItem>
+                            </Select>
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                                {I18n.t('warnOfficialMinLevelHelp')}
+                            </Typography>
+                        </FormControl>
+                    )}
                 </Box>
             </Box>
 

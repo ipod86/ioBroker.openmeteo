@@ -1810,17 +1810,25 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		// Send notifications for new DWD warnings
+		const minLevel = this.config.warnOfficialMinLevel ?? 2;
 		const activeKeys = new Set();
 		for (const w of warnings) {
 			const key = `${locId}_dwd_${w.event}_${w.start}`;
 			activeKeys.add(key);
 			if (!this.warnState[key]) {
 				this.warnState[key] = true;
-				const levelTexts = { 1: "Vorinformation", 2: "Warnung", 3: "Markante Warnung", 4: "Extreme Warnung" };
-				const levelText = levelTexts[w.level] || `Stufe ${w.level}`;
-				const msg = `DWD ${levelText} für ${locId}: ${w.headline || w.event}`;
-				this.log.warn(msg);
-				await this.registerNotification("openmeteo-notify", "official_warning", msg);
+				if ((w.level || 0) >= minLevel) {
+					const levelTexts = {
+						1: "Vorinformation",
+						2: "Warnung",
+						3: "Markante Warnung",
+						4: "Extreme Warnung",
+					};
+					const levelText = levelTexts[w.level] || `Stufe ${w.level}`;
+					const msg = `DWD ${levelText} für ${locId}: ${w.headline || w.event}`;
+					this.log.warn(msg);
+					await this.registerNotification("openmeteo-notify", "official_warning", msg);
+				}
 			}
 		}
 		for (const key of Object.keys(this.warnState)) {
@@ -1902,15 +1910,18 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		// Send notifications for new MeteoAlarm warnings
+		const minLevel = this.config.warnOfficialMinLevel ?? 2;
 		const activeKeys = new Set();
 		for (const w of warnings) {
 			const key = `${locId}_meteoalarm_${w.event}_${w.onset}`;
 			activeKeys.add(key);
 			if (!this.warnState[key]) {
 				this.warnState[key] = true;
-				const msg = `MeteoAlarm ${w.severity} für ${locId}: ${w.headline || w.event}`;
-				this.log.warn(msg);
-				await this.registerNotification("openmeteo-notify", "official_warning", msg);
+				if ((METEOALARM_SEVERITY[w.severity] || 0) >= minLevel) {
+					const msg = `MeteoAlarm ${w.severity} für ${locId}: ${w.headline || w.event}`;
+					this.log.warn(msg);
+					await this.registerNotification("openmeteo-notify", "official_warning", msg);
+				}
 			}
 		}
 		for (const key of Object.keys(this.warnState)) {
