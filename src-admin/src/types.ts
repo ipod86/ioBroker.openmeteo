@@ -13,6 +13,8 @@ export interface Widget {
     width: number;
     bgColor: string;    // hex '#rrggbb' or 'transparent'
     textBase: string;   // hex '#rrggbb'
+    hourlyRange?: number; // hours to show from now (default 20)
+    hourlyStep?: number;  // step in hours (default 2)
 }
 
 export interface OpenMeteoConfig {

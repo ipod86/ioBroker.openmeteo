@@ -59,5 +59,7 @@
   "warnIntervalMinutes": "Controle-interval voor officiële waarschuwingen",
   "warnIntervalMinutesHelp": "Hoe vaak DWD / MeteoAlarm wordt bevraagd – onafhankelijk van het weerupdate-interval",
   "warnNotifyLift": "Melding bij opheffing van een waarschuwing",
-  "warnNotifyLiftHelp": "Stuurt een melding wanneer een eerder gerapporteerde waarschuwing wordt opgeheven of verloopt"
+  "warnNotifyLiftHelp": "Stuurt een melding wanneer een eerder gerapporteerde waarschuwing wordt opgeheven of verloopt",
+  "widgetHourlyRange": "Uren vanaf nu",
+  "widgetHourlyStep": "Stapgrootte"
 }

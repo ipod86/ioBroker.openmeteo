@@ -59,5 +59,7 @@
   "warnIntervalMinutes": "Intervalo de verificação para alertas oficiais",
   "warnIntervalMinutesHelp": "Com que frequência o DWD / MeteoAlarm é consultado – independente do intervalo de atualização meteorológica",
   "warnNotifyLift": "Notificar quando um aviso é levantado",
-  "warnNotifyLiftHelp": "Envia uma notificação quando um aviso anteriormente reportado é cancelado ou expira"
+  "warnNotifyLiftHelp": "Envia uma notificação quando um aviso anteriormente reportado é cancelado ou expira",
+  "widgetHourlyRange": "Horas a partir de agora",
+  "widgetHourlyStep": "Passo"
 }

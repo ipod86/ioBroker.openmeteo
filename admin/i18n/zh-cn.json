@@ -59,5 +59,7 @@
   "warnIntervalMinutes": "官方预警检查间隔",
   "warnIntervalMinutesHelp": "DWD / MeteoAlarm 的查询频率 – 与天气更新间隔无关",
   "warnNotifyLift": "警告解除时通知",
-  "warnNotifyLiftHelp": "当之前报告的警告被取消或过期时发送通知"
+  "warnNotifyLiftHelp": "当之前报告的警告被取消或过期时发送通知",
+  "widgetHourlyRange": "从现在起的小时数",
+  "widgetHourlyStep": "步长"
 }

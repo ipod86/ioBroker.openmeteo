@@ -129,6 +129,40 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                 )}
                             </Box>
 
+                            {/* Hourly range + step — detailed only */}
+                            {(w.variant ?? 'simple') === 'detailed' && hourlyDays > 0 && (<>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                        {I18n.t('widgetHourlyRange')}
+                                    </Typography>
+                                    <ToggleButtonGroup
+                                        value={w.hourlyRange ?? 20}
+                                        exclusive
+                                        size="small"
+                                        onChange={(_, v) => v && update(i, { hourlyRange: v })}
+                                    >
+                                        {([12, 16, 20, 24] as const).map(h => (
+                                            <ToggleButton key={h} value={h}>{h}h</ToggleButton>
+                                        ))}
+                                    </ToggleButtonGroup>
+                                </Box>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                        {I18n.t('widgetHourlyStep')}
+                                    </Typography>
+                                    <ToggleButtonGroup
+                                        value={w.hourlyStep ?? 2}
+                                        exclusive
+                                        size="small"
+                                        onChange={(_, v) => v && update(i, { hourlyStep: v })}
+                                    >
+                                        {([1, 2, 3] as const).map(s => (
+                                            <ToggleButton key={s} value={s}>{s}h</ToggleButton>
+                                        ))}
+                                    </ToggleButtonGroup>
+                                </Box>
+                            </>)}
+
                             {/* Days */}
                             <Box>
                                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>

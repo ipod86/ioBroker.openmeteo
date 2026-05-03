@@ -59,5 +59,7 @@
   "warnIntervalMinutes": "Interwał sprawdzania oficjalnych ostrzeżeń",
   "warnIntervalMinutesHelp": "Jak często jest odpytywany DWD / MeteoAlarm – niezależnie od interwału aktualizacji pogody",
   "warnNotifyLift": "Powiadom po odwołaniu ostrzeżenia",
-  "warnNotifyLiftHelp": "Wysyła powiadomienie gdy poprzednio zgłoszone ostrzeżenie zostanie odwołane lub wygaśnie"
+  "warnNotifyLiftHelp": "Wysyła powiadomienie gdy poprzednio zgłoszone ostrzeżenie zostanie odwołane lub wygaśnie",
+  "widgetHourlyRange": "Godziny od teraz",
+  "widgetHourlyStep": "Krok"
 }

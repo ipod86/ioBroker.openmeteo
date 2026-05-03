@@ -1639,12 +1639,15 @@ class Openmeteo extends utils.Adapter {
 			}),
 		);
 
-		// ── Fetch next-24h hourly data (2 h steps, starting from current hour) ──
+		// ── Fetch next-N-h hourly data (configurable step, starting from current hour) ──
 		const showHourly = (this.config.hourlyDays ?? 3) > 0;
+		const hourlyStep = widget.hourlyStep ?? 2;
+		const hourlyRange = widget.hourlyRange ?? 20;
+		const slotCount = Math.round(hourlyRange / hourlyStep);
 		const nowH = new Date().getHours();
-		const startH = nowH - (nowH % 2); // round down to nearest even hour
-		const slots24 = Array.from({ length: 10 }, (_, i) => {
-			const totalH = startH + i * 2;
+		const startH = nowH - (nowH % hourlyStep);
+		const slots24 = Array.from({ length: slotCount }, (_, i) => {
+			const totalH = startH + i * hourlyStep;
 			return { day: Math.floor(totalH / 24), hour: totalH % 24 };
 		});
 		let hourly24 = [];
