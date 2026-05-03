@@ -1690,7 +1690,7 @@ class Openmeteo extends utils.Adapter {
 		html += `<div style="position:relative;display:inline-block;width:${mainIconSize};height:${mainIconSize};">`;
 		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
 		if (hasMoon && moonIcons[0]) {
-			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(30)};height:${c(30)};top:0;left:0;opacity:0.92;z-index:1;">`;
+			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(30)};height:${c(30)};top:0;right:0;opacity:0.92;z-index:1;">`;
 		}
 		html += `</div>`;
 		html += `</td>`;
@@ -1763,6 +1763,12 @@ class Openmeteo extends utils.Adapter {
 					return `<td style="text-align:center;padding:0;${border}">${txt}</td>`;
 				})
 				.join("")}</tr>`;
+			html += `<tr>${hourly24
+				.map((s, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					return `<td style="text-align:center;padding:0 0 1px;${border}"><span style="${fs(8)}${lh}color:${subColor};">${s[3]}<span style="${fs(6)}color:${fadeColor};"> km/h</span> ${windArrow(s[4], 9)}</span></td>`;
+				})
+				.join("")}</tr>`;
 			html += `</table>`;
 		}
 
@@ -1801,7 +1807,7 @@ class Openmeteo extends utils.Adapter {
 				dSlice.map((d, i) => {
 					const moonUrl = hasMoon ? mSlice[i] : null;
 					const moonOverlay = moonUrl
-						? `<img src="${moonUrl}" style="position:absolute;width:${c(22)};height:${c(22)};top:0;left:0;opacity:0.92;z-index:1;">`
+						? `<img src="${moonUrl}" style="position:absolute;width:${c(22)};height:${c(22)};top:0;right:0;opacity:0.92;z-index:1;">`
 						: "";
 					return [
 						`<div style="position:relative;display:inline-block;width:${iconSz};height:${iconSz};"><img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:block;${imgScale}${wmoSvgFilter}">${moonOverlay}</div>`,
@@ -1843,6 +1849,13 @@ class Openmeteo extends utils.Adapter {
 						i > 0 ? `border-left:1px solid ${divColor};` : "",
 					];
 				}),
+			);
+			// wind speed + direction
+			html += dRow(
+				dSlice.map((d, i) => [
+					`<span style="${fs(9)}${lh}color:${subColor};">${d[6]}<span style="${fs(7)}color:${fadeColor};"> km/h</span> ${windArrow(d[7], 11)}</span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
 			);
 			html += `</table>`;
 		}
