@@ -1643,7 +1643,7 @@ class Openmeteo extends utils.Adapter {
 		const showHourly = (this.config.hourlyDays ?? 3) > 0;
 		const nowH = new Date().getHours();
 		const startH = nowH - (nowH % 2); // round down to nearest even hour
-		const slots24 = Array.from({ length: 12 }, (_, i) => {
+		const slots24 = Array.from({ length: 10 }, (_, i) => {
 			const totalH = startH + i * 2;
 			return { day: Math.floor(totalH / 24), hour: totalH % 24 };
 		});
