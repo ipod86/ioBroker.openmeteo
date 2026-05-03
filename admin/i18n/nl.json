@@ -61,5 +61,6 @@
   "warnNotifyLift": "Melding bij opheffing van een waarschuwing",
   "warnNotifyLiftHelp": "Stuurt een melding wanneer een eerder gerapporteerde waarschuwing wordt opgeheven of verloopt",
   "widgetHourlyRange": "Uren vanaf nu",
-  "widgetHourlyStep": "Stapgrootte"
+  "widgetHourlyStep": "Stapgrootte",
+  "widgetFontScale": "Lettergrootte"
 }

@@ -61,5 +61,6 @@
   "warnNotifyLift": "Notificar cuando se levante una advertencia",
   "warnNotifyLiftHelp": "Envía una notificación cuando una advertencia previamente informada se cancela o vence",
   "widgetHourlyRange": "Horas desde ahora",
-  "widgetHourlyStep": "Intervalo"
+  "widgetHourlyStep": "Intervalo",
+  "widgetFontScale": "Tamaño de fuente"
 }

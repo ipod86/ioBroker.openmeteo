@@ -61,5 +61,6 @@
   "warnNotifyLift": "Notificar quando um aviso é levantado",
   "warnNotifyLiftHelp": "Envia uma notificação quando um aviso anteriormente reportado é cancelado ou expira",
   "widgetHourlyRange": "Horas a partir de agora",
-  "widgetHourlyStep": "Passo"
+  "widgetHourlyStep": "Passo",
+  "widgetFontScale": "Tamanho da fonte"
 }

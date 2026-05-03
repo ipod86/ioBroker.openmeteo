@@ -61,5 +61,6 @@
   "warnNotifyLift": "Уведомлять об отмене предупреждения",
   "warnNotifyLiftHelp": "Отправляет уведомление когда ранее выданное предупреждение отменяется или истекает",
   "widgetHourlyRange": "Часов с текущего момента",
-  "widgetHourlyStep": "Шаг"
+  "widgetHourlyStep": "Шаг",
+  "widgetFontScale": "Размер шрифта"
 }

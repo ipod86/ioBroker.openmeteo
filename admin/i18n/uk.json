@@ -61,5 +61,6 @@
   "warnNotifyLift": "Сповіщати про скасування попередження",
   "warnNotifyLiftHelp": "Надсилає сповіщення коли раніше надіслане попередження скасовано або закінчилось",
   "widgetHourlyRange": "Годин від зараз",
-  "widgetHourlyStep": "Крок"
+  "widgetHourlyStep": "Крок",
+  "widgetFontScale": "Розмір шрифту"
 }

@@ -61,5 +61,6 @@
   "warnNotifyLift": "Notifica quando un avviso viene revocato",
   "warnNotifyLiftHelp": "Invia una notifica quando un avviso precedentemente segnalato viene annullato o scade",
   "widgetHourlyRange": "Ore da adesso",
-  "widgetHourlyStep": "Incremento"
+  "widgetHourlyStep": "Incremento",
+  "widgetFontScale": "Dimensione carattere"
 }

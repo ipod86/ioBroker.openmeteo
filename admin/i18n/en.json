@@ -56,5 +56,6 @@
   "warnNotifyLift": "Notify when warning is lifted",
   "warnNotifyLiftHelp": "Sends a notification when a previously reported warning is cancelled or expires",
   "widgetHourlyRange": "Hours from now",
-  "widgetHourlyStep": "Step size"
+  "widgetHourlyStep": "Step size",
+  "widgetFontScale": "Font size"
 }

@@ -61,5 +61,6 @@
   "warnNotifyLift": "Powiadom po odwołaniu ostrzeżenia",
   "warnNotifyLiftHelp": "Wysyła powiadomienie gdy poprzednio zgłoszone ostrzeżenie zostanie odwołane lub wygaśnie",
   "widgetHourlyRange": "Godziny od teraz",
-  "widgetHourlyStep": "Krok"
+  "widgetHourlyStep": "Krok",
+  "widgetFontScale": "Rozmiar czcionki"
 }

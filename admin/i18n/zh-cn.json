@@ -61,5 +61,6 @@
   "warnNotifyLift": "警告解除时通知",
   "warnNotifyLiftHelp": "当之前报告的警告被取消或过期时发送通知",
   "widgetHourlyRange": "从现在起的小时数",
-  "widgetHourlyStep": "步长"
+  "widgetHourlyStep": "步长",
+  "widgetFontScale": "字体大小"
 }

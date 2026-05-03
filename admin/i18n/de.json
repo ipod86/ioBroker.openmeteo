@@ -57,5 +57,6 @@
   "warnNotifyLift": "Benachrichtigung bei Aufhebung einer Warnung",
   "warnNotifyLiftHelp": "Sendet eine Benachrichtigung wenn eine zuvor gemeldete Warnung aufgehoben wird oder abläuft",
   "widgetHourlyRange": "Stunden ab jetzt",
-  "widgetHourlyStep": "Schrittweite"
+  "widgetHourlyStep": "Schrittweite",
+  "widgetFontScale": "Schriftgröße"
 }
