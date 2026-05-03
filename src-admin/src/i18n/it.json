@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "Anteprima icone diurne (mancanti nascoste)",
   "warnExcludeKeywords": "Parole chiave escluse",
   "warnExcludeKeywordsPlaceholder": "Gelo, Nebbia, Neve",
-  "warnExcludeKeywordsHelp": "Parole separate da virgole – gli avvisi contenenti una di esse non invieranno notifiche"
+  "warnExcludeKeywordsHelp": "Parole separate da virgole – gli avvisi contenenti una di esse non invieranno notifiche",
+  "widgetVariant": "Tipo",
+  "widgetVariantSimple": "Semplice",
+  "widgetVariantDetailed": "Dettagliato",
+  "widgetDetailedNoHourly": "Dati orari disabilitati – abilitare giorni orari nelle impostazioni generali",
+  "widgetDetailedNoAstronomy": "Astronomia disabilitata – l'icona della fase lunare non verrà mostrata",
+  "widgetHourlyRange": "Ore da adesso",
+  "widgetHourlyStep": "Incremento",
+  "widgetFontScale": "Dimensione carattere"
 }

@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "Podgląd ikon dziennych (brakujące ukryte)",
   "warnExcludeKeywords": "Wykluczone słowa kluczowe",
   "warnExcludeKeywordsPlaceholder": "Mróz, Mgła, Śnieg",
-  "warnExcludeKeywordsHelp": "Słowa oddzielone przecinkami – ostrzeżenia zawierające któreś z nich nie wyślą powiadomienia"
+  "warnExcludeKeywordsHelp": "Słowa oddzielone przecinkami – ostrzeżenia zawierające któreś z nich nie wyślą powiadomienia",
+  "widgetVariant": "Typ",
+  "widgetVariantSimple": "Prosty",
+  "widgetVariantDetailed": "Szczegółowy",
+  "widgetDetailedNoHourly": "Dane godzinowe wyłączone – włącz dni godzinowe w ustawieniach ogólnych",
+  "widgetDetailedNoAstronomy": "Astronomia wyłączona – ikona fazy księżyca nie będzie wyświetlana",
+  "widgetHourlyRange": "Godziny od teraz",
+  "widgetHourlyStep": "Krok",
+  "widgetFontScale": "Rozmiar czcionki"
 }

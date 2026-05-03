@@ -34,5 +34,13 @@
   "widgetDetailedNoHourly": "Hourly data is disabled – the detailed widget will show no hourly section. Enable hourly days in General settings.",
   "widgetDetailedPartialHourly": "Hourly data is only available for %s day(s) – remaining days show daily data only. Increase hourly days in General settings to cover more days.",
   "warnNotifyLift": "Notify when warning is lifted",
-  "warnNotifyLiftHelp": "Sends a notification when a previously reported warning is cancelled or expires"
+  "warnNotifyLiftHelp": "Sends a notification when a previously reported warning is cancelled or expires",
+  "location": "Location",
+  "addWidget": "Add widget",
+  "widgetHint": "Each widget creates an HTML datapoint that can be embedded directly in VIS or Jarvis.",
+  "widgetDays": "Days",
+  "widgetTheme": "Theme",
+  "widgetHourlyRange": "Hours from now",
+  "widgetHourlyStep": "Step size",
+  "widgetFontScale": "Font size"
 }

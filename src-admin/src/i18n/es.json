@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "Vista previa iconos diurnos (faltantes ocultos)",
   "warnExcludeKeywords": "Palabras clave excluidas",
   "warnExcludeKeywordsPlaceholder": "Helada, Niebla, Nieve",
-  "warnExcludeKeywordsHelp": "Palabras separadas por comas – las alertas que contengan alguna de ellas no generarán notificación"
+  "warnExcludeKeywordsHelp": "Palabras separadas por comas – las alertas que contengan alguna de ellas no generarán notificación",
+  "widgetVariant": "Tipo",
+  "widgetVariantSimple": "Simple",
+  "widgetVariantDetailed": "Detallado",
+  "widgetDetailedNoHourly": "Datos por hora desactivados – activar días por hora en ajustes generales",
+  "widgetDetailedNoAstronomy": "Astronomía desactivada – no se mostrará el icono de fase lunar",
+  "widgetHourlyRange": "Horas desde ahora",
+  "widgetHourlyStep": "Intervalo",
+  "widgetFontScale": "Tamaño de fuente"
 }

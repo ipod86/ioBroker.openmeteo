@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "Попередній перегляд денних іконок (відсутні приховано)",
   "warnExcludeKeywords": "Виключені ключові слова",
   "warnExcludeKeywordsPlaceholder": "Мороз, Туман, Сніг",
-  "warnExcludeKeywordsHelp": "Слова через кому – попередження з такими словами не надсилатимуть сповіщення"
+  "warnExcludeKeywordsHelp": "Слова через кому – попередження з такими словами не надсилатимуть сповіщення",
+  "widgetVariant": "Тип",
+  "widgetVariantSimple": "Простий",
+  "widgetVariantDetailed": "Детальний",
+  "widgetDetailedNoHourly": "Погодинні дані вимкнено – увімкніть погодинні дні в загальних налаштуваннях",
+  "widgetDetailedNoAstronomy": "Астрономію вимкнено – значок фази місяця не відображатиметься",
+  "widgetHourlyRange": "Годин від зараз",
+  "widgetHourlyStep": "Крок",
+  "widgetFontScale": "Розмір шрифту"
 }

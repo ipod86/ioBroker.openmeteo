@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "预览白天图标（缺失的已隐藏）",
   "warnExcludeKeywords": "排除关键词",
   "warnExcludeKeywordsPlaceholder": "霜冻, 大雾, 降雪",
-  "warnExcludeKeywordsHelp": "逗号分隔的关键词 – 包含这些词的警报不会触发通知"
+  "warnExcludeKeywordsHelp": "逗号分隔的关键词 – 包含这些词的警报不会触发通知",
+  "widgetVariant": "类型",
+  "widgetVariantSimple": "简单",
+  "widgetVariantDetailed": "详细",
+  "widgetDetailedNoHourly": "每小时数据已禁用 – 在常规设置中启用每小时天数",
+  "widgetDetailedNoAstronomy": "天文学已禁用 – 不会显示月相图标",
+  "widgetHourlyRange": "从现在起的小时数",
+  "widgetHourlyStep": "步长",
+  "widgetFontScale": "字体大小"
 }

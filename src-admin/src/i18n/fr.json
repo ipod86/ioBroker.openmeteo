@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "Aperçu icônes jour (icônes manquantes masquées)",
   "warnExcludeKeywords": "Mots-clés exclus",
   "warnExcludeKeywordsPlaceholder": "Gel, Brouillard, Neige",
-  "warnExcludeKeywordsHelp": "Mots séparés par des virgules – les alertes contenant l'un d'eux ne déclencheront pas de notification"
+  "warnExcludeKeywordsHelp": "Mots séparés par des virgules – les alertes contenant l'un d'eux ne déclencheront pas de notification",
+  "widgetVariant": "Type",
+  "widgetVariantSimple": "Simple",
+  "widgetVariantDetailed": "Détaillé",
+  "widgetDetailedNoHourly": "Données horaires désactivées – activer les jours horaires dans les paramètres",
+  "widgetDetailedNoAstronomy": "Astronomie désactivée – l'icône de phase lunaire ne sera pas affichée",
+  "widgetHourlyRange": "Heures à partir de maintenant",
+  "widgetHourlyStep": "Pas",
+  "widgetFontScale": "Taille de police"
 }

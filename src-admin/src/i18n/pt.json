@@ -86,5 +86,13 @@
   "iconSetCustomPreviewHint": "Pré-visualização ícones diurnos (em falta ocultos)",
   "warnExcludeKeywords": "Palavras-chave excluídas",
   "warnExcludeKeywordsPlaceholder": "Geada, Nevoeiro, Neve",
-  "warnExcludeKeywordsHelp": "Palavras separadas por vírgulas – alertas com alguma delas não enviarão notificação"
+  "warnExcludeKeywordsHelp": "Palavras separadas por vírgulas – alertas com alguma delas não enviarão notificação",
+  "widgetVariant": "Tipo",
+  "widgetVariantSimple": "Simples",
+  "widgetVariantDetailed": "Detalhado",
+  "widgetDetailedNoHourly": "Dados por hora desativados – ativar dias por hora nas configurações gerais",
+  "widgetDetailedNoAstronomy": "Astronomia desativada – o ícone de fase lunar não será exibido",
+  "widgetHourlyRange": "Horas a partir de agora",
+  "widgetHourlyStep": "Passo",
+  "widgetFontScale": "Tamanho da fonte"
 }
