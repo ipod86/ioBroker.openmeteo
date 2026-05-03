@@ -1722,6 +1722,8 @@ class Openmeteo extends utils.Adapter {
 		html += `</tr>`;
 		html += `</table>`;
 
+		const lh = "line-height:1;";
+
 		// ── Section 2: Next 24 h (2 h steps) ────────────────────────────────────
 		if (showHourly && hourly24.length > 0) {
 			html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
@@ -1778,8 +1780,6 @@ class Openmeteo extends utils.Adapter {
 						`<td style="text-align:center;vertical-align:middle;padding:0 ${c(1)};${extra}">${content}</td>`,
 				)
 				.join("")}</tr>`;
-
-		const lh = "line-height:1;"; // force tight line height on all text spans
 
 		// Split into rows of 7 for 14-day view, single row otherwise
 		const chunkSize = days > 7 ? 7 : days;
