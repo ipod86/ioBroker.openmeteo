@@ -1797,12 +1797,18 @@ class Openmeteo extends utils.Adapter {
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
-			// icon
+			// icon (with optional moon phase overlay bottom-right)
 			html += dRow(
-				dSlice.map((d, i) => [
-					`<img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:inline-block;${imgScale}${wmoSvgFilter}">`,
-					i > 0 ? `border-left:1px solid ${divColor};` : "",
-				]),
+				dSlice.map((d, i) => {
+					const moonUrl = hasMoon ? mSlice[i] : null;
+					const moonOverlay = moonUrl
+						? `<img src="${moonUrl}" style="position:absolute;width:${c(12)};height:${c(12)};bottom:0;right:0;opacity:0.85;">`
+						: "";
+					return [
+						`<div style="position:relative;display:inline-block;width:${iconSz};height:${iconSz};"><img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:block;${imgScale}${wmoSvgFilter}">${moonOverlay}</div>`,
+						i > 0 ? `border-left:1px solid ${divColor};` : "",
+					];
+				}),
 			);
 			// temp max
 			html += dRow(
@@ -1846,17 +1852,6 @@ class Openmeteo extends utils.Adapter {
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
-			// moon phase
-			if (hasMoon) {
-				html += dRow(
-					mSlice.map((url, i) => [
-						url
-							? `<img src="${url}" style="width:${c(15)};height:${c(15)};display:inline-block;opacity:0.8;vertical-align:middle;">`
-							: `<span style="${fs(9)}${lh}color:${fadeColor};">-</span>`,
-						i > 0 ? `border-left:1px solid ${divColor};` : "",
-					]),
-				);
-			}
 			html += `</table>`;
 		}
 

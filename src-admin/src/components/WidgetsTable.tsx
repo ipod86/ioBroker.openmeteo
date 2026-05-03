@@ -13,6 +13,7 @@ interface Props {
     locations: Location[];
     daysCount: number;
     hourlyDays: number;
+    enableAstronomy: boolean;
     onChange: (widgets: Widget[]) => void;
 }
 
@@ -40,7 +41,7 @@ const ColorSwatch: React.FC<{ value: string; onChange: (v: string) => void; disa
     />
 );
 
-const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, onChange }) => {
+const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, enableAstronomy, onChange }) => {
     const update = (index: number, patch: Partial<Widget>): void => {
         const updated = widgets.map((w, i) => i === index ? { ...w, ...patch } : w);
         onChange(updated);
@@ -119,6 +120,11 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                 {(w.variant ?? 'simple') === 'detailed' && hourlyDays === 0 && (
                                     <Alert severity="warning" sx={{ mt: 1, maxWidth: 340 }}>
                                         {I18n.t('widgetDetailedNoHourly')}
+                                    </Alert>
+                                )}
+                                {(w.variant ?? 'simple') === 'detailed' && !enableAstronomy && (
+                                    <Alert severity="info" sx={{ mt: 1, maxWidth: 340 }}>
+                                        {I18n.t('widgetDetailedNoAstronomy')}
                                     </Alert>
                                 )}
                             </Box>
