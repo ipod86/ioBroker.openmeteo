@@ -1639,24 +1639,31 @@ class Openmeteo extends utils.Adapter {
 			}),
 		);
 
-		// ── Fetch next-24h hourly data (2 h steps, day 0 only) ─────────────────
+		// ── Fetch next-24h hourly data (2 h steps, starting from current hour) ──
 		const showHourly = (this.config.hourlyDays ?? 3) > 0;
-		const H2 = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+		const nowH = new Date().getHours();
+		const startH = nowH - (nowH % 2); // round down to nearest even hour
+		const slots24 = Array.from({ length: 12 }, (_, i) => {
+			const totalH = startH + i * 2;
+			return { day: Math.floor(totalH / 24), hour: totalH % 24 };
+		});
 		let hourly24 = [];
 		if (showHourly) {
 			const raw24 = await Promise.all(
-				H2.map(h => {
-					const hk = `h${String(h).padStart(2, "0")}`;
+				slots24.map(({ day, hour }) => {
+					const hk = `h${String(hour).padStart(2, "0")}`;
 					return Promise.all([
-						gs(`${p}.day0.hourly.${hk}.icon_url`),
-						gs(`${p}.day0.hourly.${hk}.temperature`),
-						gs(`${p}.day0.hourly.${hk}.precipitation`),
-						gs(`${p}.day0.hourly.${hk}.windspeed`),
-						gs(`${p}.day0.hourly.${hk}.winddirection_text`),
+						gs(`${p}.day${day}.hourly.${hk}.icon_url`),
+						gs(`${p}.day${day}.hourly.${hk}.temperature`),
+						gs(`${p}.day${day}.hourly.${hk}.precipitation`),
+						gs(`${p}.day${day}.hourly.${hk}.windspeed`),
+						gs(`${p}.day${day}.hourly.${hk}.winddirection_text`),
 					]);
 				}),
 			);
-			hourly24 = await Promise.all(raw24.map(async s => [await resolveIcon(s[0]), s[1], s[2], s[3], s[4]]));
+			hourly24 = await Promise.all(
+				raw24.map(async (s, i) => [await resolveIcon(s[0]), s[1], s[2], s[3], s[4], slots24[i].hour]),
+			);
 		}
 
 		// ── Fetch moon phase icons (optional – astronomy may be disabled) ─────────
@@ -1720,10 +1727,12 @@ class Openmeteo extends utils.Adapter {
 			html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
 			const hIconSz = c(isAmcharts ? 30 : isBasmilius ? 24 : 20);
 			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
-			html += `<tr>${H2.map((h, j) => {
-				const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-				return `<td style="text-align:center;${pad(1, 0, 0, 0)}${border}"><span style="${fs(9)}color:${fadeColor};">${String(h).padStart(2, "0")}h</span></td>`;
-			}).join("")}</tr>`;
+			html += `<tr>${hourly24
+				.map((s, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					return `<td style="text-align:center;${pad(1, 0, 0, 0)}${border}"><span style="${fs(9)}color:${fadeColor};">${String(s[5]).padStart(2, "0")}h</span></td>`;
+				})
+				.join("")}</tr>`;
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
