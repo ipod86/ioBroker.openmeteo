@@ -1534,6 +1534,15 @@ class Openmeteo extends utils.Adapter {
 			rain: "M6,14.03A1,1 0 0,1 7,15.03C7,15.58 6.55,16.03 6,16.03C3.24,16.03 1,13.79 1,11.03C1,8.27 3.24,6.03 6,6.03C7,3.68 9.3,2.03 12,2.03C15.43,2.03 18.24,4.69 18.5,8.06L19,8.03A4,4 0 0,1 23,12.03C23,14.23 21.21,16.03 19,16.03H18C17.45,16.03 17,15.58 17,15.03C17,14.47 17.45,14.03 18,14.03H19A2,2 0 0,0 21,12.03A2,2 0 0,0 19,10.03H17V9.03C17,6.27 14.76,4.03 12,4.03C9.5,4.03 7.45,5.84 7.06,8.21C6.73,8.09 6.37,8.03 6,8.03A3,3 0 0,0 3,11.03A3,3 0 0,0 6,14.03M12,14.15C12.18,14.39 12.37,14.66 12.56,14.94C13,15.56 14,17.03 14,18C14,19.11 13.1,20 12,20A2,2 0 0,1 10,18C10,17.03 11,15.56 11.44,14.94C11.63,14.66 11.82,14.4 12,14.15M12,11.03L11.5,11.59C11.5,11.59 10.65,12.55 9.79,13.81C8.93,15.06 8,16.56 8,18A4,4 0 0,0 12,22A4,4 0 0,0 16,18C16,16.56 15.07,15.06 14.21,13.81C13.35,12.55 12.5,11.59 12.5,11.59",
 		};
 
+		const compassToRotation = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315 };
+		const windArrow = (dir, size = 14) => {
+			const deg = compassToRotation[String(dir || "").toUpperCase()] ?? null;
+			if (deg === null) {
+				return dir ? `<span style="font-size:${c(10)};color:${fadeColor};">${dir}</span>` : "";
+			}
+			return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;fill:${iconColor};flex-shrink:0;transform:rotate(${deg}deg);display:inline-block;"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`;
+		};
+
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
 
 		const iconCache = new Map();
@@ -1559,7 +1568,9 @@ class Openmeteo extends utils.Adapter {
 				if (!buf) {
 					return url;
 				}
-				const dataUrl = `data:image/svg+xml;base64,${buf.toString("base64")}`;
+				const ext = filePath.split(".").pop()?.toLowerCase();
+				const mime = ext === "png" ? "image/png" : ext === "gif" ? "image/gif" : "image/svg+xml";
+				const dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
 				iconCache.set(filePath, dataUrl);
 				return dataUrl;
 			} catch {
@@ -1628,6 +1639,13 @@ class Openmeteo extends utils.Adapter {
 			hourlyData.push(resolved);
 		}
 
+		// ── Fetch moon phase icons (optional – astronomy may be disabled) ─────────
+		const moonIconsRaw = await Promise.all(
+			Array.from({ length: days }, (_, i) => gs(`${p}.day${i}.astronomy.moon_phase_icon_url`)),
+		);
+		const moonIcons = await Promise.all(moonIconsRaw.map(url => resolveIcon(url)));
+		const hasMoon = moonIcons.some(url => url && url !== "");
+
 		// ── Build HTML ───────────────────────────────────────────────────────────
 		const div = (style, content) => `<div style="${style}">${content}</div>`;
 		const fs = s => `font-size:${c(s)};`;
@@ -1664,7 +1682,7 @@ class Openmeteo extends utils.Adapter {
 		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind)}`;
 		html += `<span style="margin-left:${c(4)};">${curWind} <span style="${fs(10)}color:${fadeColor};">km/h</span>`;
 		if (curWindDir) {
-			html += ` <span style="${fs(10)}color:${fadeColor};">${curWindDir}</span>`;
+			html += ` ${windArrow(curWindDir, 13)}`;
 		}
 		html += `</span></td>`;
 		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fs(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid)}</td>`;
@@ -1745,10 +1763,21 @@ class Openmeteo extends utils.Adapter {
 		// wind
 		html += dRow(
 			dayData.map((d, i) => [
-				`<span style="${fs(10)}color:${subColor};">${d[6]} <span style="${fs(8)}color:${fadeColor};">km/h</span><br><span style="${fs(9)}color:${fadeColor};">${d[7]}</span></span>`,
+				`<span style="${fs(10)}color:${subColor};">${d[6]} <span style="${fs(8)}color:${fadeColor};">km/h</span> ${windArrow(d[7], 12)}</span>`,
 				i > 0 ? `border-left:1px solid ${divColor};` : "",
 			]),
 		);
+		// moon phase
+		if (hasMoon) {
+			html += dRow(
+				moonIcons.map((url, i) => [
+					url
+						? `<img src="${url}" style="width:${c(18)};height:${c(18)};display:inline-block;opacity:0.8;vertical-align:middle;">`
+						: `<span style="${fs(9)}color:${fadeColor};">-</span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
+			);
+		}
 
 		html += `</table>`;
 
@@ -1814,7 +1843,7 @@ class Openmeteo extends utils.Adapter {
 				html += `<tr>${slots
 					.map((s, j) => {
 						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-						return `<td style="text-align:center;${pad(1, 1, 2, 1)}${border}"><span style="${fs(10)}color:${subColor};">${s[3]}<span style="${fs(8)}color:${fadeColor};"> km/h</span></span><br><span style="${fs(9)}color:${fadeColor};">${s[4]}</span></td>`;
+						return `<td style="text-align:center;${pad(1, 1, 2, 1)}${border}"><span style="${fs(10)}color:${subColor};">${s[3]}<span style="${fs(8)}color:${fadeColor};"> km/h</span></span><br>${windArrow(s[4], 11)}</td>`;
 					})
 					.join("")}</tr>`;
 
