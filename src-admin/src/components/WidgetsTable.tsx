@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Box, Button, IconButton, Typography, Slider, TextField, Switch, FormControlLabel,
+    Alert, Box, Button, IconButton, Typography, Slider, TextField, Switch, FormControlLabel,
     Select, MenuItem, FormControl, InputLabel, ToggleButtonGroup, ToggleButton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +12,7 @@ interface Props {
     widgets: Widget[];
     locations: Location[];
     daysCount: number;
+    hourlyDays: number;
     onChange: (widgets: Widget[]) => void;
 }
 
@@ -39,7 +40,7 @@ const ColorSwatch: React.FC<{ value: string; onChange: (v: string) => void; disa
     />
 );
 
-const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange }) => {
+const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, onChange }) => {
     const update = (index: number, patch: Partial<Widget>): void => {
         const updated = widgets.map((w, i) => i === index ? { ...w, ...patch } : w);
         onChange(updated);
@@ -115,6 +116,16 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange
                                     <ToggleButton value="simple">{I18n.t('widgetVariantSimple')}</ToggleButton>
                                     <ToggleButton value="detailed">{I18n.t('widgetVariantDetailed')}</ToggleButton>
                                 </ToggleButtonGroup>
+                                {(w.variant ?? 'simple') === 'detailed' && hourlyDays === 0 && (
+                                    <Alert severity="warning" sx={{ mt: 1, maxWidth: 340 }}>
+                                        {I18n.t('widgetDetailedNoHourly')}
+                                    </Alert>
+                                )}
+                                {(w.variant ?? 'simple') === 'detailed' && hourlyDays > 0 && hourlyDays < (w.days ?? 5) && (
+                                    <Alert severity="info" sx={{ mt: 1, maxWidth: 340 }}>
+                                        {I18n.t('widgetDetailedPartialHourly', String(hourlyDays))}
+                                    </Alert>
+                                )}
                             </Box>
 
                             {/* Days */}

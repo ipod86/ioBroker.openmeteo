@@ -98,6 +98,8 @@
   "widgetVariant": "Variante",
   "widgetVariantSimple": "Einfach",
   "widgetVariantDetailed": "Detailliert",
+  "widgetDetailedNoHourly": "Stündliche Daten sind deaktiviert – das detaillierte Widget zeigt keinen Stunden-Bereich. Stundentage in den Allgemeinen Einstellungen aktivieren.",
+  "widgetDetailedPartialHourly": "Stündliche Daten sind nur für %s Tag(e) verfügbar – restliche Tage zeigen nur Tagesdaten.",
   "warnNotifyLift": "Benachrichtigung bei Aufhebung einer Warnung",
   "warnNotifyLiftHelp": "Sendet eine Benachrichtigung wenn eine zuvor gemeldete Warnung aufgehoben wird oder abläuft"
 }
