@@ -1558,7 +1558,7 @@ class Openmeteo extends utils.Adapter {
 				try {
 					const relPath = url.replace("/adapter/openmeteo-notify/", "admin/");
 					const absPath = path.join(__dirname, relPath);
-					const buf = fs.readFileSync(absPath);
+					const buf = require("node:fs").readFileSync(absPath);
 					const ext = absPath.split(".").pop()?.toLowerCase();
 					const mime = ext === "png" ? "image/png" : ext === "gif" ? "image/gif" : "image/svg+xml";
 					const dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
@@ -1639,25 +1639,24 @@ class Openmeteo extends utils.Adapter {
 			}),
 		);
 
-		// ── Fetch hourly data (every 3 h) for each day with hourly states ────────
-		const hourlyDays = Math.min(this.config.hourlyDays ?? 3, days);
-		const HOURS = [0, 3, 6, 9, 12, 15, 18, 21];
-		const hourlyData = [];
-		for (let d = 0; d < hourlyDays; d++) {
-			const slots = await Promise.all(
-				HOURS.map(h => {
+		// ── Fetch next-24h hourly data (2 h steps, day 0 only) ─────────────────
+		const showHourly = (this.config.hourlyDays ?? 3) > 0;
+		const H2 = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+		let hourly24 = [];
+		if (showHourly) {
+			const raw24 = await Promise.all(
+				H2.map(h => {
 					const hk = `h${String(h).padStart(2, "0")}`;
 					return Promise.all([
-						gs(`${p}.day${d}.hourly.${hk}.icon_url`),
-						gs(`${p}.day${d}.hourly.${hk}.temperature`),
-						gs(`${p}.day${d}.hourly.${hk}.precipitation`),
-						gs(`${p}.day${d}.hourly.${hk}.windspeed`),
-						gs(`${p}.day${d}.hourly.${hk}.winddirection_text`),
+						gs(`${p}.day0.hourly.${hk}.icon_url`),
+						gs(`${p}.day0.hourly.${hk}.temperature`),
+						gs(`${p}.day0.hourly.${hk}.precipitation`),
+						gs(`${p}.day0.hourly.${hk}.windspeed`),
+						gs(`${p}.day0.hourly.${hk}.winddirection_text`),
 					]);
 				}),
 			);
-			const resolved = await Promise.all(slots.map(async s => [await resolveIcon(s[0]), s[1], s[2], s[3], s[4]]));
-			hourlyData.push(resolved);
+			hourly24 = await Promise.all(raw24.map(async s => [await resolveIcon(s[0]), s[1], s[2], s[3], s[4]]));
 		}
 
 		// ── Fetch moon phase icons (optional – astronomy may be disabled) ─────────
@@ -1716,7 +1715,48 @@ class Openmeteo extends utils.Adapter {
 		html += `</tr>`;
 		html += `</table>`;
 
-		// ── Section 2: Daily forecast ────────────────────────────────────────────
+		// ── Section 2: Next 24 h (2 h steps) ────────────────────────────────────
+		if (showHourly && hourly24.length > 0) {
+			html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
+			const hIconSz = c(isAmcharts ? 30 : isBasmilius ? 24 : 20);
+			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
+			html += `<tr>${H2.map((h, j) => {
+				const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+				return `<td style="text-align:center;${pad(1, 0, 0, 0)}${border}"><span style="${fs(9)}color:${fadeColor};">${String(h).padStart(2, "0")}h</span></td>`;
+			}).join("")}</tr>`;
+			html += `<tr>${hourly24
+				.map((s, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					return `<td style="text-align:center;padding:0;${border}"><img src="${s[0]}" style="width:${hIconSz};height:${hIconSz};display:inline-block;${imgScale}${wmoSvgFilter}"></td>`;
+				})
+				.join("")}</tr>`;
+			html += `<tr>${hourly24
+				.map((s, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					return `<td style="text-align:center;${pad(0, 0, 1, 0)}${border}"><span style="${fs(11)}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}vertical-align:top;margin-left:${c(1)};">°</span></span></td>`;
+				})
+				.join("")}</tr>`;
+			html += `<tr>${hourly24
+				.map((s, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					const mm = parseFloat(s[2]) || 0;
+					const txt =
+						mm >= 0.1
+							? `<span style="${fs(9)}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(7)}color:${fadeColor};"> mm</span></span>`
+							: `<span style="${fs(9)}color:${subColor};">0<span style="${fs(7)}color:${fadeColor};"> mm</span></span>`;
+					return `<td style="text-align:center;padding:0;${border}">${txt}</td>`;
+				})
+				.join("")}</tr>`;
+			html += `<tr>${hourly24
+				.map((s, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					return `<td style="text-align:center;${pad(0, 0, 1, 0)}${border}"><span style="${fs(9)}color:${subColor};">${s[3]}<span style="${fs(7)}color:${fadeColor};"> km/h</span></span><br>${windArrow(s[4], 10)}</td>`;
+				})
+				.join("")}</tr>`;
+			html += `</table>`;
+		}
+
+		// ── Section 3: Daily forecast ────────────────────────────────────────────
 		html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
 
 		const iconSz = c(isAmcharts ? 46 : isBasmilius ? 40 : 36);
@@ -1807,76 +1847,6 @@ class Openmeteo extends utils.Adapter {
 				);
 			}
 			html += `</table>`;
-		}
-
-		// ── Section 3: Hourly ────────────────────────────────────────────────────
-		if (hourlyDays > 0 && hourlyData.length > 0) {
-			const sysConf = await this.getForeignObjectAsync("system.config");
-			const rawLang = (sysConf?.common?.language || "en").toLowerCase();
-			const SUPPORTED = ["de", "en", "fr", "it", "es", "pt", "nl", "pl", "ru", "uk", "zh-cn"];
-			const lang = SUPPORTED.includes(rawLang)
-				? rawLang
-				: SUPPORTED.includes(rawLang.split("-")[0])
-					? rawLang.split("-")[0]
-					: "en";
-			const summaryT = I18N_SUMMARY[lang] || I18N_SUMMARY.en;
-			const dayLabels = [summaryT.today, summaryT.tomorrow, summaryT.day_after_tomorrow];
-
-			for (let d = 0; d < hourlyDays; d++) {
-				const label = dayLabels[d] || `+${d}`;
-				const slots = hourlyData[d];
-
-				html += `<div style="border-top:1px solid ${divColor};margin-top:${c(4)};padding-top:${c(3)};">`;
-				html += `<div style="${fs(11)}color:${fadeColor};font-weight:600;margin-bottom:${c(2)};letter-spacing:0.05em;text-transform:uppercase;">${label}</div>`;
-
-				html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
-				const hIconSz = c(isAmcharts ? 36 : isBasmilius ? 30 : 26);
-
-				// time labels
-				html += `<tr>${HOURS.map((h, j) => {
-					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}"><span style="${fs(10)}color:${fadeColor};">${String(h).padStart(2, "0")}:00</span></td>`;
-				}).join("")}</tr>`;
-
-				// icons
-				html += `<tr>${slots
-					.map((s, j) => {
-						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}"><img src="${s[0]}" style="width:${hIconSz};height:${hIconSz};display:inline-block;${imgScale}${wmoSvgFilter}"></td>`;
-					})
-					.join("")}</tr>`;
-
-				// temperature
-				html += `<tr>${slots
-					.map((s, j) => {
-						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}"><span style="${fs(12)}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span></td>`;
-					})
-					.join("")}</tr>`;
-
-				// precipitation
-				html += `<tr>${slots
-					.map((s, j) => {
-						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-						const mm = parseFloat(s[2]) || 0;
-						const txt =
-							mm >= 0.1
-								? `<span style="${fs(10)}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(8)}color:${fadeColor};"> mm</span></span>`
-								: `<span style="${fs(10)}color:${subColor};">0<span style="${fs(8)}color:${fadeColor};"> mm</span></span>`;
-						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}">${txt}</td>`;
-					})
-					.join("")}</tr>`;
-
-				// wind speed + direction
-				html += `<tr>${slots
-					.map((s, j) => {
-						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-						return `<td style="text-align:center;${pad(1, 1, 2, 1)}${border}"><span style="${fs(10)}color:${subColor};">${s[3]}<span style="${fs(8)}color:${fadeColor};"> km/h</span></span><br>${windArrow(s[4], 11)}</td>`;
-					})
-					.join("")}</tr>`;
-
-				html += `</table></div>`;
-			}
 		}
 
 		html += `</div></div>`;

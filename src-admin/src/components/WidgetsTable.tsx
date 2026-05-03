@@ -121,11 +121,6 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                         {I18n.t('widgetDetailedNoHourly')}
                                     </Alert>
                                 )}
-                                {(w.variant ?? 'simple') === 'detailed' && hourlyDays > 0 && hourlyDays < (w.days ?? 5) && (
-                                    <Alert severity="info" sx={{ mt: 1, maxWidth: 340 }}>
-                                        {I18n.t('widgetDetailedPartialHourly', String(hourlyDays))}
-                                    </Alert>
-                                )}
                             </Box>
 
                             {/* Days */}
