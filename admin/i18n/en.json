@@ -57,5 +57,15 @@
   "warnNotifyLiftHelp": "Sends a notification when a previously reported warning is cancelled or expires",
   "widgetHourlyRange": "Hours from now",
   "widgetHourlyStep": "Step size",
-  "widgetFontScale": "Font size"
+  "widgetFontScale": "Font size",
+  "location": "Location",
+  "addWidget": "Add widget",
+  "widgetHint": "Each widget creates an HTML datapoint that can be embedded directly in VIS or Jarvis.",
+  "widgetVariant": "Type",
+  "widgetVariantSimple": "Simple",
+  "widgetVariantDetailed": "Detailed",
+  "widgetDetailedNoHourly": "Hourly data disabled – enable hourly days in general settings",
+  "widgetDetailedNoAstronomy": "Astronomy disabled – moon phase icon will not be shown",
+  "widgetDays": "Days",
+  "widgetTheme": "Theme"
 }

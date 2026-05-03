@@ -62,5 +62,15 @@
   "warnNotifyLiftHelp": "Wysyła powiadomienie gdy poprzednio zgłoszone ostrzeżenie zostanie odwołane lub wygaśnie",
   "widgetHourlyRange": "Godziny od teraz",
   "widgetHourlyStep": "Krok",
-  "widgetFontScale": "Rozmiar czcionki"
+  "widgetFontScale": "Rozmiar czcionki",
+  "location": "Lokalizacja",
+  "addWidget": "Dodaj widget",
+  "widgetHint": "Każdy widget tworzy punkt danych HTML, który można osadzić bezpośrednio w VIS lub Jarvis.",
+  "widgetVariant": "Typ",
+  "widgetVariantSimple": "Prosty",
+  "widgetVariantDetailed": "Szczegółowy",
+  "widgetDetailedNoHourly": "Dane godzinowe wyłączone – włącz dni godzinowe w ustawieniach ogólnych",
+  "widgetDetailedNoAstronomy": "Astronomia wyłączona – ikona fazy księżyca nie będzie wyświetlana",
+  "widgetDays": "Dni",
+  "widgetTheme": "Motyw"
 }

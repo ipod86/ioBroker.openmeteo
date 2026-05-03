@@ -293,7 +293,7 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                             {/* Font scale */}
                             <Box sx={{ minWidth: 220 }}>
                                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    {I18n.t('widgetFontScale')} ({w.fontScale ?? 0 > 0 ? '+' : ''}{w.fontScale ?? 0})
+                                    {I18n.t('widgetFontScale')} ({(w.fontScale ?? 0) > 0 ? '+' : ''}{w.fontScale ?? 0})
                                 </Typography>
                                 <Slider
                                     value={w.fontScale ?? 0}

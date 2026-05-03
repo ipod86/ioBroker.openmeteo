@@ -62,5 +62,15 @@
   "warnNotifyLiftHelp": "Надсилає сповіщення коли раніше надіслане попередження скасовано або закінчилось",
   "widgetHourlyRange": "Годин від зараз",
   "widgetHourlyStep": "Крок",
-  "widgetFontScale": "Розмір шрифту"
+  "widgetFontScale": "Розмір шрифту",
+  "location": "Місцезнаходження",
+  "addWidget": "Додати віджет",
+  "widgetHint": "Кожен віджет створює HTML-точку даних, яку можна вбудувати у VIS або Jarvis.",
+  "widgetVariant": "Тип",
+  "widgetVariantSimple": "Простий",
+  "widgetVariantDetailed": "Детальний",
+  "widgetDetailedNoHourly": "Погодинні дані вимкнено – увімкніть погодинні дні в загальних налаштуваннях",
+  "widgetDetailedNoAstronomy": "Астрономію вимкнено – значок фази місяця не відображатиметься",
+  "widgetDays": "Дні",
+  "widgetTheme": "Тема"
 }

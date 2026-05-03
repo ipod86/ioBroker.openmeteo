@@ -62,5 +62,15 @@
   "warnNotifyLiftHelp": "当之前报告的警告被取消或过期时发送通知",
   "widgetHourlyRange": "从现在起的小时数",
   "widgetHourlyStep": "步长",
-  "widgetFontScale": "字体大小"
+  "widgetFontScale": "字体大小",
+  "location": "位置",
+  "addWidget": "添加组件",
+  "widgetHint": "每个组件会创建一个HTML数据点，可直接嵌入VIS或Jarvis。",
+  "widgetVariant": "类型",
+  "widgetVariantSimple": "简单",
+  "widgetVariantDetailed": "详细",
+  "widgetDetailedNoHourly": "每小时数据已禁用 – 在常规设置中启用每小时天数",
+  "widgetDetailedNoAstronomy": "天文学已禁用 – 不会显示月相图标",
+  "widgetDays": "天数",
+  "widgetTheme": "主题"
 }

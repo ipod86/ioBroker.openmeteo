@@ -62,5 +62,15 @@
   "warnNotifyLiftHelp": "Отправляет уведомление когда ранее выданное предупреждение отменяется или истекает",
   "widgetHourlyRange": "Часов с текущего момента",
   "widgetHourlyStep": "Шаг",
-  "widgetFontScale": "Размер шрифта"
+  "widgetFontScale": "Размер шрифта",
+  "location": "Местоположение",
+  "addWidget": "Добавить виджет",
+  "widgetHint": "Каждый виджет создаёт HTML-точку данных, которую можно встроить в VIS или Jarvis.",
+  "widgetVariant": "Тип",
+  "widgetVariantSimple": "Простой",
+  "widgetVariantDetailed": "Подробный",
+  "widgetDetailedNoHourly": "Почасовые данные отключены – включите почасовые дни в общих настройках",
+  "widgetDetailedNoAstronomy": "Астрономия отключена – иконка фазы луны не будет показана",
+  "widgetDays": "Дни",
+  "widgetTheme": "Тема"
 }

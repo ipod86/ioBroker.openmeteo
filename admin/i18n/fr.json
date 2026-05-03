@@ -62,5 +62,15 @@
   "warnNotifyLiftHelp": "Envoie une notification lorsqu'une alerte précédemment signalée est annulée ou expire",
   "widgetHourlyRange": "Heures à partir de maintenant",
   "widgetHourlyStep": "Pas",
-  "widgetFontScale": "Taille de police"
+  "widgetFontScale": "Taille de police",
+  "location": "Lieu",
+  "addWidget": "Ajouter un widget",
+  "widgetHint": "Chaque widget crée un point de données HTML intégrable directement dans VIS ou Jarvis.",
+  "widgetVariant": "Type",
+  "widgetVariantSimple": "Simple",
+  "widgetVariantDetailed": "Détaillé",
+  "widgetDetailedNoHourly": "Données horaires désactivées – activer les jours horaires dans les paramètres",
+  "widgetDetailedNoAstronomy": "Astronomie désactivée – l'icône de phase lunaire ne sera pas affichée",
+  "widgetDays": "Jours",
+  "widgetTheme": "Thème"
 }

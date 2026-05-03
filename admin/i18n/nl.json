@@ -62,5 +62,15 @@
   "warnNotifyLiftHelp": "Stuurt een melding wanneer een eerder gerapporteerde waarschuwing wordt opgeheven of verloopt",
   "widgetHourlyRange": "Uren vanaf nu",
   "widgetHourlyStep": "Stapgrootte",
-  "widgetFontScale": "Lettergrootte"
+  "widgetFontScale": "Lettergrootte",
+  "location": "Locatie",
+  "addWidget": "Widget toevoegen",
+  "widgetHint": "Elk widget maakt een HTML-datapunt aan dat rechtstreeks in VIS of Jarvis kan worden ingesloten.",
+  "widgetVariant": "Type",
+  "widgetVariantSimple": "Eenvoudig",
+  "widgetVariantDetailed": "Gedetailleerd",
+  "widgetDetailedNoHourly": "Uurdata uitgeschakeld – schakel uurlijkse dagen in via de algemene instellingen",
+  "widgetDetailedNoAstronomy": "Astronomie uitgeschakeld – maanfase-icoon wordt niet getoond",
+  "widgetDays": "Dagen",
+  "widgetTheme": "Thema"
 }
