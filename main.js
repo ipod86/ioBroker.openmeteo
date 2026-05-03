@@ -1071,7 +1071,10 @@ class Openmeteo extends utils.Adapter {
 				const dpKey = `${locId}.widget.${widget.id}`;
 				activeWidgetKeys.add(dpKey);
 				try {
-					const html = await this.buildWidgetHtml(widget, locId);
+					const html =
+						widget.variant === "detailed"
+							? await this.buildDetailedWidgetHtml(widget, locId)
+							: await this.buildWidgetHtml(widget, locId);
 					await this.setObjectNotExistsAsync(`${locId}.widget`, {
 						type: "channel",
 						common: { name: "Widget" },
@@ -1470,6 +1473,353 @@ class Openmeteo extends utils.Adapter {
 				html += `<td style="font-size:${c(11)};color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13)} ${dayData[i][4]}<span style="font-size:${c(9)};margin-left:${c(1)};">%</span></td>`;
 			}
 			html += `</tr></table>`;
+		}
+
+		html += `</div></div>`;
+		return html;
+	}
+
+	async buildDetailedWidgetHtml(widget, locId) {
+		const p = locId;
+		const w = widget.width ?? 600;
+		const c = x => `${(x / 6).toFixed(2)}cqw`; // reference width 600 px
+
+		const isLight = widget.theme === "light";
+		const isCustom = widget.theme === "custom";
+
+		let textColor, subColor, fadeColor, divColor, iconColor, bgColor;
+
+		if (isCustom) {
+			const textBase = widget.textBase || "#000000";
+			bgColor = widget.bgColor && widget.bgColor !== "transparent" ? widget.bgColor : "transparent";
+			const hexToRgba = (hex, alpha) => {
+				const r = parseInt(hex.slice(1, 3), 16);
+				const g = parseInt(hex.slice(3, 5), 16);
+				const b = parseInt(hex.slice(5, 7), 16);
+				return `rgba(${r},${g},${b},${alpha})`;
+			};
+			textColor = hexToRgba(textBase, 0.9);
+			subColor = hexToRgba(textBase, 0.7);
+			fadeColor = hexToRgba(textBase, 0.45);
+			divColor = hexToRgba(textBase, 0.15);
+			iconColor = hexToRgba(textBase, 0.85);
+		} else {
+			bgColor = "transparent";
+			textColor = isLight ? "rgba(255,255,255,0.93)" : "rgba(0,0,0,0.87)";
+			subColor = isLight ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.6)";
+			fadeColor = isLight ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)";
+			divColor = isLight ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)";
+			iconColor = isLight ? "rgba(255,255,255,0.85)" : "rgba(0,0,0,0.6)";
+		}
+
+		const _iconSet = this.config.iconSet || "basmilius";
+		const isAmcharts = _iconSet.startsWith("amcharts");
+		const isBasmilius = _iconSet.startsWith("basmilius");
+		const isWmoSvg = _iconSet === "wmo_svg";
+		const wmoSvgFilter = isWmoSvg ? (isLight ? "filter:invert(1);" : "") : "";
+		const imgScale = isAmcharts
+			? "transform:scale(1.5);transform-origin:center;"
+			: isBasmilius
+				? "transform:scale(1.05);transform-origin:center;"
+				: "";
+
+		const mdi = (path, size = 14, ml = 0) =>
+			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;fill:${iconColor};flex-shrink:0;${ml ? `margin-left:${c(ml)};` : ""}"><path d="${path}"/></svg>`;
+
+		const MDI = {
+			wind: "M4,10A1,1 0 0,1 3,9A1,1 0 0,1 4,8H12A2,2 0 0,0 14,6A2,2 0 0,0 12,4C11.45,4 10.95,4.22 10.59,4.59C10.2,5 9.56,5 9.17,4.59C8.78,4.2 8.78,3.56 9.17,3.17C9.9,2.45 10.9,2 12,2A4,4 0 0,1 16,6A4,4 0 0,1 12,10H4M19,12A1,1 0 0,0 20,11A1,1 0 0,0 19,10C18.72,10 18.47,10.11 18.29,10.29C17.9,10.68 17.27,10.68 16.88,10.29C16.5,9.9 16.5,9.27 16.88,8.88C17.42,8.34 18.17,8 19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14H5A1,1 0 0,1 4,13A1,1 0 0,1 5,12H19M18,18H4A1,1 0 0,1 3,17A1,1 0 0,1 4,16H18A3,3 0 0,1 21,19A3,3 0 0,1 18,22C17.17,22 16.42,21.66 15.88,21.12C15.5,20.73 15.5,20.1 15.88,19.71C16.27,19.32 16.9,19.32 17.29,19.71C17.47,19.89 17.72,20 18,20A1,1 0 0,0 19,19A1,1 0 0,0 18,18Z",
+			humid: "M12,3.25C12,3.25 6,10 6,14C6,17.32 8.69,20 12,20A6,6 0 0,0 18,14C18,10 12,3.25 12,3.25M14.47,9.97L15.53,11.03L9.53,17.03L8.47,15.97M9.75,10A1.25,1.25 0 0,1 11,11.25A1.25,1.25 0 0,1 9.75,12.5A1.25,1.25 0 0,1 8.5,11.25A1.25,1.25 0 0,1 9.75,10M14.25,14.5A1.25,1.25 0 0,1 15.5,15.75A1.25,1.25 0 0,1 14.25,17A1.25,1.25 0 0,1 13,15.75A1.25,1.25 0 0,1 14.25,14.5Z",
+			press: "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12C20,14.4 19,16.5 17.3,18C15.9,16.7 14,16 12,16C10,16 8.2,16.7 6.7,18C5,16.5 4,14.4 4,12A8,8 0 0,1 12,4M14,5.89C13.62,5.9 13.26,6.15 13.1,6.54L11.81,9.77L11.71,10C11,10.13 10.41,10.6 10.14,11.26C9.73,12.29 10.23,13.45 11.26,13.86C12.29,14.27 13.45,13.77 13.86,12.74C14.12,12.08 14,11.32 13.57,10.76L13.67,10.5L14.96,7.29L14.97,7.26C15.17,6.75 14.92,6.17 14.41,5.96C14.28,5.91 14.15,5.89 14,5.89M10,6A1,1 0 0,0 9,7A1,1 0 0,0 10,8A1,1 0 0,0 11,7A1,1 0 0,0 10,6M7,9A1,1 0 0,0 6,10A1,1 0 0,0 7,11A1,1 0 0,0 8,10A1,1 0 0,0 7,9M17,9A1,1 0 0,0 16,10A1,1 0 0,0 17,11A1,1 0 0,0 18,10A1,1 0 0,0 17,9Z",
+			sun: "M3.55 19.09L4.96 20.5L6.76 18.71L5.34 17.29M12 6C8.69 6 6 8.69 6 12S8.69 18 12 18 18 15.31 18 12C18 8.68 15.31 6 12 6M20 13H23V11H20M17.24 18.71L19.04 20.5L20.45 19.09L18.66 17.29M20.45 5L19.04 3.6L17.24 5.39L18.66 6.81M13 1H11V4H13M6.76 5.39L4.96 3.6L3.55 5L5.34 6.81L6.76 5.39M1 13H4V11H1M13 20H11V23H13",
+			rain: "M6,14.03A1,1 0 0,1 7,15.03C7,15.58 6.55,16.03 6,16.03C3.24,16.03 1,13.79 1,11.03C1,8.27 3.24,6.03 6,6.03C7,3.68 9.3,2.03 12,2.03C15.43,2.03 18.24,4.69 18.5,8.06L19,8.03A4,4 0 0,1 23,12.03C23,14.23 21.21,16.03 19,16.03H18C17.45,16.03 17,15.58 17,15.03C17,14.47 17.45,14.03 18,14.03H19A2,2 0 0,0 21,12.03A2,2 0 0,0 19,10.03H17V9.03C17,6.27 14.76,4.03 12,4.03C9.5,4.03 7.45,5.84 7.06,8.21C6.73,8.09 6.37,8.03 6,8.03A3,3 0 0,0 3,11.03A3,3 0 0,0 6,14.03M12,14.15C12.18,14.39 12.37,14.66 12.56,14.94C13,15.56 14,17.03 14,18C14,19.11 13.1,20 12,20A2,2 0 0,1 10,18C10,17.03 11,15.56 11.44,14.94C11.63,14.66 11.82,14.4 12,14.15M12,11.03L11.5,11.59C11.5,11.59 10.65,12.55 9.79,13.81C8.93,15.06 8,16.56 8,18A4,4 0 0,0 12,22A4,4 0 0,0 16,18C16,16.56 15.07,15.06 14.21,13.81C13.35,12.55 12.5,11.59 12.5,11.59",
+		};
+
+		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
+
+		const iconCache = new Map();
+		const resolveIcon = async url => {
+			if (!url || !url.startsWith("/files/")) {
+				return url;
+			}
+			const filePath = url.split("?")[0].replace(`/files/${this.namespace}/`, "");
+			if (iconCache.has(filePath)) {
+				return iconCache.get(filePath);
+			}
+			try {
+				const raw = await this.readFileAsync(this.namespace, filePath);
+				const buf = Buffer.isBuffer(raw)
+					? raw
+					: raw?.file instanceof Buffer
+						? raw.file
+						: typeof raw?.file === "string"
+							? Buffer.from(raw.file)
+							: raw?.data instanceof Buffer
+								? raw.data
+								: null;
+				if (!buf) {
+					return url;
+				}
+				const dataUrl = `data:image/svg+xml;base64,${buf.toString("base64")}`;
+				iconCache.set(filePath, dataUrl);
+				return dataUrl;
+			} catch {
+				return url;
+			}
+		};
+
+		// ── Fetch current conditions ─────────────────────────────────────────────
+		const [curTemp, curDesc, curIconRaw, curWind, curWindDir, curHum, curPress, curSummary, sunH] =
+			await Promise.all([
+				gs(`${p}.current.temperature`),
+				gs(`${p}.current.description`),
+				gs(`${p}.current.icon_url`),
+				gs(`${p}.current.windspeed`),
+				gs(`${p}.current.winddirection_text`),
+				gs(`${p}.current.humidity`),
+				gs(`${p}.current.pressure`),
+				gs(`${p}.current.summary`),
+				gs(`${p}.day0.sunshine_hours`),
+			]);
+		const curIcon = await resolveIcon(curIconRaw);
+
+		const days = Math.min(widget.days ?? 7, 14);
+
+		// ── Fetch daily data ─────────────────────────────────────────────────────
+		const dayDataRaw = await Promise.all(
+			Array.from({ length: days }, (_, i) =>
+				Promise.all([
+					gs(`${p}.day${i}.weekday`),
+					gs(`${p}.day${i}.icon_url`),
+					gs(`${p}.day${i}.temp_max`),
+					gs(`${p}.day${i}.temp_min`),
+					gs(`${p}.day${i}.precipitation_probability`),
+					gs(`${p}.day${i}.precipitation`),
+					gs(`${p}.day${i}.windspeed`),
+					gs(`${p}.day${i}.winddirection_text`),
+				]),
+			),
+		);
+		const dayData = await Promise.all(
+			dayDataRaw.map(async row => {
+				const icon = await resolveIcon(row[1]);
+				return [row[0], icon, row[2], row[3], row[4], row[5], row[6], row[7]];
+				//       weekday icon  tMax  tMin  precipProb precipMm wind   windDir
+			}),
+		);
+
+		// ── Fetch hourly data (every 3 h) for each day with hourly states ────────
+		const hourlyDays = Math.min(this.config.hourlyDays ?? 3, days);
+		const HOURS = [0, 3, 6, 9, 12, 15, 18, 21];
+		const hourlyData = [];
+		for (let d = 0; d < hourlyDays; d++) {
+			const slots = await Promise.all(
+				HOURS.map(h => {
+					const hk = `h${String(h).padStart(2, "0")}`;
+					return Promise.all([
+						gs(`${p}.day${d}.hourly.${hk}.icon_url`),
+						gs(`${p}.day${d}.hourly.${hk}.temperature`),
+						gs(`${p}.day${d}.hourly.${hk}.precipitation`),
+						gs(`${p}.day${d}.hourly.${hk}.windspeed`),
+						gs(`${p}.day${d}.hourly.${hk}.winddirection_text`),
+					]);
+				}),
+			);
+			const resolved = await Promise.all(slots.map(async s => [await resolveIcon(s[0]), s[1], s[2], s[3], s[4]]));
+			hourlyData.push(resolved);
+		}
+
+		// ── Build HTML ───────────────────────────────────────────────────────────
+		const div = (style, content) => `<div style="${style}">${content}</div>`;
+		const fs = s => `font-size:${c(s)};`;
+		const pad = (t, r, b, l) => `padding:${c(t)} ${c(r)} ${c(b)} ${c(l)};`;
+
+		const mainIconSize = c(isAmcharts ? 90 : isBasmilius ? 78 : 70);
+
+		let html = `<div style="container-type:inline-size;width:100%;max-width:${w}px;">`;
+		html += `<div style="background:${bgColor};color:${textColor};font-family:sans-serif;${pad(10, 10, 6, 10)}">`;
+
+		// ── Section 1: Current ───────────────────────────────────────────────────
+		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(8)};">`;
+		html += `<tr>`;
+		html += `<td style="width:${mainIconSize};vertical-align:middle;">`;
+		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
+		html += `</td>`;
+		html += `<td style="padding-left:${c(10)};vertical-align:middle;">`;
+		html += div(`${fs(14)}font-weight:600;color:${textColor};margin-bottom:${c(2)};`, widget.locationName);
+		html += div(`${fs(16)}color:${subColor};`, curDesc);
+		if (curSummary) {
+			html += div(`${fs(12)}color:${fadeColor};margin-top:${c(2)};`, curSummary);
+		}
+		html += `</td>`;
+		html += `<td style="text-align:right;vertical-align:middle;padding-right:${c(4)};">`;
+		html += `<div style="${fs(46)}font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="${fs(18)}vertical-align:top;font-weight:300;margin-left:${c(2)};position:relative;top:${c(6)};">°C</span></div>`;
+		html += `</td>`;
+		html += `</tr>`;
+		html += `</table>`;
+
+		// Details row
+		html += `<table width="100%" style="border-collapse:collapse;${fs(13)}color:${subColor};margin-bottom:${c(10)};">`;
+		html += `<tr>`;
+		html += `<td width="5%"></td>`;
+		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind)}`;
+		html += `<span style="margin-left:${c(4)};">${curWind} <span style="${fs(10)}color:${fadeColor};">km/h</span>`;
+		if (curWindDir) {
+			html += ` <span style="${fs(10)}color:${fadeColor};">${curWindDir}</span>`;
+		}
+		html += `</span></td>`;
+		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fs(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid)}</td>`;
+		html += `<td width="5%"></td>`;
+		html += `</tr><tr>`;
+		html += `<td></td>`;
+		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.sun)}<span style="margin-left:${c(4)};">${sunH} <span style="${fs(10)}color:${fadeColor};">h</span></span></td>`;
+		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curPress} <span style="${fs(10)}color:${fadeColor};">hPa</span></span>${mdi(MDI.press)}</td>`;
+		html += `<td></td>`;
+		html += `</tr>`;
+		html += `</table>`;
+
+		// ── Section 2: Daily forecast ────────────────────────────────────────────
+		html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(6)};"></div>`;
+
+		const iconSz = c(isAmcharts ? 46 : isBasmilius ? 40 : 36);
+
+		// Row helper
+		const dRow = (cells, style = "") =>
+			`<tr style="${style}">${cells
+				.map(
+					([content, extra = ""]) =>
+						`<td style="text-align:center;vertical-align:middle;padding:${c(2)} ${c(1)};${extra}">${content}</td>`,
+				)
+				.join("")}</tr>`;
+
+		html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
+
+		// weekday
+		html += dRow(
+			dayData.map((d, i) => [
+				`<span style="${fs(11)}color:${fadeColor};font-weight:${i === 0 ? "700" : "400"};">${d[0]}</span>`,
+				i > 0 ? `border-left:1px solid ${divColor};` : "",
+			]),
+		);
+		// icon
+		html += dRow(
+			dayData.map((d, i) => [
+				`<img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:inline-block;${imgScale}${wmoSvgFilter}">`,
+				i > 0 ? `border-left:1px solid ${divColor};` : "",
+			]),
+		);
+		// temp max
+		html += dRow(
+			dayData.map((d, i) => [
+				`<span style="${fs(13)}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(9)}font-weight:400;vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+				i > 0 ? `border-left:1px solid ${divColor};` : "",
+			]),
+		);
+		// temp min
+		html += dRow(
+			dayData.map((d, i) => [
+				`<span style="${fs(11)}color:${fadeColor};">${d[3]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+				i > 0 ? `border-left:1px solid ${divColor};` : "",
+			]),
+		);
+		// precip prob
+		html += dRow(
+			dayData.map((d, i) => [
+				`<span style="${fs(10)}color:${subColor};">${mdi(MDI.rain, 11)} ${d[4]}<span style="${fs(8)}margin-left:${c(1)};">%</span></span>`,
+				i > 0 ? `border-left:1px solid ${divColor};` : "",
+			]),
+		);
+		// precip mm
+		html += dRow(
+			dayData.map((d, i) => {
+				const mm = parseFloat(d[5]) || 0;
+				const txt =
+					mm >= 0.1
+						? `${Math.round(mm * 10) / 10} <span style="${fs(8)}color:${fadeColor};">mm</span>`
+						: `<span style="${fs(8)}color:${fadeColor};">–</span>`;
+				return [
+					`<span style="${fs(10)}color:${subColor};">${txt}</span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				];
+			}),
+		);
+		// wind
+		html += dRow(
+			dayData.map((d, i) => [
+				`<span style="${fs(10)}color:${subColor};">${d[6]} <span style="${fs(8)}color:${fadeColor};">km/h</span><br><span style="${fs(9)}color:${fadeColor};">${d[7]}</span></span>`,
+				i > 0 ? `border-left:1px solid ${divColor};` : "",
+			]),
+		);
+
+		html += `</table>`;
+
+		// ── Section 3: Hourly ────────────────────────────────────────────────────
+		if (hourlyDays > 0 && hourlyData.length > 0) {
+			const sysConf = await this.getForeignObjectAsync("system.config");
+			const rawLang = (sysConf?.common?.language || "en").toLowerCase();
+			const SUPPORTED = ["de", "en", "fr", "it", "es", "pt", "nl", "pl", "ru", "uk", "zh-cn"];
+			const lang = SUPPORTED.includes(rawLang)
+				? rawLang
+				: SUPPORTED.includes(rawLang.split("-")[0])
+					? rawLang.split("-")[0]
+					: "en";
+			const summaryT = I18N_SUMMARY[lang] || I18N_SUMMARY.en;
+			const dayLabels = [summaryT.today, summaryT.tomorrow, summaryT.day_after_tomorrow];
+
+			for (let d = 0; d < hourlyDays; d++) {
+				const label = dayLabels[d] || `+${d}`;
+				const slots = hourlyData[d];
+
+				html += `<div style="border-top:1px solid ${divColor};margin-top:${c(8)};padding-top:${c(6)};">`;
+				html += `<div style="${fs(11)}color:${fadeColor};font-weight:600;margin-bottom:${c(4)};letter-spacing:0.05em;text-transform:uppercase;">${label}</div>`;
+
+				html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
+				const hIconSz = c(isAmcharts ? 36 : isBasmilius ? 30 : 26);
+
+				// time labels
+				html += `<tr>${HOURS.map((h, j) => {
+					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+					return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}"><span style="${fs(10)}color:${fadeColor};">${String(h).padStart(2, "0")}:00</span></td>`;
+				}).join("")}</tr>`;
+
+				// icons
+				html += `<tr>${slots
+					.map((s, j) => {
+						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}"><img src="${s[0]}" style="width:${hIconSz};height:${hIconSz};display:inline-block;${imgScale}${wmoSvgFilter}"></td>`;
+					})
+					.join("")}</tr>`;
+
+				// temperature
+				html += `<tr>${slots
+					.map((s, j) => {
+						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}"><span style="${fs(12)}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span></td>`;
+					})
+					.join("")}</tr>`;
+
+				// precipitation
+				html += `<tr>${slots
+					.map((s, j) => {
+						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+						const mm = parseFloat(s[2]) || 0;
+						const txt =
+							mm >= 0.1
+								? `<span style="${fs(10)}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(8)}color:${fadeColor};"> mm</span></span>`
+								: `<span style="${fs(9)}color:${fadeColor};">–</span>`;
+						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}">${txt}</td>`;
+					})
+					.join("")}</tr>`;
+
+				// wind speed + direction
+				html += `<tr>${slots
+					.map((s, j) => {
+						const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
+						return `<td style="text-align:center;${pad(1, 1, 2, 1)}${border}"><span style="${fs(10)}color:${subColor};">${s[3]}<span style="${fs(8)}color:${fadeColor};"> km/h</span></span><br><span style="${fs(9)}color:${fadeColor};">${s[4]}</span></td>`;
+					})
+					.join("")}</tr>`;
+
+				html += `</table></div>`;
+			}
 		}
 
 		html += `</div></div>`;

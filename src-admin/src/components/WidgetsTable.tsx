@@ -52,6 +52,7 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange
             id: makeId(),
             locationName: defaultLoc,
             days: defaultDays,
+            variant: 'simple',
             theme: 'dark',
             width: 450,
             bgColor: 'transparent',
@@ -99,6 +100,22 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, onChange
                                     ))}
                                 </Select>
                             </FormControl>
+
+                            {/* Variant */}
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                    {I18n.t('widgetVariant')}
+                                </Typography>
+                                <ToggleButtonGroup
+                                    value={w.variant ?? 'simple'}
+                                    exclusive
+                                    size="small"
+                                    onChange={(_, v) => v && update(i, { variant: v })}
+                                >
+                                    <ToggleButton value="simple">{I18n.t('widgetVariantSimple')}</ToggleButton>
+                                    <ToggleButton value="detailed">{I18n.t('widgetVariantDetailed')}</ToggleButton>
+                                </ToggleButtonGroup>
+                            </Box>
 
                             {/* Days */}
                             <Box>
