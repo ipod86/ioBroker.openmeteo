@@ -1749,7 +1749,7 @@ class Openmeteo extends utils.Adapter {
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;padding:0;${border}"><span style="${fs(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}vertical-align:top;margin-left:0;">°C</span></span></td>`;
+					return `<td style="text-align:center;padding:0;${border}"><span style="${fs(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}">°C</span></span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
@@ -1818,14 +1818,14 @@ class Openmeteo extends utils.Adapter {
 			// temp max
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(8)}vertical-align:top;margin-left:0;">°C</span></span>`,
+					`<span style="${fs(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(8)}">°C</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
 			// temp min
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fs(7)}vertical-align:top;margin-left:0;">°C</span></span>`,
+					`<span style="${fs(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fs(7)}">°C</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
