@@ -1284,11 +1284,11 @@ class Openmeteo extends utils.Adapter {
 	async buildWidgetHtml(widget, locId) {
 		const p = locId;
 		const scale = widget.fontScale ?? 0;
-		const w = (widget.width ?? 450) + Math.max(0, scale) * 25;
+		const w = (widget.width ?? 450) + Math.max(0, scale) * 80;
 		// c(x): converts a design-px value (at 450 px reference width) to a
 		// container-relative cqw unit so every size scales with the actual cell width.
 		const c = x => `${(x / 4.5).toFixed(2)}cqw`;
-		const fontFactor = 1 + scale * 0.06;
+		const fontFactor = Math.max(0.1, 1 + scale * 0.2);
 		const cf = x => c(x * fontFactor);
 		const isLight = widget.theme === "light";
 		const isCustom = widget.theme === "custom";
@@ -1485,9 +1485,9 @@ class Openmeteo extends utils.Adapter {
 	async buildDetailedWidgetHtml(widget, locId) {
 		const p = locId;
 		const scale = widget.fontScale ?? 0;
-		const w = (widget.width ?? 600) + Math.max(0, scale) * 30;
+		const w = (widget.width ?? 600) + Math.max(0, scale) * 100;
 		const c = x => `${(x / 6).toFixed(2)}cqw`; // reference width 600 px
-		const fontFactor = 1 + scale * 0.06;
+		const fontFactor = Math.max(0.1, 1 + scale * 0.2);
 
 		const isLight = widget.theme === "light";
 		const isCustom = widget.theme === "custom";
