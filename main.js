@@ -1690,7 +1690,7 @@ class Openmeteo extends utils.Adapter {
 		html += `<div style="position:relative;display:inline-block;width:${mainIconSize};height:${mainIconSize};">`;
 		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
 		if (hasMoon && moonIcons[0]) {
-			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(22)};height:${c(22)};top:0;left:0;opacity:0.9;">`;
+			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(30)};height:${c(30)};top:0;left:0;opacity:0.92;z-index:1;">`;
 		}
 		html += `</div>`;
 		html += `</td>`;
@@ -1807,7 +1807,7 @@ class Openmeteo extends utils.Adapter {
 				dSlice.map((d, i) => {
 					const moonUrl = hasMoon ? mSlice[i] : null;
 					const moonOverlay = moonUrl
-						? `<img src="${moonUrl}" style="position:absolute;width:${c(16)};height:${c(16)};top:0;left:0;opacity:0.9;">`
+						? `<img src="${moonUrl}" style="position:absolute;width:${c(22)};height:${c(22)};top:0;left:0;opacity:0.92;z-index:1;">`
 						: "";
 					return [
 						`<div style="position:relative;display:inline-block;width:${iconSz};height:${iconSz};"><img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:block;${imgScale}${wmoSvgFilter}">${moonOverlay}</div>`,
