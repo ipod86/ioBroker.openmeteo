@@ -31,7 +31,7 @@
   "widgetVariantSimple": "Simple",
   "widgetVariantDetailed": "Detailed",
   "widgetDetailedNoHourly": "Hourly data is disabled – the detailed widget will show no hourly section. Enable hourly days in General settings.",
-  "widgetDetailedPartialHourly": "Hourly data is only available for %s day(s) – remaining days show daily data only.",
+  "widgetDetailedPartialHourly": "Hourly data is only available for %s day(s) – remaining days show daily data only. Increase hourly days in General settings to cover more days.",
   "warnNotifyLift": "Notify when warning is lifted",
   "warnNotifyLiftHelp": "Sends a notification when a previously reported warning is cancelled or expires"
 }
