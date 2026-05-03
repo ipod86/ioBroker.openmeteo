@@ -1690,7 +1690,7 @@ class Openmeteo extends utils.Adapter {
 		html += `<div style="position:relative;display:inline-block;width:${mainIconSize};height:${mainIconSize};">`;
 		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
 		if (hasMoon && moonIcons[0]) {
-			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(30)};height:${c(30)};top:0;right:0;opacity:0.92;z-index:1;">`;
+			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(36)};height:${c(36)};top:${c(-4)};right:${c(-4)};opacity:0.92;z-index:1;">`;
 		}
 		html += `</div>`;
 		html += `</td>`;
@@ -1702,7 +1702,7 @@ class Openmeteo extends utils.Adapter {
 		}
 		html += `</td>`;
 		html += `<td style="text-align:right;vertical-align:middle;padding-right:${c(4)};">`;
-		html += `<div style="${fs(46)}font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="${fs(18)}vertical-align:top;font-weight:300;margin-left:${c(2)};position:relative;top:${c(6)};">°C</span></div>`;
+		html += `<div style="${fs(46)}font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="${fs(18)}vertical-align:top;font-weight:300;margin-left:0;position:relative;top:${c(4)};">°C</span></div>`;
 		html += `</td>`;
 		html += `</tr>`;
 		html += `</table>`;
@@ -1749,7 +1749,7 @@ class Openmeteo extends utils.Adapter {
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;padding:0;${border}"><span style="${fs(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}vertical-align:top;margin-left:${c(1)};">°</span></span></td>`;
+					return `<td style="text-align:center;padding:0;${border}"><span style="${fs(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}vertical-align:top;margin-left:0;">°C</span></span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
@@ -1807,7 +1807,7 @@ class Openmeteo extends utils.Adapter {
 				dSlice.map((d, i) => {
 					const moonUrl = hasMoon ? mSlice[i] : null;
 					const moonOverlay = moonUrl
-						? `<img src="${moonUrl}" style="position:absolute;width:${c(22)};height:${c(22)};top:0;right:0;opacity:0.92;z-index:1;">`
+						? `<img src="${moonUrl}" style="position:absolute;width:${c(27)};height:${c(27)};top:${c(-3)};right:${c(-3)};opacity:0.92;z-index:1;">`
 						: "";
 					return [
 						`<div style="position:relative;display:inline-block;width:${iconSz};height:${iconSz};"><img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:block;${imgScale}${wmoSvgFilter}">${moonOverlay}</div>`,
@@ -1818,14 +1818,14 @@ class Openmeteo extends utils.Adapter {
 			// temp max
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+					`<span style="${fs(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(8)}vertical-align:top;margin-left:0;">°C</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
 			// temp min
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fs(7)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+					`<span style="${fs(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fs(7)}vertical-align:top;margin-left:0;">°C</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
