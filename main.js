@@ -796,7 +796,8 @@ class Openmeteo extends utils.Adapter {
 		await this.runUpdate();
 		await this.runWarnUpdate();
 
-		// Schedule repeating weather updates
+		// Schedule repeating weather updates aligned to clock boundaries:
+		// 30 min → :00 and :30, 60 min → :00, 120 min → even hours, daily → 01:00
 		const intervalMinutes = this.config.updateInterval || 60;
 		if (intervalMinutes >= 1440) {
 			// Daily at 01:00
@@ -809,23 +810,31 @@ class Openmeteo extends utils.Adapter {
 				}
 				return next - now;
 			};
-			this.updateTimeout = this.setTimeout(async () => {
-				this.updateTimeout = null;
+			const scheduleDailyNext = async () => {
 				await this.runUpdate();
-				this.updateInterval = this.setInterval(
-					async () => {
-						await this.runUpdate();
-					},
-					24 * 60 * 60 * 1000,
-				);
-			}, msUntilNext1am());
+				this.updateTimeout = this.setTimeout(scheduleDailyNext, msUntilNext1am());
+			};
+			this.updateTimeout = this.setTimeout(scheduleDailyNext, msUntilNext1am());
 		} else {
-			this.updateInterval = this.setInterval(
-				async () => {
-					await this.runUpdate();
-				},
-				intervalMinutes * 60 * 1000,
-			);
+			const intervalMs = intervalMinutes * 60 * 1000;
+			const msUntilNextAligned = () => {
+				const now = new Date();
+				const localMs =
+					(now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds();
+				const remaining = intervalMs - (localMs % intervalMs);
+				// avoid back-to-back firing if update finishes right at the boundary
+				return remaining < 10000 ? remaining + intervalMs : remaining;
+			};
+			const scheduleNext = async () => {
+				await this.runUpdate();
+				const delay = msUntilNextAligned();
+				const nextTime = new Date(Date.now() + delay);
+				this.log.debug(`Next weather update: ${nextTime.toLocaleTimeString()}`);
+				this.updateTimeout = this.setTimeout(scheduleNext, delay);
+			};
+			const delay = msUntilNextAligned();
+			this.log.debug(`First weather update: ${new Date(Date.now() + delay).toLocaleTimeString()}`);
+			this.updateTimeout = this.setTimeout(scheduleNext, delay);
 		}
 
 		// Schedule separate official warning updates
@@ -4066,9 +4075,6 @@ class Openmeteo extends utils.Adapter {
 		try {
 			if (this.updateTimeout) {
 				this.clearTimeout(this.updateTimeout);
-			}
-			if (this.updateInterval) {
-				this.clearInterval(this.updateInterval);
 			}
 			if (this.warnInterval) {
 				this.clearInterval(this.warnInterval);
