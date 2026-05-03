@@ -1725,12 +1725,12 @@ class Openmeteo extends utils.Adapter {
 		// ── Section 2: Next 24 h (2 h steps) ────────────────────────────────────
 		if (showHourly && hourly24.length > 0) {
 			html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
-			const hIconSz = c(isAmcharts ? 30 : isBasmilius ? 24 : 20);
+			const hIconSz = c(isAmcharts ? 26 : isBasmilius ? 20 : 17);
 			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;${pad(1, 0, 0, 0)}${border}"><span style="${fs(9)}color:${fadeColor};">${String(s[5]).padStart(2, "0")}h</span></td>`;
+					return `<td style="text-align:center;padding:0 0 1px;${border}"><span style="${fs(8)}${lh}color:${fadeColor};">${String(s[5]).padStart(2, "0")}h</span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
@@ -1742,7 +1742,7 @@ class Openmeteo extends utils.Adapter {
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;${pad(0, 0, 1, 0)}${border}"><span style="${fs(11)}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}vertical-align:top;margin-left:${c(1)};">°</span></span></td>`;
+					return `<td style="text-align:center;padding:0;${border}"><span style="${fs(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}vertical-align:top;margin-left:${c(1)};">°</span></span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
@@ -1751,15 +1751,15 @@ class Openmeteo extends utils.Adapter {
 					const mm = parseFloat(s[2]) || 0;
 					const txt =
 						mm >= 0.1
-							? `<span style="${fs(9)}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(7)}color:${fadeColor};"> mm</span></span>`
-							: `<span style="${fs(9)}color:${subColor};">0<span style="${fs(7)}color:${fadeColor};"> mm</span></span>`;
+							? `<span style="${fs(8)}${lh}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(6)}color:${fadeColor};"> mm</span></span>`
+							: `<span style="${fs(8)}${lh}color:${subColor};">0<span style="${fs(6)}color:${fadeColor};"> mm</span></span>`;
 					return `<td style="text-align:center;padding:0;${border}">${txt}</td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;${pad(0, 0, 1, 0)}${border}"><span style="${fs(9)}color:${subColor};">${s[3]}<span style="${fs(7)}color:${fadeColor};"> km/h</span></span><br>${windArrow(s[4], 10)}</td>`;
+					return `<td style="text-align:center;padding:0 0 2px;${border}"><span style="${fs(8)}${lh}color:${subColor};">${s[3]}<span style="${fs(6)}color:${fadeColor};"> km/h</span></span><br>${windArrow(s[4], 9)}</td>`;
 				})
 				.join("")}</tr>`;
 			html += `</table>`;
@@ -1768,16 +1768,18 @@ class Openmeteo extends utils.Adapter {
 		// ── Section 3: Daily forecast ────────────────────────────────────────────
 		html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
 
-		const iconSz = c(isAmcharts ? 46 : isBasmilius ? 40 : 36);
+		const iconSz = c(isAmcharts ? 36 : isBasmilius ? 30 : 26);
 
-		// Row helper
+		// Row helper – no vertical padding, content drives height
 		const dRow = (cells, style = "") =>
 			`<tr style="${style}">${cells
 				.map(
 					([content, extra = ""]) =>
-						`<td style="text-align:center;vertical-align:middle;padding:${c(1)} ${c(1)};${extra}">${content}</td>`,
+						`<td style="text-align:center;vertical-align:middle;padding:0 ${c(1)};${extra}">${content}</td>`,
 				)
 				.join("")}</tr>`;
+
+		const lh = "line-height:1;"; // force tight line height on all text spans
 
 		// Split into rows of 7 for 14-day view, single row otherwise
 		const chunkSize = days > 7 ? 7 : days;
@@ -1785,13 +1787,13 @@ class Openmeteo extends utils.Adapter {
 			const dSlice = dayData.slice(g, g + chunkSize);
 			const mSlice = moonIcons.slice(g, g + chunkSize);
 			if (g > 0) {
-				html += `<div style="margin-top:${c(5)};border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
+				html += `<div style="margin-top:${c(4)};border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
 			}
 			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
 			// weekday
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(11)}color:${fadeColor};font-weight:${g === 0 && i === 0 ? "700" : "400"};">${d[0]}</span>`,
+					`<span style="${fs(10)}${lh}color:${fadeColor};font-weight:${g === 0 && i === 0 ? "700" : "400"};">${d[0]}</span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
@@ -1805,21 +1807,21 @@ class Openmeteo extends utils.Adapter {
 			// temp max
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(13)}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(9)}font-weight:400;vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+					`<span style="${fs(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
 			// temp min
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(11)}color:${fadeColor};">${d[3]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+					`<span style="${fs(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fs(7)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
 			// precip prob
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(10)}color:${subColor};">${mdi(MDI.rain, 11)} ${d[4]}<span style="${fs(8)}margin-left:${c(1)};">%</span></span>`,
+					`<span style="${fs(9)}${lh}color:${subColor};">${mdi(MDI.rain, 10)} ${d[4]}<span style="${fs(7)}margin-left:${c(1)};">%</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
@@ -1829,10 +1831,10 @@ class Openmeteo extends utils.Adapter {
 					const mm = parseFloat(d[5]) || 0;
 					const txt =
 						mm >= 0.1
-							? `${Math.round(mm * 10) / 10} <span style="${fs(8)}color:${fadeColor};">mm</span>`
-							: `0 <span style="${fs(8)}color:${fadeColor};">mm</span>`;
+							? `${Math.round(mm * 10) / 10} <span style="${fs(7)}color:${fadeColor};">mm</span>`
+							: `0 <span style="${fs(7)}color:${fadeColor};">mm</span>`;
 					return [
-						`<span style="${fs(10)}color:${subColor};">${txt}</span>`,
+						`<span style="${fs(9)}${lh}color:${subColor};">${txt}</span>`,
 						i > 0 ? `border-left:1px solid ${divColor};` : "",
 					];
 				}),
@@ -1840,7 +1842,7 @@ class Openmeteo extends utils.Adapter {
 			// wind
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(10)}color:${subColor};">${d[6]} <span style="${fs(8)}color:${fadeColor};">km/h</span> ${windArrow(d[7], 12)}</span>`,
+					`<span style="${fs(9)}${lh}color:${subColor};">${d[6]} <span style="${fs(7)}color:${fadeColor};">km/h</span> ${windArrow(d[7], 11)}</span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
@@ -1849,8 +1851,8 @@ class Openmeteo extends utils.Adapter {
 				html += dRow(
 					mSlice.map((url, i) => [
 						url
-							? `<img src="${url}" style="width:${c(18)};height:${c(18)};display:inline-block;opacity:0.8;vertical-align:middle;">`
-							: `<span style="${fs(9)}color:${fadeColor};">-</span>`,
+							? `<img src="${url}" style="width:${c(15)};height:${c(15)};display:inline-block;opacity:0.8;vertical-align:middle;">`
+							: `<span style="${fs(9)}${lh}color:${fadeColor};">-</span>`,
 						i > 0 ? `border-left:1px solid ${divColor};` : "",
 					]),
 				);
