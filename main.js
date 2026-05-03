@@ -1687,7 +1687,12 @@ class Openmeteo extends utils.Adapter {
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(4)};">`;
 		html += `<tr>`;
 		html += `<td style="width:${mainIconSize};vertical-align:middle;">`;
+		html += `<div style="position:relative;display:inline-block;width:${mainIconSize};height:${mainIconSize};">`;
 		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
+		if (hasMoon && moonIcons[0]) {
+			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(22)};height:${c(22)};top:0;left:0;opacity:0.9;">`;
+		}
+		html += `</div>`;
 		html += `</td>`;
 		html += `<td style="padding-left:${c(10)};vertical-align:middle;">`;
 		html += div(`${fs(14)}font-weight:600;color:${textColor};margin-bottom:${c(2)};`, widget.locationName);
@@ -1802,7 +1807,7 @@ class Openmeteo extends utils.Adapter {
 				dSlice.map((d, i) => {
 					const moonUrl = hasMoon ? mSlice[i] : null;
 					const moonOverlay = moonUrl
-						? `<img src="${moonUrl}" style="position:absolute;width:${c(12)};height:${c(12)};bottom:0;right:0;opacity:0.85;">`
+						? `<img src="${moonUrl}" style="position:absolute;width:${c(16)};height:${c(16)};top:0;left:0;opacity:0.9;">`
 						: "";
 					return [
 						`<div style="position:relative;display:inline-block;width:${iconSz};height:${iconSz};"><img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:block;${imgScale}${wmoSvgFilter}">${moonOverlay}</div>`,
