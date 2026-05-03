@@ -1547,7 +1547,28 @@ class Openmeteo extends utils.Adapter {
 
 		const iconCache = new Map();
 		const resolveIcon = async url => {
-			if (!url || !url.startsWith("/files/")) {
+			if (!url) {
+				return url;
+			}
+			if (url.startsWith("/adapter/openmeteo-notify/")) {
+				const cacheKey = url;
+				if (iconCache.has(cacheKey)) {
+					return iconCache.get(cacheKey);
+				}
+				try {
+					const relPath = url.replace("/adapter/openmeteo-notify/", "admin/");
+					const absPath = path.join(__dirname, relPath);
+					const buf = fs.readFileSync(absPath);
+					const ext = absPath.split(".").pop()?.toLowerCase();
+					const mime = ext === "png" ? "image/png" : ext === "gif" ? "image/gif" : "image/svg+xml";
+					const dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
+					iconCache.set(cacheKey, dataUrl);
+					return dataUrl;
+				} catch {
+					return url;
+				}
+			}
+			if (!url.startsWith("/files/")) {
 				return url;
 			}
 			const filePath = url.split("?")[0].replace(`/files/${this.namespace}/`, "");
@@ -1654,10 +1675,10 @@ class Openmeteo extends utils.Adapter {
 		const mainIconSize = c(isAmcharts ? 90 : isBasmilius ? 78 : 70);
 
 		let html = `<div style="container-type:inline-size;width:100%;max-width:${w}px;">`;
-		html += `<div style="background:${bgColor};color:${textColor};font-family:sans-serif;${pad(10, 10, 6, 10)}">`;
+		html += `<div style="background:${bgColor};color:${textColor};font-family:sans-serif;${pad(6, 8, 4, 8)}">`;
 
 		// ── Section 1: Current ───────────────────────────────────────────────────
-		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(8)};">`;
+		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(4)};">`;
 		html += `<tr>`;
 		html += `<td style="width:${mainIconSize};vertical-align:middle;">`;
 		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
@@ -1676,7 +1697,7 @@ class Openmeteo extends utils.Adapter {
 		html += `</table>`;
 
 		// Details row
-		html += `<table width="100%" style="border-collapse:collapse;${fs(13)}color:${subColor};margin-bottom:${c(10)};">`;
+		html += `<table width="100%" style="border-collapse:collapse;${fs(13)}color:${subColor};margin-bottom:${c(5)};">`;
 		html += `<tr>`;
 		html += `<td width="5%"></td>`;
 		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind)}`;
@@ -1696,7 +1717,7 @@ class Openmeteo extends utils.Adapter {
 		html += `</table>`;
 
 		// ── Section 2: Daily forecast ────────────────────────────────────────────
-		html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(6)};"></div>`;
+		html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
 
 		const iconSz = c(isAmcharts ? 46 : isBasmilius ? 40 : 36);
 
@@ -1705,7 +1726,7 @@ class Openmeteo extends utils.Adapter {
 			`<tr style="${style}">${cells
 				.map(
 					([content, extra = ""]) =>
-						`<td style="text-align:center;vertical-align:middle;padding:${c(2)} ${c(1)};${extra}">${content}</td>`,
+						`<td style="text-align:center;vertical-align:middle;padding:${c(1)} ${c(1)};${extra}">${content}</td>`,
 				)
 				.join("")}</tr>`;
 
@@ -1753,7 +1774,7 @@ class Openmeteo extends utils.Adapter {
 				const txt =
 					mm >= 0.1
 						? `${Math.round(mm * 10) / 10} <span style="${fs(8)}color:${fadeColor};">mm</span>`
-						: `<span style="${fs(8)}color:${fadeColor};">–</span>`;
+						: `0 <span style="${fs(8)}color:${fadeColor};">mm</span>`;
 				return [
 					`<span style="${fs(10)}color:${subColor};">${txt}</span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
@@ -1798,8 +1819,8 @@ class Openmeteo extends utils.Adapter {
 				const label = dayLabels[d] || `+${d}`;
 				const slots = hourlyData[d];
 
-				html += `<div style="border-top:1px solid ${divColor};margin-top:${c(8)};padding-top:${c(6)};">`;
-				html += `<div style="${fs(11)}color:${fadeColor};font-weight:600;margin-bottom:${c(4)};letter-spacing:0.05em;text-transform:uppercase;">${label}</div>`;
+				html += `<div style="border-top:1px solid ${divColor};margin-top:${c(4)};padding-top:${c(3)};">`;
+				html += `<div style="${fs(11)}color:${fadeColor};font-weight:600;margin-bottom:${c(2)};letter-spacing:0.05em;text-transform:uppercase;">${label}</div>`;
 
 				html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
 				const hIconSz = c(isAmcharts ? 36 : isBasmilius ? 30 : 26);
@@ -1834,7 +1855,7 @@ class Openmeteo extends utils.Adapter {
 						const txt =
 							mm >= 0.1
 								? `<span style="${fs(10)}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(8)}color:${fadeColor};"> mm</span></span>`
-								: `<span style="${fs(9)}color:${fadeColor};">–</span>`;
+								: `<span style="${fs(10)}color:${subColor};">0<span style="${fs(8)}color:${fadeColor};"> mm</span></span>`;
 						return `<td style="text-align:center;${pad(1, 1, 1, 1)}${border}">${txt}</td>`;
 					})
 					.join("")}</tr>`;
