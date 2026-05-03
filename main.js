@@ -1763,12 +1763,6 @@ class Openmeteo extends utils.Adapter {
 					return `<td style="text-align:center;padding:0;${border}">${txt}</td>`;
 				})
 				.join("")}</tr>`;
-			html += `<tr>${hourly24
-				.map((s, j) => {
-					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;padding:0 0 2px;${border}"><span style="${fs(8)}${lh}color:${subColor};">${s[3]}<span style="${fs(6)}color:${fadeColor};"> km/h</span></span><br>${windArrow(s[4], 9)}</td>`;
-				})
-				.join("")}</tr>`;
 			html += `</table>`;
 		}
 
@@ -1849,13 +1843,6 @@ class Openmeteo extends utils.Adapter {
 						i > 0 ? `border-left:1px solid ${divColor};` : "",
 					];
 				}),
-			);
-			// wind
-			html += dRow(
-				dSlice.map((d, i) => [
-					`<span style="${fs(9)}${lh}color:${subColor};">${d[6]} <span style="${fs(7)}color:${fadeColor};">km/h</span> ${windArrow(d[7], 11)}</span>`,
-					i > 0 ? `border-left:1px solid ${divColor};` : "",
-				]),
 			);
 			html += `</table>`;
 		}
