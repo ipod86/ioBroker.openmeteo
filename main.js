@@ -1730,77 +1730,84 @@ class Openmeteo extends utils.Adapter {
 				)
 				.join("")}</tr>`;
 
-		html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
-
-		// weekday
-		html += dRow(
-			dayData.map((d, i) => [
-				`<span style="${fs(11)}color:${fadeColor};font-weight:${i === 0 ? "700" : "400"};">${d[0]}</span>`,
-				i > 0 ? `border-left:1px solid ${divColor};` : "",
-			]),
-		);
-		// icon
-		html += dRow(
-			dayData.map((d, i) => [
-				`<img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:inline-block;${imgScale}${wmoSvgFilter}">`,
-				i > 0 ? `border-left:1px solid ${divColor};` : "",
-			]),
-		);
-		// temp max
-		html += dRow(
-			dayData.map((d, i) => [
-				`<span style="${fs(13)}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(9)}font-weight:400;vertical-align:top;margin-left:${c(1)};">°</span></span>`,
-				i > 0 ? `border-left:1px solid ${divColor};` : "",
-			]),
-		);
-		// temp min
-		html += dRow(
-			dayData.map((d, i) => [
-				`<span style="${fs(11)}color:${fadeColor};">${d[3]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
-				i > 0 ? `border-left:1px solid ${divColor};` : "",
-			]),
-		);
-		// precip prob
-		html += dRow(
-			dayData.map((d, i) => [
-				`<span style="${fs(10)}color:${subColor};">${mdi(MDI.rain, 11)} ${d[4]}<span style="${fs(8)}margin-left:${c(1)};">%</span></span>`,
-				i > 0 ? `border-left:1px solid ${divColor};` : "",
-			]),
-		);
-		// precip mm
-		html += dRow(
-			dayData.map((d, i) => {
-				const mm = parseFloat(d[5]) || 0;
-				const txt =
-					mm >= 0.1
-						? `${Math.round(mm * 10) / 10} <span style="${fs(8)}color:${fadeColor};">mm</span>`
-						: `0 <span style="${fs(8)}color:${fadeColor};">mm</span>`;
-				return [
-					`<span style="${fs(10)}color:${subColor};">${txt}</span>`,
-					i > 0 ? `border-left:1px solid ${divColor};` : "",
-				];
-			}),
-		);
-		// wind
-		html += dRow(
-			dayData.map((d, i) => [
-				`<span style="${fs(10)}color:${subColor};">${d[6]} <span style="${fs(8)}color:${fadeColor};">km/h</span> ${windArrow(d[7], 12)}</span>`,
-				i > 0 ? `border-left:1px solid ${divColor};` : "",
-			]),
-		);
-		// moon phase
-		if (hasMoon) {
+		// Split into rows of 7 for 14-day view, single row otherwise
+		const chunkSize = days > 7 ? 7 : days;
+		for (let g = 0; g < days; g += chunkSize) {
+			const dSlice = dayData.slice(g, g + chunkSize);
+			const mSlice = moonIcons.slice(g, g + chunkSize);
+			if (g > 0) {
+				html += `<div style="margin-top:${c(5)};border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
+			}
+			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
+			// weekday
 			html += dRow(
-				moonIcons.map((url, i) => [
-					url
-						? `<img src="${url}" style="width:${c(18)};height:${c(18)};display:inline-block;opacity:0.8;vertical-align:middle;">`
-						: `<span style="${fs(9)}color:${fadeColor};">-</span>`,
+				dSlice.map((d, i) => [
+					`<span style="${fs(11)}color:${fadeColor};font-weight:${g === 0 && i === 0 ? "700" : "400"};">${d[0]}</span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
+			// icon
+			html += dRow(
+				dSlice.map((d, i) => [
+					`<img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:inline-block;${imgScale}${wmoSvgFilter}">`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
+			);
+			// temp max
+			html += dRow(
+				dSlice.map((d, i) => [
+					`<span style="${fs(13)}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(9)}font-weight:400;vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
+			);
+			// temp min
+			html += dRow(
+				dSlice.map((d, i) => [
+					`<span style="${fs(11)}color:${fadeColor};">${d[3]}<span style="${fs(8)}vertical-align:top;margin-left:${c(1)};">°</span></span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
+			);
+			// precip prob
+			html += dRow(
+				dSlice.map((d, i) => [
+					`<span style="${fs(10)}color:${subColor};">${mdi(MDI.rain, 11)} ${d[4]}<span style="${fs(8)}margin-left:${c(1)};">%</span></span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
+			);
+			// precip mm
+			html += dRow(
+				dSlice.map((d, i) => {
+					const mm = parseFloat(d[5]) || 0;
+					const txt =
+						mm >= 0.1
+							? `${Math.round(mm * 10) / 10} <span style="${fs(8)}color:${fadeColor};">mm</span>`
+							: `0 <span style="${fs(8)}color:${fadeColor};">mm</span>`;
+					return [
+						`<span style="${fs(10)}color:${subColor};">${txt}</span>`,
+						i > 0 ? `border-left:1px solid ${divColor};` : "",
+					];
+				}),
+			);
+			// wind
+			html += dRow(
+				dSlice.map((d, i) => [
+					`<span style="${fs(10)}color:${subColor};">${d[6]} <span style="${fs(8)}color:${fadeColor};">km/h</span> ${windArrow(d[7], 12)}</span>`,
+					i > 0 ? `border-left:1px solid ${divColor};` : "",
+				]),
+			);
+			// moon phase
+			if (hasMoon) {
+				html += dRow(
+					mSlice.map((url, i) => [
+						url
+							? `<img src="${url}" style="width:${c(18)};height:${c(18)};display:inline-block;opacity:0.8;vertical-align:middle;">`
+							: `<span style="${fs(9)}color:${fadeColor};">-</span>`,
+						i > 0 ? `border-left:1px solid ${divColor};` : "",
+					]),
+				);
+			}
+			html += `</table>`;
 		}
-
-		html += `</table>`;
 
 		// ── Section 3: Hourly ────────────────────────────────────────────────────
 		if (hourlyDays > 0 && hourlyData.length > 0) {
