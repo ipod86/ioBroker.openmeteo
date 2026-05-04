@@ -1420,14 +1420,17 @@ class Openmeteo extends utils.Adapter {
 			}
 		};
 
-		const [curTemp, curDesc, curIconRaw, curPress, curSummary, sunH] = await Promise.all([
+		const [curTemp, curDesc, curIconRaw, curSummary, sunH, sunriseRaw, sunsetRaw] = await Promise.all([
 			gs(`${p}.current.temperature`),
 			gs(`${p}.current.description`),
 			gs(`${p}.current.icon_url`),
-			gs(`${p}.current.pressure`),
 			gs(`${p}.current.summary`),
 			gs(`${p}.day0.sunshine_hours`),
+			gs(`${p}.day0.astronomy.sunrise`),
+			gs(`${p}.day0.astronomy.sunset`),
 		]);
+		const sunrise = sunriseRaw ? String(sunriseRaw).split("T")[1]?.substring(0, 5) || "" : "";
+		const sunset = sunsetRaw ? String(sunsetRaw).split("T")[1]?.substring(0, 5) || "" : "";
 		const curIcon = await resolveIcon(curIconRaw);
 
 		const days = Math.min(widget.days ?? 5, 14);
@@ -1488,7 +1491,7 @@ class Openmeteo extends utils.Adapter {
 <tr>
 <td></td>
 <td style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.sun, 16, 0, sd)}<span style="margin-left:${c(5)};">${sunH} <span style="font-size:${cd(10)};color:${fadeColor};">h</span></span></td>
-<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curPress} <span style="font-size:${cd(10)};color:${fadeColor};">hPa</span></span>${mdi(MDI.press, 16, 0, sd)}</td>
+<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};font-size:${cd(11)};color:${subColor};">${sunrise ? `↑&thinsp;${sunrise}` : ""}${sunrise && sunset ? "&ensp;" : ""}${sunset ? `↓&thinsp;${sunset}` : ""}</span></td>
 <td></td>
 </tr>
 </table>`;
