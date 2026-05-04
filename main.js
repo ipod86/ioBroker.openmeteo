@@ -648,7 +648,7 @@ class Openmeteo extends utils.Adapter {
 		});
 		this.updateInterval = null;
 		this.updateTimeout = null;
-		this.warnInterval = null;
+		this.warnTimeout = null;
 		this.consecutiveFailures = 0;
 		this.warnState = {};
 		this.customNightIcons = new Set();
@@ -837,15 +837,25 @@ class Openmeteo extends utils.Adapter {
 			this.updateTimeout = this.setTimeout(scheduleNext, delay);
 		}
 
-		// Schedule separate official warning updates
+		// Schedule separate official warning updates aligned to clock boundaries
 		if (this.config.warnOfficial) {
-			const warnIntervalMinutes = this.config.warnIntervalMinutes || 15;
-			this.warnInterval = this.setInterval(
-				async () => {
-					await this.runWarnUpdate();
-				},
-				warnIntervalMinutes * 60 * 1000,
-			);
+			const warnIntervalMinutes = this.config.warnIntervalMinutes || 5;
+			const warnIntervalMs = warnIntervalMinutes * 60 * 1000;
+			const msUntilNextWarn = () => {
+				const now = new Date();
+				const localMs = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds();
+				const remaining = warnIntervalMs - (localMs % warnIntervalMs);
+				return remaining < 10000 ? remaining + warnIntervalMs : remaining;
+			};
+			const scheduleNextWarn = async () => {
+				await this.runWarnUpdate();
+				const delay = msUntilNextWarn();
+				this.log.debug(`Next warning update: ${new Date(Date.now() + delay).toLocaleTimeString()}`);
+				this.warnTimeout = this.setTimeout(scheduleNextWarn, delay);
+			};
+			const warnDelay = msUntilNextWarn();
+			this.log.debug(`First warning update: ${new Date(Date.now() + warnDelay).toLocaleTimeString()}`);
+			this.warnTimeout = this.setTimeout(scheduleNextWarn, warnDelay);
 		}
 	}
 
@@ -4116,8 +4126,8 @@ class Openmeteo extends utils.Adapter {
 			if (this.updateTimeout) {
 				this.clearTimeout(this.updateTimeout);
 			}
-			if (this.warnInterval) {
-				this.clearInterval(this.warnInterval);
+			if (this.warnTimeout) {
+				this.clearTimeout(this.warnTimeout);
 			}
 			callback();
 		} catch (error) {

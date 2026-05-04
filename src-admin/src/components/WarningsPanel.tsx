@@ -51,14 +51,14 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                         <FormControl sx={{ width: 240, ml: 2, mt: 1 }} size="small">
                             <InputLabel>{I18n.t('warnIntervalMinutes')}</InputLabel>
                             <Select
-                                value={native.warnIntervalMinutes ?? 15}
+                                value={native.warnIntervalMinutes ?? 5}
                                 label={I18n.t('warnIntervalMinutes')}
                                 onChange={e => update('warnIntervalMinutes', Number(e.target.value))}
                             >
+                                <MenuItem value={5}>5 min</MenuItem>
+                                <MenuItem value={10}>10 min</MenuItem>
                                 <MenuItem value={15}>15 min</MenuItem>
                                 <MenuItem value={30}>30 min</MenuItem>
-                                <MenuItem value={45}>45 min</MenuItem>
-                                <MenuItem value={60}>60 min</MenuItem>
                             </Select>
                             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
                                 {I18n.t('warnIntervalMinutesHelp')}
