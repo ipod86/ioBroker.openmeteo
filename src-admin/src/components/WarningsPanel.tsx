@@ -26,11 +26,6 @@ const WarningsPanel: React.FC<Props> = ({ native, onChange }) => {
                     <Typography variant="caption" color="text.secondary" sx={{ ml: 4 }}>
                         {I18n.t('warnOfficialHelp')}
                     </Typography>
-                    {native.warnOfficial && !native.warnOfficialFetch && (
-                        <Alert severity="info" sx={{ ml: 2, maxWidth: 440 }}>
-                            {I18n.t('warnOfficialEnableFetchHint')}
-                        </Alert>
-                    )}
                     {native.warnOfficial && (
                         <FormControl sx={{ width: 360, ml: 2, mt: 1 }} size="small">
                             <InputLabel>{I18n.t('warnOfficialMinLevel')}</InputLabel>
