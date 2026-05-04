@@ -290,29 +290,36 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                 </Box>
                             )}
 
-                            {/* Scale sliders */}
-                            {(['scaleHeader', 'scaleDetails', 'scaleForecast'] as const).map(key => {
-                                const val = w[key] ?? 0;
-                                const sign = val > 0 ? '+' : '';
-                                return (
-                                    <Box key={key} sx={{ minWidth: 180 }}>
-                                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                            {I18n.t(key === 'scaleHeader' ? 'widgetScaleHeader' : key === 'scaleDetails' ? 'widgetScaleDetails' : 'widgetScaleForecast')} ({sign}{val})
-                                        </Typography>
-                                        <Slider
-                                            value={val}
-                                            min={-5}
-                                            max={5}
-                                            step={1}
-                                            size="small"
-                                            marks
-                                            sx={{ width: 160 }}
-                                            onChange={(_, v) => update(i, { [key]: v as number })}
-                                        />
-                                    </Box>
-                                );
-                            })}
+                        </Box>
 
+                        {/* Scale sliders — own row */}
+                        <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid', borderColor: 'divider' }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, fontWeight: 600 }}>
+                                {I18n.t('widgetFontSizes')}
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'flex-end' }}>
+                                {(['scaleHeader', 'scaleDetails', 'scaleForecast'] as const).map(key => {
+                                    const val = w[key] ?? 0;
+                                    const sign = val > 0 ? '+' : '';
+                                    return (
+                                        <Box key={key} sx={{ minWidth: 180 }}>
+                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                                {I18n.t(key === 'scaleHeader' ? 'widgetScaleHeader' : key === 'scaleDetails' ? 'widgetScaleDetails' : 'widgetScaleForecast')} ({sign}{val})
+                                            </Typography>
+                                            <Slider
+                                                value={val}
+                                                min={-5}
+                                                max={5}
+                                                step={1}
+                                                size="small"
+                                                marks
+                                                sx={{ width: 160 }}
+                                                onChange={(_, v) => update(i, { [key]: v as number })}
+                                            />
+                                        </Box>
+                                    );
+                                })}
+                            </Box>
                         </Box>
                     </Box>
                 );
