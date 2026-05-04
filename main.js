@@ -1293,7 +1293,6 @@ class Openmeteo extends utils.Adapter {
 	async buildWidgetHtml(widget, locId) {
 		const p = locId;
 		const scale = widget.fontScale ?? 0;
-		const w = (widget.width ?? 450) + Math.max(0, scale) * 80;
 		// c(x): converts a design-px value (at 450 px reference width) to a
 		// container-relative cqw unit so every size scales with the actual cell width.
 		const c = x => `${(x / 4.5).toFixed(2)}cqw`;
@@ -1421,7 +1420,7 @@ class Openmeteo extends utils.Adapter {
 
 		// Outer div is the cqw query container (container-type:inline-size).
 		// Inner div carries background/padding; its children use cqw for all sizes.
-		let html = `<div style="container-type:inline-size;width:100%;max-width:${w}px;">`;
+		let html = `<div style="container-type:inline-size;width:100%;">`;
 		html += `<div style="background:${bgColor};color:${textColor};padding:0 ${c(5)};font-family:sans-serif;">`;
 
 		// Header
@@ -1494,7 +1493,6 @@ class Openmeteo extends utils.Adapter {
 	async buildDetailedWidgetHtml(widget, locId) {
 		const p = locId;
 		const scale = widget.fontScale ?? 0;
-		const w = (widget.width ?? 600) + Math.max(0, scale) * 100;
 		const c = x => `${(x / 6).toFixed(2)}cqw`; // reference width 600 px
 		const fontFactor = Math.max(0.1, 1 + scale * 0.2);
 
@@ -1697,7 +1695,7 @@ class Openmeteo extends utils.Adapter {
 
 		const mainIconSize = c(isAmcharts ? 90 : isBasmilius ? 78 : 70);
 
-		let html = `<div style="container-type:inline-size;width:100%;max-width:${w}px;">`;
+		let html = `<div style="container-type:inline-size;width:100%;">`;
 		html += `<div style="background:${bgColor};color:${textColor};font-family:sans-serif;${pad(6, 8, 4, 8)}">`;
 
 		// ── Section 1: Current ───────────────────────────────────────────────────

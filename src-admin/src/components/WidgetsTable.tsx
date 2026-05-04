@@ -307,35 +307,6 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                 />
                             </Box>
 
-                            {/* Width */}
-                            <Box sx={{ minWidth: 220 }}>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    {I18n.t('widgetWidth')}
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                    <Slider
-                                        value={w.width ?? 450}
-                                        min={200}
-                                        max={900}
-                                        step={10}
-                                        size="small"
-                                        sx={{ width: 140 }}
-                                        onChange={(_, v) => update(i, { width: v as number })}
-                                    />
-                                    <TextField
-                                        value={w.width ?? 450}
-                                        type="number"
-                                        size="small"
-                                        sx={{ width: 75 }}
-                                        inputProps={{ min: 200, max: 900, step: 10 }}
-                                        onChange={e => {
-                                            const v = Math.min(900, Math.max(200, parseInt(e.target.value) || 450));
-                                            update(i, { width: v });
-                                        }}
-                                    />
-                                    <Typography variant="caption" color="text.secondary">px</Typography>
-                                </Box>
-                            </Box>
                         </Box>
                     </Box>
                 );
