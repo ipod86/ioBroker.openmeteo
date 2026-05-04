@@ -1729,16 +1729,16 @@ class Openmeteo extends utils.Adapter {
 		html += `</table>`;
 
 		// Details row
-		html += `<table width="100%" style="border-collapse:collapse;${fsd(13)}color:${subColor};margin-bottom:${c(5)};">`;
+		html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;${fsd(13)}color:${subColor};margin-bottom:${c(5)};">`;
 		html += `<tr>`;
 		html += `<td width="5%"></td>`;
-		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind, 14, 0, sdv)}`;
+		html += `<td width="45%" style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind, 14, 0, sdv)}`;
 		html += `<span style="margin-left:${c(4)};">${curWind} <span style="${fsd(10)}color:${fadeColor};">km/h</span>`;
 		if (curWindDir) {
 			html += ` ${windArrow(curWindDir, 13, fsd)}`;
 		}
 		html += `</span></td>`;
-		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fsd(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid, 14, 0, sdv)}</td>`;
+		html += `<td width="45%" style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fsd(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid, 14, 0, sdv)}</td>`;
 		html += `<td width="5%"></td>`;
 		html += `</tr><tr>`;
 		html += `<td></td>`;
