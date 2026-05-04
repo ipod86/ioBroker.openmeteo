@@ -843,7 +843,8 @@ class Openmeteo extends utils.Adapter {
 			const warnIntervalMs = warnIntervalMinutes * 60 * 1000;
 			const msUntilNextWarn = () => {
 				const now = new Date();
-				const localMs = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds();
+				const localMs =
+					(now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds();
 				const remaining = warnIntervalMs - (localMs % warnIntervalMs);
 				return remaining < 10000 ? remaining + warnIntervalMs : remaining;
 			};
@@ -1152,6 +1153,27 @@ class Openmeteo extends utils.Adapter {
 			} catch (err) {
 				this.log.warn(`Official warnings not available for "${loc.name}": ${err.message}`);
 			}
+
+			// Rebuild widgets for this location so the badge reflects current warnings
+			const widgets = Array.isArray(this.config.widgets) ? this.config.widgets : [];
+			for (const widget of widgets) {
+				if (!widget.id || normalizeId(widget.locationName) !== locId) {
+					continue;
+				}
+				try {
+					const html =
+						widget.variant === "detailed"
+							? await this.buildDetailedWidgetHtml(widget, locId)
+							: await this.buildWidgetHtml(widget, locId);
+					await this.setDP(`${locId}.widget.${widget.id}`, html, {
+						name: `Widget ${widget.id}`,
+						type: "string",
+						role: "html",
+					});
+				} catch (err) {
+					this.log.error(`Widget rebuild after warn update: ${err.message}`);
+				}
+			}
 		}
 	}
 
@@ -1433,8 +1455,9 @@ class Openmeteo extends utils.Adapter {
 
 		// Outer div is the cqw query container (container-type:inline-size).
 		// Inner div carries background/padding; its children use cqw for all sizes.
+		const activeWarnings = await this.getActiveWarnings(locId);
 		let html = `<div style="container-type:inline-size;width:100%;">`;
-		html += `<div style="background:${bgColor};color:${textColor};padding:0 ${c(5)};font-family:sans-serif;">`;
+		html += `<div style="position:relative;background:${bgColor};color:${textColor};padding:0 ${c(5)};font-family:sans-serif;">`;
 
 		// Header
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:0;">
@@ -1499,6 +1522,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr></table>`;
 		}
 
+		html += this.buildWarningOverlay(activeWarnings, widget.id);
 		html += `</div></div>`;
 		return html;
 	}
@@ -1711,8 +1735,9 @@ class Openmeteo extends utils.Adapter {
 
 		const mainIconSize = c((isAmcharts ? 90 : isBasmilius ? 78 : 70) * sh);
 
+		const activeWarnings = await this.getActiveWarnings(locId);
 		let html = `<div style="container-type:inline-size;width:100%;">`;
-		html += `<div style="background:${bgColor};color:${textColor};font-family:sans-serif;${pad(6, 8, 4, 8)}">`;
+		html += `<div style="position:relative;background:${bgColor};color:${textColor};font-family:sans-serif;${pad(6, 8, 4, 8)}">`;
 
 		// ── Section 1: Current ───────────────────────────────────────────────────
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(4)};">`;
@@ -1891,8 +1916,110 @@ class Openmeteo extends utils.Adapter {
 			html += `</table>`;
 		}
 
+		html += this.buildWarningOverlay(activeWarnings, widget.id);
 		html += `</div></div>`;
 		return html;
+	}
+
+	/**
+	 * Returns active official warnings for a location from stored datapoints.
+	 *
+	 * @param {string} locId - Location channel ID
+	 * @returns {Promise<Array>} Array of warning objects
+	 */
+	async getActiveWarnings(locId) {
+		if (!this.config.warnOfficial) {
+			return [];
+		}
+		const ws = [];
+		for (let i = 1; i <= 5; i++) {
+			try {
+				const act = await this.getStateAsync(`${locId}.warnings.warning_${i}.active`);
+				if (!act?.val) {
+					break;
+				}
+				const [hl, desc, st, en, lv] = await Promise.all([
+					this.getStateAsync(`${locId}.warnings.warning_${i}.headline`),
+					this.getStateAsync(`${locId}.warnings.warning_${i}.description`),
+					this.getStateAsync(`${locId}.warnings.warning_${i}.start`),
+					this.getStateAsync(`${locId}.warnings.warning_${i}.end`),
+					this.getStateAsync(`${locId}.warnings.warning_${i}.level`),
+				]);
+				ws.push({
+					headline: hl?.val || "",
+					description: desc?.val || "",
+					start: st?.val || "",
+					end: en?.val || "",
+					level: lv?.val || 0,
+				});
+			} catch {
+				break;
+			}
+		}
+		return ws;
+	}
+
+	/**
+	 * Builds an absolutely-positioned warning badge + modal overlay for a widget.
+	 * Returns empty string if no warnings are active.
+	 *
+	 * @param {Array} warnings - Active warning objects from getActiveWarnings
+	 * @param {string} wid - Widget ID (used for unique DOM IDs)
+	 * @returns {string} HTML string
+	 */
+	buildWarningOverlay(warnings, wid) {
+		if (!warnings.length) {
+			return "";
+		}
+		const maxLevel = Math.max(...warnings.map(w => w.level || 0));
+		const badgeColor = maxLevel >= 4 ? "#b71c1c" : maxLevel >= 3 ? "#e65100" : "#f9a825";
+		const fmtT = iso => {
+			if (!iso) {
+				return "";
+			}
+			try {
+				const d = new Date(iso);
+				return d
+					.toLocaleString("de-DE", {
+						day: "2-digit",
+						month: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+						timeZone: "Europe/Berlin",
+					})
+					.replace(",", "");
+			} catch {
+				return "";
+			}
+		};
+		const items = warnings
+			.map(w => {
+				const from = fmtT(w.start);
+				const to = fmtT(w.end);
+				const time = from ? (to ? `${from} – ${to} Uhr` : `ab ${from} Uhr`) : "";
+				return (
+					`<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.15);">` +
+					`<div style="font-weight:700;font-size:13px;margin-bottom:3px;">${w.headline}</div>${
+						time ? `<div style="font-size:11px;opacity:0.65;margin-bottom:3px;">⏱ ${time}</div>` : ""
+					}${
+						w.description
+							? `<div style="font-size:11px;opacity:0.85;line-height:1.4;">${w.description}</div>`
+							: ""
+					}</div>`
+				);
+			})
+			.join("");
+		return (
+			`<style>@keyframes wb${wid}{0%,100%{opacity:1}50%{opacity:0.25}}</style>` +
+			`<div onclick="document.getElementById('wm${wid}').style.display='flex'" style="position:absolute;top:6px;right:6px;background:${badgeColor};color:#fff;border-radius:10px;min-width:20px;height:20px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;animation:wb${wid} 1.2s ease-in-out infinite;z-index:10;padding:0 5px;box-sizing:border-box;gap:3px;">` +
+			`<span>⚠</span><span>${warnings.length}</span></div>` +
+			`<div id="wm${wid}" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.72);z-index:20;align-items:flex-start;justify-content:center;padding:10px;box-sizing:border-box;overflow-y:auto;">` +
+			`<div style="background:#1c2033;color:#fff;border-radius:8px;padding:14px;width:100%;box-sizing:border-box;">` +
+			`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">` +
+			`<span style="font-weight:700;font-size:13px;">⚠ Amtliche Warnungen (${warnings.length})</span>` +
+			`<span onclick="document.getElementById('wm${wid}').style.display='none'" style="cursor:pointer;font-size:18px;line-height:1;opacity:0.7;padding:2px 4px;">✕</span>` +
+			`</div>${items}</div></div>`
+		);
 	}
 
 	/**
