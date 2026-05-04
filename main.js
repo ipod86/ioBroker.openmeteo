@@ -1420,12 +1420,11 @@ class Openmeteo extends utils.Adapter {
 			}
 		};
 
-		const [curTemp, curDesc, curIconRaw, curWind, curHum, curPress, curSummary, sunH] = await Promise.all([
+		const [curTemp, curDesc, curIconRaw, curWind, curPress, curSummary, sunH] = await Promise.all([
 			gs(`${p}.current.temperature`),
 			gs(`${p}.current.description`),
 			gs(`${p}.current.icon_url`),
 			gs(`${p}.current.windspeed`),
-			gs(`${p}.current.humidity`),
 			gs(`${p}.current.pressure`),
 			gs(`${p}.current.summary`),
 			gs(`${p}.day0.sunshine_hours`),
@@ -1483,18 +1482,13 @@ class Openmeteo extends utils.Adapter {
 <tr>
 <td width="5%"></td>
 <td width="45%" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.wind, 16, 0, sd)}<span style="margin-left:${c(5)};">${curWind} <span style="font-size:${cd(10)};color:${fadeColor};">km/h</span></span></td>
-<td width="45%" style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curHum} <span style="font-size:${cd(10)};color:${fadeColor};">%</span></span>${mdi(MDI.humid, 16, 0, sd)}</td>
+<td width="45%" style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${mdi(MDI.rain, 16, 0, sd)}<span style="margin-left:${c(4)};">${day0PrecipProb}<span style="font-size:${cd(10)};color:${fadeColor};"> %</span>&nbsp;&nbsp;${day0PrecipMm}<span style="font-size:${cd(10)};color:${fadeColor};"> mm</span></span></span></td>
 <td width="5%"></td>
 </tr>
 <tr>
 <td></td>
 <td style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.sun, 16, 0, sd)}<span style="margin-left:${c(5)};">${sunH} <span style="font-size:${cd(10)};color:${fadeColor};">h</span></span></td>
 <td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curPress} <span style="font-size:${cd(10)};color:${fadeColor};">hPa</span></span>${mdi(MDI.press, 16, 0, sd)}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td colspan="2" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.rain, 16, 0, sd)}<span style="margin-left:${c(5)};">${day0PrecipProb}<span style="font-size:${cd(10)};color:${fadeColor};"> %</span>&nbsp;&nbsp;${day0PrecipMm}<span style="font-size:${cd(10)};color:${fadeColor};"> mm</span></span></td>
 <td></td>
 </tr>
 </table>`;
@@ -1791,6 +1785,7 @@ class Openmeteo extends utils.Adapter {
 		const day0PrecipProb = dayData[0][4];
 		const day0PrecipMm = Math.round((parseFloat(dayData[0][5]) || 0) * 10) / 10;
 		html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;${fsd(13)}color:${subColor};margin-bottom:${c(5)};">`;
+		// Row 1: wind | precipitation
 		html += `<tr>`;
 		html += `<td width="5%"></td>`;
 		html += `<td width="45%" style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind, 14, 0, sdv)}`;
@@ -1799,16 +1794,20 @@ class Openmeteo extends utils.Adapter {
 			html += ` ${windArrow(curWindDir, 13, fsd)}`;
 		}
 		html += `</span></td>`;
-		html += `<td width="45%" style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fsd(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid, 14, 0, sdv)}</td>`;
+		html += `<td width="45%" style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${mdi(MDI.rain, 14, 0, sdv)}<span style="margin-left:${c(3)};">${day0PrecipProb}<span style="${fsd(10)}color:${fadeColor};"> %</span>&nbsp;&nbsp;${day0PrecipMm}<span style="${fsd(10)}color:${fadeColor};"> mm</span></span></span></td>`;
 		html += `<td width="5%"></td>`;
-		html += `</tr><tr>`;
+		html += `</tr>`;
+		// Row 2: sunshine | humidity
+		html += `<tr>`;
 		html += `<td></td>`;
 		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.sun, 14, 0, sdv)}<span style="margin-left:${c(4)};">${sunH} <span style="${fsd(10)}color:${fadeColor};">h</span></span></td>`;
-		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curPress} <span style="${fsd(10)}color:${fadeColor};">hPa</span></span>${mdi(MDI.press, 14, 0, sdv)}</td>`;
+		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fsd(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid, 14, 0, sdv)}</td>`;
 		html += `<td></td>`;
-		html += `</tr><tr>`;
+		html += `</tr>`;
+		// Row 3: pressure | sunrise/sunset
+		html += `<tr>`;
 		html += `<td></td>`;
-		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.rain, 14, 0, sdv)}<span style="margin-left:${c(4)};">${day0PrecipProb}<span style="${fsd(10)}color:${fadeColor};"> %</span>&nbsp;&nbsp;${day0PrecipMm}<span style="${fsd(10)}color:${fadeColor};"> mm</span></span></td>`;
+		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.press, 14, 0, sdv)}<span style="margin-left:${c(4)};">${curPress} <span style="${fsd(10)}color:${fadeColor};">hPa</span></span></td>`;
 		if (sunrise || sunset) {
 			html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};${fsd(11)}color:${subColor};">${sunrise ? `↑&thinsp;${sunrise}` : ""}${sunrise && sunset ? "&ensp;" : ""}${sunset ? `↓&thinsp;${sunset}` : ""}</span></td>`;
 		} else {
