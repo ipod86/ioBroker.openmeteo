@@ -97,5 +97,6 @@
     "widgetScaleHeader": "Cabeçalho",
     "widgetScaleDetails": "Detalhes",
     "widgetScaleForecast": "Previsão",
-    "widgetFontSizes": "Tamanhos de fonte"
+    "widgetFontSizes": "Tamanhos de fonte",
+    "widgetShowWarnBadge": "Emblema de alerta oficial"
 }

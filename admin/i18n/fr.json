@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Astronomie désactivée – l'icône de phase lunaire ne sera pas affichée",
     "widgetDays": "Jours",
     "widgetTheme": "Thème",
-    "widgetFontSizes": "Tailles de police"
+    "widgetFontSizes": "Tailles de police",
+    "widgetShowWarnBadge": "Badge d'alerte officielle"
 }

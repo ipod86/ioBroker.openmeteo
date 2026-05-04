@@ -97,5 +97,6 @@
     "widgetScaleHeader": "En-tête",
     "widgetScaleDetails": "Détails",
     "widgetScaleForecast": "Prévisions",
-    "widgetFontSizes": "Tailles de police"
+    "widgetFontSizes": "Tailles de police",
+    "widgetShowWarnBadge": "Badge d'alerte officielle"
 }

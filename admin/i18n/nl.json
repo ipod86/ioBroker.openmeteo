@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Astronomie uitgeschakeld – maanfase-icoon wordt niet getoond",
     "widgetDays": "Dagen",
     "widgetTheme": "Thema",
-    "widgetFontSizes": "Lettergroottes"
+    "widgetFontSizes": "Lettergroottes",
+    "widgetShowWarnBadge": "Waarschuwingsbadge officiële meldingen"
 }

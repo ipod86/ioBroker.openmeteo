@@ -14,6 +14,7 @@ interface Props {
     daysCount: number;
     hourlyDays: number;
     enableAstronomy: boolean;
+    enableWarnOfficial: boolean;
     onChange: (widgets: Widget[]) => void;
 }
 
@@ -41,7 +42,7 @@ const ColorSwatch: React.FC<{ value: string; onChange: (v: string) => void; disa
     />
 );
 
-const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, enableAstronomy, onChange }) => {
+const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, enableAstronomy, enableWarnOfficial, onChange }) => {
     const update = (index: number, patch: Partial<Widget>): void => {
         const updated = widgets.map((w, i) => i === index ? { ...w, ...patch } : w);
         onChange(updated);
@@ -207,6 +208,20 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                     <ToggleButton value="custom">{I18n.t('widgetCustom')}</ToggleButton>
                                 </ToggleButtonGroup>
                             </Box>
+
+                            {/* Warning badge toggle — only when official warnings are enabled */}
+                            {enableWarnOfficial && (
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            size="small"
+                                            checked={w.showWarnBadge !== false}
+                                            onChange={e => update(i, { showWarnBadge: e.target.checked })}
+                                        />
+                                    }
+                                    label={<Typography variant="caption">{I18n.t('widgetShowWarnBadge')}</Typography>}
+                                />
+                            )}
 
                             {/* Custom color pickers — only when theme === 'custom' */}
                             {w.theme === 'custom' && (

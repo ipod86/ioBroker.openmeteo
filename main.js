@@ -1522,7 +1522,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr></table>`;
 		}
 
-		html += this.buildWarningOverlay(activeWarnings, widget.id);
+		html += widget.showWarnBadge !== false ? this.buildWarningOverlay(activeWarnings, widget.id) : "";
 		html += `</div></div>`;
 		return html;
 	}
@@ -1916,7 +1916,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</table>`;
 		}
 
-		html += this.buildWarningOverlay(activeWarnings, widget.id);
+		html += widget.showWarnBadge !== false ? this.buildWarningOverlay(activeWarnings, widget.id) : "";
 		html += `</div></div>`;
 		return html;
 	}

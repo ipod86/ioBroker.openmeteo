@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Астрономия отключена – иконка фазы луны не будет показана",
     "widgetDays": "Дни",
     "widgetTheme": "Тема",
-    "widgetFontSizes": "Размеры шрифта"
+    "widgetFontSizes": "Размеры шрифта",
+    "widgetShowWarnBadge": "Значок официальных предупреждений"
 }

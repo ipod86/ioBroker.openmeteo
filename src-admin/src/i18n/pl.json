@@ -97,5 +97,6 @@
     "widgetScaleHeader": "Nagłówek",
     "widgetScaleDetails": "Szczegóły",
     "widgetScaleForecast": "Prognoza",
-    "widgetFontSizes": "Rozmiary czcionki"
+    "widgetFontSizes": "Rozmiary czcionki",
+    "widgetShowWarnBadge": "Plakietka oficjalnych ostrzeżeń"
 }

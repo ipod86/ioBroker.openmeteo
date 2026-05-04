@@ -97,5 +97,6 @@
     "widgetScaleHeader": "Koptekst",
     "widgetScaleDetails": "Details",
     "widgetScaleForecast": "Voorspelling",
-    "widgetFontSizes": "Lettergroottes"
+    "widgetFontSizes": "Lettergroottes",
+    "widgetShowWarnBadge": "Waarschuwingsbadge officiële meldingen"
 }

@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Astronomia wyłączona – ikona fazy księżyca nie będzie wyświetlana",
     "widgetDays": "Dni",
     "widgetTheme": "Motyw",
-    "widgetFontSizes": "Rozmiary czcionki"
+    "widgetFontSizes": "Rozmiary czcionki",
+    "widgetShowWarnBadge": "Plakietka oficjalnych ostrzeżeń"
 }

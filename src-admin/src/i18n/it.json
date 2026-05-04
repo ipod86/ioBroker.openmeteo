@@ -97,5 +97,6 @@
     "widgetScaleHeader": "Intestazione",
     "widgetScaleDetails": "Dettagli",
     "widgetScaleForecast": "Previsione",
-    "widgetFontSizes": "Dimensioni carattere"
+    "widgetFontSizes": "Dimensioni carattere",
+    "widgetShowWarnBadge": "Badge avviso ufficiale"
 }

@@ -70,5 +70,6 @@
     "widgetDetailedNoAstronomy": "Astronomy disabled – moon phase icon will not be shown",
     "widgetDays": "Days",
     "widgetTheme": "Theme",
-    "widgetFontSizes": "Font sizes"
+    "widgetFontSizes": "Font sizes",
+    "widgetShowWarnBadge": "Warning badge for official alerts"
 }

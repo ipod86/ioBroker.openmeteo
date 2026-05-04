@@ -71,5 +71,6 @@
     "widgetDetailedNoAstronomy": "Astronomie deaktiviert – Mondphasen-Icon wird nicht angezeigt",
     "widgetDays": "Tage",
     "widgetTheme": "Design",
-    "widgetFontSizes": "Schriftgrößen"
+    "widgetFontSizes": "Schriftgrößen",
+    "widgetShowWarnBadge": "Warnungs-Badge für amtliche Warnungen"
 }

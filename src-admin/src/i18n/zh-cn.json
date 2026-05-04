@@ -97,5 +97,6 @@
     "widgetScaleHeader": "标题区",
     "widgetScaleDetails": "详情",
     "widgetScaleForecast": "预报",
-    "widgetFontSizes": "字体大小"
+    "widgetFontSizes": "字体大小",
+    "widgetShowWarnBadge": "官方预警徽章"
 }

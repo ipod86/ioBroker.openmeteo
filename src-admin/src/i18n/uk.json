@@ -97,5 +97,6 @@
     "widgetScaleHeader": "Заголовок",
     "widgetScaleDetails": "Деталі",
     "widgetScaleForecast": "Прогноз",
-    "widgetFontSizes": "Розміри шрифту"
+    "widgetFontSizes": "Розміри шрифту",
+    "widgetShowWarnBadge": "Значок офіційних попереджень"
 }

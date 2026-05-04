@@ -45,5 +45,6 @@
     "widgetScaleHeader": "Header",
     "widgetScaleDetails": "Details",
     "widgetScaleForecast": "Forecast",
-    "widgetFontSizes": "Font sizes"
+    "widgetFontSizes": "Font sizes",
+    "widgetShowWarnBadge": "Warning badge for official alerts"
 }

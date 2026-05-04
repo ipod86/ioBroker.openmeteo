@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Astronomia desativada – o ícone de fase lunar não será exibido",
     "widgetDays": "Dias",
     "widgetTheme": "Tema",
-    "widgetFontSizes": "Tamanhos de fonte"
+    "widgetFontSizes": "Tamanhos de fonte",
+    "widgetShowWarnBadge": "Emblema de alerta oficial"
 }

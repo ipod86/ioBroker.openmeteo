@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "天文学已禁用 – 不会显示月相图标",
     "widgetDays": "天数",
     "widgetTheme": "主题",
-    "widgetFontSizes": "字体大小"
+    "widgetFontSizes": "字体大小",
+    "widgetShowWarnBadge": "官方预警徽章"
 }

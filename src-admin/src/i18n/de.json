@@ -108,5 +108,6 @@
     "widgetScaleHeader": "Kopfbereich",
     "widgetScaleDetails": "Details",
     "widgetScaleForecast": "Vorhersage",
-    "widgetFontSizes": "Schriftgrößen"
+    "widgetFontSizes": "Schriftgrößen",
+    "widgetShowWarnBadge": "Warnungs-Badge für amtliche Warnungen"
 }

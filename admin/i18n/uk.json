@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Астрономію вимкнено – значок фази місяця не відображатиметься",
     "widgetDays": "Дні",
     "widgetTheme": "Тема",
-    "widgetFontSizes": "Розміри шрифту"
+    "widgetFontSizes": "Розміри шрифту",
+    "widgetShowWarnBadge": "Значок офіційних попереджень"
 }

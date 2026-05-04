@@ -75,5 +75,6 @@
     "widgetDetailedNoAstronomy": "Astronomia disabilitata – l'icona della fase lunare non verrà mostrata",
     "widgetDays": "Giorni",
     "widgetTheme": "Tema",
-    "widgetFontSizes": "Dimensioni carattere"
+    "widgetFontSizes": "Dimensioni carattere",
+    "widgetShowWarnBadge": "Badge avviso ufficiale"
 }
