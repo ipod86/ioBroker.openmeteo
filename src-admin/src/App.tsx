@@ -60,6 +60,12 @@ class App extends GenericApp<GenericAppProps, AppState> {
                 return;
             }
         }
+        const warnDataActive = !!native.warnOfficialFetch || !!native.warnOfficial;
+        const badgeWithoutData = (native.widgets || []).some(w => w.showWarnBadge && !warnDataActive);
+        if (badgeWithoutData) {
+            this.setConfigurationError(I18n.t('validationBadgeNeedsWarnData'));
+            return;
+        }
         this.setConfigurationError('');
     }
 
