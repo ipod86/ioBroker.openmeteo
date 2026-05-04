@@ -1420,11 +1420,10 @@ class Openmeteo extends utils.Adapter {
 			}
 		};
 
-		const [curTemp, curDesc, curIconRaw, curWind, curPress, curSummary, sunH] = await Promise.all([
+		const [curTemp, curDesc, curIconRaw, curPress, curSummary, sunH] = await Promise.all([
 			gs(`${p}.current.temperature`),
 			gs(`${p}.current.description`),
 			gs(`${p}.current.icon_url`),
-			gs(`${p}.current.windspeed`),
 			gs(`${p}.current.pressure`),
 			gs(`${p}.current.summary`),
 			gs(`${p}.day0.sunshine_hours`),
@@ -1443,14 +1442,15 @@ class Openmeteo extends utils.Adapter {
 					gs(`${p}.day${i}.temp_min`),
 					gs(`${p}.day${i}.precipitation_probability`),
 					gs(`${p}.day${i}.precipitation`),
+					gs(`${p}.day${i}.windspeed`),
 				]),
 			),
 		);
 		const dayData = await Promise.all(
 			dayDataRaw.map(async row => {
 				const resolved = await resolveIcon(row[1]);
-				return [row[0], resolved, row[2], row[3], row[4], row[5]];
-				//       weekday icon  tMax  tMin  precipProb precipMm
+				return [row[0], resolved, row[2], row[3], row[4], row[5], row[6]];
+				//       weekday icon  tMax  tMin  precipProb precipMm windMax
 			}),
 		);
 
@@ -1481,7 +1481,7 @@ class Openmeteo extends utils.Adapter {
 		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(12)};font-size:${cd(13)};color:${subColor};">
 <tr>
 <td width="5%"></td>
-<td width="45%" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.wind, 16, 0, sd)}<span style="margin-left:${c(5)};">${curWind} <span style="font-size:${cd(10)};color:${fadeColor};">km/h</span></span></td>
+<td width="45%" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.wind, 16, 0, sd)}<span style="margin-left:${c(5)};">${dayData[0][6]} <span style="font-size:${cd(10)};color:${fadeColor};">km/h</span></span></td>
 <td width="45%" style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${mdi(MDI.rain, 16, 0, sd)}<span style="margin-left:${c(4)};">${day0PrecipProb}<span style="font-size:${cd(10)};color:${fadeColor};"> %</span>&nbsp;&nbsp;${day0PrecipMm}<span style="font-size:${cd(10)};color:${fadeColor};"> mm</span></span></span></td>
 <td width="5%"></td>
 </tr>
@@ -1653,31 +1653,18 @@ class Openmeteo extends utils.Adapter {
 		};
 
 		// ── Fetch current conditions ─────────────────────────────────────────────
-		const [
-			curTemp,
-			curDesc,
-			curIconRaw,
-			curWind,
-			curWindDir,
-			curHum,
-			curPress,
-			curSummary,
-			sunH,
-			sunriseRaw,
-			sunsetRaw,
-		] = await Promise.all([
-			gs(`${p}.current.temperature`),
-			gs(`${p}.current.description`),
-			gs(`${p}.current.icon_url`),
-			gs(`${p}.current.windspeed`),
-			gs(`${p}.current.winddirection_text`),
-			gs(`${p}.current.humidity`),
-			gs(`${p}.current.pressure`),
-			gs(`${p}.current.summary`),
-			gs(`${p}.day0.sunshine_hours`),
-			gs(`${p}.day0.astronomy.sunrise`),
-			gs(`${p}.day0.astronomy.sunset`),
-		]);
+		const [curTemp, curDesc, curIconRaw, curHum, curPress, curSummary, sunH, sunriseRaw, sunsetRaw] =
+			await Promise.all([
+				gs(`${p}.current.temperature`),
+				gs(`${p}.current.description`),
+				gs(`${p}.current.icon_url`),
+				gs(`${p}.current.humidity`),
+				gs(`${p}.current.pressure`),
+				gs(`${p}.current.summary`),
+				gs(`${p}.day0.sunshine_hours`),
+				gs(`${p}.day0.astronomy.sunrise`),
+				gs(`${p}.day0.astronomy.sunset`),
+			]);
 		const curIcon = await resolveIcon(curIconRaw);
 		const sunrise = sunriseRaw ? String(sunriseRaw).split("T")[1]?.substring(0, 5) || "" : "";
 		const sunset = sunsetRaw ? String(sunsetRaw).split("T")[1]?.substring(0, 5) || "" : "";
@@ -1789,9 +1776,9 @@ class Openmeteo extends utils.Adapter {
 		html += `<tr>`;
 		html += `<td width="5%"></td>`;
 		html += `<td width="45%" style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind, 14, 0, sdv)}`;
-		html += `<span style="margin-left:${c(4)};">${curWind} <span style="${fsd(10)}color:${fadeColor};">km/h</span>`;
-		if (curWindDir) {
-			html += ` ${windArrow(curWindDir, 13, fsd)}`;
+		html += `<span style="margin-left:${c(4)};">${dayData[0][6]} <span style="${fsd(10)}color:${fadeColor};">km/h</span>`;
+		if (dayData[0][7]) {
+			html += ` ${windArrow(dayData[0][7], 13, fsd)}`;
 		}
 		html += `</span></td>`;
 		html += `<td width="45%" style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${mdi(MDI.rain, 14, 0, sdv)}<span style="margin-left:${c(3)};">${day0PrecipProb}<span style="${fsd(10)}color:${fadeColor};"> %</span>&nbsp;&nbsp;${day0PrecipMm}<span style="${fsd(10)}color:${fadeColor};"> mm</span></span></span></td>`;
