@@ -94,5 +94,7 @@
   "widgetDetailedNoAstronomy": "Astronomia desativada – o ícone de fase lunar não será exibido",
   "widgetHourlyRange": "Horas a partir de agora",
   "widgetHourlyStep": "Passo",
-  "widgetFontScale": "Tamanho da fonte"
+  "widgetScaleHeader": "Cabeçalho",
+  "widgetScaleDetails": "Detalhes",
+  "widgetScaleForecast": "Previsão"
 }

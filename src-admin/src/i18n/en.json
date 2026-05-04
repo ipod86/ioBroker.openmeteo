@@ -42,5 +42,7 @@
   "widgetTheme": "Theme",
   "widgetHourlyRange": "Hours from now",
   "widgetHourlyStep": "Step size",
-  "widgetFontScale": "Font size"
+  "widgetScaleHeader": "Header",
+  "widgetScaleDetails": "Details",
+  "widgetScaleForecast": "Forecast"
 }

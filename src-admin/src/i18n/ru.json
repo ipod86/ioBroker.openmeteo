@@ -94,5 +94,7 @@
   "widgetDetailedNoAstronomy": "Астрономия отключена – иконка фазы луны не будет показана",
   "widgetHourlyRange": "Часов с текущего момента",
   "widgetHourlyStep": "Шаг",
-  "widgetFontScale": "Размер шрифта"
+  "widgetScaleHeader": "Заголовок",
+  "widgetScaleDetails": "Детали",
+  "widgetScaleForecast": "Прогноз"
 }

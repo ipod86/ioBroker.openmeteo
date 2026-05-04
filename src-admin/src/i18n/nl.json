@@ -94,5 +94,7 @@
   "widgetDetailedNoAstronomy": "Astronomie uitgeschakeld – maanfase-icoon wordt niet getoond",
   "widgetHourlyRange": "Uren vanaf nu",
   "widgetHourlyStep": "Stapgrootte",
-  "widgetFontScale": "Lettergrootte"
+  "widgetScaleHeader": "Koptekst",
+  "widgetScaleDetails": "Details",
+  "widgetScaleForecast": "Voorspelling"
 }

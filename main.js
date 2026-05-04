@@ -1292,12 +1292,15 @@ class Openmeteo extends utils.Adapter {
 	 */
 	async buildWidgetHtml(widget, locId) {
 		const p = locId;
-		const scale = widget.fontScale ?? 0;
 		// c(x): converts a design-px value (at 450 px reference width) to a
 		// container-relative cqw unit so every size scales with the actual cell width.
 		const c = x => `${(x / 4.5).toFixed(2)}cqw`;
-		const fontFactor = Math.max(0.1, 1 + scale * 0.2);
-		const cf = x => c(x * fontFactor);
+		const sh = Math.max(0.1, 1 + (widget.scaleHeader ?? 0) * 0.2);
+		const sd = Math.max(0.1, 1 + (widget.scaleDetails ?? 0) * 0.2);
+		const sfv = Math.max(0.1, 1 + (widget.scaleForecast ?? 0) * 0.2);
+		const ch = x => c(x * sh);
+		const cd = x => c(x * sd);
+		const cf = x => c(x * sfv);
 		const isLight = widget.theme === "light";
 		const isCustom = widget.theme === "custom";
 
@@ -1330,7 +1333,7 @@ class Openmeteo extends utils.Adapter {
 		const isAmcharts = _iconSet.startsWith("amcharts");
 		const isBasmilius = _iconSet.startsWith("basmilius");
 		const isWmoSvg = _iconSet === "wmo_svg";
-		const mainIconCqw = c(isAmcharts ? 95 : isBasmilius ? 82 : 75);
+		const mainIconCqw = ch(isAmcharts ? 95 : isBasmilius ? 82 : 75);
 		const wmoSvgFilter = isWmoSvg ? (isLight ? "filter:invert(1);" : "") : "";
 		const imgScale = isAmcharts
 			? "transform:scale(1.6);transform-origin:center;"
@@ -1339,8 +1342,8 @@ class Openmeteo extends utils.Adapter {
 				: "";
 
 		// SVG icons use inline CSS width/height so cqw units apply correctly.
-		const mdi = (path, size = 16, ml = 0) =>
-			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;fill:${iconColor};flex-shrink:0;${ml ? `margin-left:${c(ml)};` : ""}"><path d="${path}"/></svg>`;
+		const mdi = (path, size = 16, ml = 0, scale = 1) =>
+			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size * scale)};height:${c(size * scale)};vertical-align:middle;fill:${iconColor};flex-shrink:0;${ml ? `margin-left:${c(ml)};` : ""}"><path d="${path}"/></svg>`;
 
 		const MDI = {
 			wind: "M4,10A1,1 0 0,1 3,9A1,1 0 0,1 4,8H12A2,2 0 0,0 14,6A2,2 0 0,0 12,4C11.45,4 10.95,4.22 10.59,4.59C10.2,5 9.56,5 9.17,4.59C8.78,4.2 8.78,3.56 9.17,3.17C9.9,2.45 10.9,2 12,2A4,4 0 0,1 16,6A4,4 0 0,1 12,10H4M19,12A1,1 0 0,0 20,11A1,1 0 0,0 19,10C18.72,10 18.47,10.11 18.29,10.29C17.9,10.68 17.27,10.68 16.88,10.29C16.5,9.9 16.5,9.27 16.88,8.88C17.42,8.34 18.17,8 19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14H5A1,1 0 0,1 4,13A1,1 0 0,1 5,12H19M18,18H4A1,1 0 0,1 3,17A1,1 0 0,1 4,16H18A3,3 0 0,1 21,19A3,3 0 0,1 18,22C17.17,22 16.42,21.66 15.88,21.12C15.5,20.73 15.5,20.1 15.88,19.71C16.27,19.32 16.9,19.32 17.29,19.71C17.47,19.89 17.72,20 18,20A1,1 0 0,0 19,19A1,1 0 0,0 18,18Z",
@@ -1428,28 +1431,28 @@ class Openmeteo extends utils.Adapter {
 <tr>
 <td style="width:${mainIconCqw}"><img src="${curIcon}" style="width:${mainIconCqw};height:${mainIconCqw};display:block;${wmoSvgFilter}"></td>
 <td style="padding-left:${c(10)};vertical-align:middle;">
-<div style="font-size:${cf(13)};font-weight:600;color:${textColor};margin-bottom:${c(2)};">${widget.locationName}</div>
-<div style="font-size:${cf(15)};font-weight:400;color:${subColor};">${curDesc}</div>
-<div style="font-size:${cf(12)};color:${fadeColor};margin-top:${c(2)};">${curSummary}</div>
+<div style="font-size:${ch(13)};font-weight:600;color:${textColor};margin-bottom:${c(2)};">${widget.locationName}</div>
+<div style="font-size:${ch(15)};font-weight:400;color:${subColor};">${curDesc}</div>
+<div style="font-size:${ch(12)};color:${fadeColor};margin-top:${c(2)};">${curSummary}</div>
 </td>
 <td style="text-align:right;vertical-align:middle;padding-right:${c(5)};">
-<div style="font-size:${cf(42)};font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="font-size:${cf(18)};vertical-align:top;font-weight:300;margin-left:${c(2)};position:relative;top:${c(6)};">°C</span></div>
+<div style="font-size:${ch(42)};font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="font-size:${ch(18)};vertical-align:top;font-weight:300;margin-left:${c(2)};position:relative;top:${c(6)};">°C</span></div>
 </td>
 </tr>
 </table>`;
 
 		// Details
-		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(12)};font-size:${cf(13)};color:${subColor};">
+		html += `<table width="100%" style="border-collapse:collapse;margin-bottom:${c(12)};font-size:${cd(13)};color:${subColor};">
 <tr>
 <td width="5%"></td>
-<td width="45%" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.wind)}<span style="margin-left:${c(5)};">${curWind} <span style="font-size:${cf(10)};color:${fadeColor};">km/h</span></span></td>
-<td width="45%" style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curHum} <span style="font-size:${cf(10)};color:${fadeColor};">%</span></span>${mdi(MDI.humid)}</td>
+<td width="45%" style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.wind, 16, 0, sd)}<span style="margin-left:${c(5)};">${curWind} <span style="font-size:${cd(10)};color:${fadeColor};">km/h</span></span></td>
+<td width="45%" style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curHum} <span style="font-size:${cd(10)};color:${fadeColor};">%</span></span>${mdi(MDI.humid, 16, 0, sd)}</td>
 <td width="5%"></td>
 </tr>
 <tr>
 <td></td>
-<td style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.sun)}<span style="margin-left:${c(5)};">${sunH} <span style="font-size:${cf(10)};color:${fadeColor};">h</span></span></td>
-<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curPress} <span style="font-size:${cf(10)};color:${fadeColor};">hPa</span></span>${mdi(MDI.press)}</td>
+<td style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.sun, 16, 0, sd)}<span style="margin-left:${c(5)};">${sunH} <span style="font-size:${cd(10)};color:${fadeColor};">h</span></span></td>
+<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};">${curPress} <span style="font-size:${cd(10)};color:${fadeColor};">hPa</span></span>${mdi(MDI.press, 16, 0, sd)}</td>
 <td></td>
 </tr>
 </table>`;
@@ -1466,7 +1469,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
-				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${c(42)};height:${c(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
+				html += `<td style="padding:0;${border}"><img src="${dayData[i][1]}" style="width:${cf(42)};height:${cf(42)};display:inline-block;margin:${c(-2)} 0;${imgScale}${wmoSvgFilter}"></td>`;
 			}
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
@@ -1481,7 +1484,7 @@ class Openmeteo extends utils.Adapter {
 			html += `</tr><tr>`;
 			for (let i = start; i < end; i++) {
 				const border = i > start ? `border-left:${c(2)} solid ${divColor};` : "";
-				html += `<td style="font-size:${cf(11)};color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13)} ${dayData[i][4]}<span style="font-size:${cf(9)};margin-left:${c(1)};">%</span></td>`;
+				html += `<td style="font-size:${cf(11)};color:${fadeColor};padding-top:0;${border}">${mdi(MDI.rain, 13, 0, sfv)} ${dayData[i][4]}<span style="font-size:${cf(9)};margin-left:${c(1)};">%</span></td>`;
 			}
 			html += `</tr></table>`;
 		}
@@ -1492,9 +1495,10 @@ class Openmeteo extends utils.Adapter {
 
 	async buildDetailedWidgetHtml(widget, locId) {
 		const p = locId;
-		const scale = widget.fontScale ?? 0;
 		const c = x => `${(x / 6).toFixed(2)}cqw`; // reference width 600 px
-		const fontFactor = Math.max(0.1, 1 + scale * 0.2);
+		const sh = Math.max(0.1, 1 + (widget.scaleHeader ?? 0) * 0.2);
+		const sdv = Math.max(0.1, 1 + (widget.scaleDetails ?? 0) * 0.2);
+		const sfv = Math.max(0.1, 1 + (widget.scaleForecast ?? 0) * 0.2);
 
 		const isLight = widget.theme === "light";
 		const isCustom = widget.theme === "custom";
@@ -1535,8 +1539,8 @@ class Openmeteo extends utils.Adapter {
 				? "transform:scale(1.05);transform-origin:center;"
 				: "";
 
-		const mdi = (path, size = 14, ml = 0) =>
-			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;fill:${iconColor};flex-shrink:0;${ml ? `margin-left:${c(ml)};` : ""}"><path d="${path}"/></svg>`;
+		const mdi = (path, size = 14, ml = 0, scale = 1) =>
+			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size * scale)};height:${c(size * scale)};vertical-align:middle;fill:${iconColor};flex-shrink:0;${ml ? `margin-left:${c(ml)};` : ""}"><path d="${path}"/></svg>`;
 
 		const MDI = {
 			wind: "M4,10A1,1 0 0,1 3,9A1,1 0 0,1 4,8H12A2,2 0 0,0 14,6A2,2 0 0,0 12,4C11.45,4 10.95,4.22 10.59,4.59C10.2,5 9.56,5 9.17,4.59C8.78,4.2 8.78,3.56 9.17,3.17C9.9,2.45 10.9,2 12,2A4,4 0 0,1 16,6A4,4 0 0,1 12,10H4M19,12A1,1 0 0,0 20,11A1,1 0 0,0 19,10C18.72,10 18.47,10.11 18.29,10.29C17.9,10.68 17.27,10.68 16.88,10.29C16.5,9.9 16.5,9.27 16.88,8.88C17.42,8.34 18.17,8 19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14H5A1,1 0 0,1 4,13A1,1 0 0,1 5,12H19M18,18H4A1,1 0 0,1 3,17A1,1 0 0,1 4,16H18A3,3 0 0,1 21,19A3,3 0 0,1 18,22C17.17,22 16.42,21.66 15.88,21.12C15.5,20.73 15.5,20.1 15.88,19.71C16.27,19.32 16.9,19.32 17.29,19.71C17.47,19.89 17.72,20 18,20A1,1 0 0,0 19,19A1,1 0 0,0 18,18Z",
@@ -1547,12 +1551,12 @@ class Openmeteo extends utils.Adapter {
 		};
 
 		const compassToRotation = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315 };
-		const windArrow = (dir, size = 14) => {
+		const windArrow = (dir, size = 14, fsFunc = null) => {
 			const deg = compassToRotation[String(dir || "").toUpperCase()] ?? null;
 			if (deg === null) {
-				return dir ? `<span style="${fs(10)}color:${fadeColor};">${dir}</span>` : "";
+				return dir ? `<span style="${(fsFunc ?? fsd)(10)}color:${fadeColor};">${dir}</span>` : "";
 			}
-			return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;fill:${iconColor};flex-shrink:0;transform:rotate(${deg}deg);display:inline-block;"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`;
+			return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:${c(size)};height:${c(size)};vertical-align:middle;display:inline-block;transform:rotate(${deg}deg);fill:${iconColor};"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`;
 		};
 
 		const gs = async id => (await this.getStateAsync(id))?.val ?? "";
@@ -1690,10 +1694,12 @@ class Openmeteo extends utils.Adapter {
 
 		// ── Build HTML ───────────────────────────────────────────────────────────
 		const div = (style, content) => `<div style="${style}">${content}</div>`;
-		const fs = s => `font-size:${c(s * fontFactor)};`;
+		const fsh = s => `font-size:${c(s * sh)};`;
+		const fsd = s => `font-size:${c(s * sdv)};`;
+		const fsf = s => `font-size:${c(s * sfv)};`;
 		const pad = (t, r, b, l) => `padding:${c(t)} ${c(r)} ${c(b)} ${c(l)};`;
 
-		const mainIconSize = c(isAmcharts ? 90 : isBasmilius ? 78 : 70);
+		const mainIconSize = c((isAmcharts ? 90 : isBasmilius ? 78 : 70) * sh);
 
 		let html = `<div style="container-type:inline-size;width:100%;">`;
 		html += `<div style="background:${bgColor};color:${textColor};font-family:sans-serif;${pad(6, 8, 4, 8)}">`;
@@ -1705,39 +1711,39 @@ class Openmeteo extends utils.Adapter {
 		html += `<div style="position:relative;display:inline-block;width:${mainIconSize};height:${mainIconSize};">`;
 		html += `<img src="${curIcon}" style="width:${mainIconSize};height:${mainIconSize};display:block;${wmoSvgFilter}${imgScale}">`;
 		if (hasMoon && moonIcons[0]) {
-			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(36)};height:${c(36)};top:${c(-13)};right:${c(-13)};opacity:0.92;z-index:1;">`;
+			html += `<img src="${moonIcons[0]}" style="position:absolute;width:${c(36 * sh)};height:${c(36 * sh)};top:${c(-13 * sh)};right:${c(-13 * sh)};opacity:0.92;z-index:1;">`;
 		}
 		html += `</div>`;
 		html += `</td>`;
 		html += `<td style="padding-left:${c(10)};vertical-align:middle;">`;
-		html += div(`${fs(14)}font-weight:600;color:${textColor};margin-bottom:${c(2)};`, widget.locationName);
-		html += div(`${fs(16)}color:${subColor};`, curDesc);
+		html += div(`${fsh(14)}font-weight:600;color:${textColor};margin-bottom:${c(2)};`, widget.locationName);
+		html += div(`${fsh(16)}color:${subColor};`, curDesc);
 		if (curSummary) {
-			html += div(`${fs(12)}color:${fadeColor};margin-top:${c(2)};`, curSummary);
+			html += div(`${fsh(12)}color:${fadeColor};margin-top:${c(2)};`, curSummary);
 		}
 		html += `</td>`;
 		html += `<td style="text-align:right;vertical-align:middle;padding-right:${c(4)};">`;
-		html += `<div style="${fs(46)}font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="${fs(18)}vertical-align:top;font-weight:300;margin-left:0;position:relative;top:${c(4)};">°C</span></div>`;
+		html += `<div style="${fsh(46)}font-weight:300;letter-spacing:${c(-1)};color:${textColor};">${curTemp}<span style="${fsh(18)}vertical-align:top;font-weight:300;margin-left:0;position:relative;top:${c(4)};">°C</span></div>`;
 		html += `</td>`;
 		html += `</tr>`;
 		html += `</table>`;
 
 		// Details row
-		html += `<table width="100%" style="border-collapse:collapse;${fs(13)}color:${subColor};margin-bottom:${c(5)};">`;
+		html += `<table width="100%" style="border-collapse:collapse;${fsd(13)}color:${subColor};margin-bottom:${c(5)};">`;
 		html += `<tr>`;
 		html += `<td width="5%"></td>`;
-		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind)}`;
-		html += `<span style="margin-left:${c(4)};">${curWind} <span style="${fs(10)}color:${fadeColor};">km/h</span>`;
+		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.wind, 14, 0, sdv)}`;
+		html += `<span style="margin-left:${c(4)};">${curWind} <span style="${fsd(10)}color:${fadeColor};">km/h</span>`;
 		if (curWindDir) {
-			html += ` ${windArrow(curWindDir, 13)}`;
+			html += ` ${windArrow(curWindDir, 13, fsd)}`;
 		}
 		html += `</span></td>`;
-		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fs(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid)}</td>`;
+		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curHum} <span style="${fsd(10)}color:${fadeColor};">%</span></span>${mdi(MDI.humid, 14, 0, sdv)}</td>`;
 		html += `<td width="5%"></td>`;
 		html += `</tr><tr>`;
 		html += `<td></td>`;
-		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.sun)}<span style="margin-left:${c(4)};">${sunH} <span style="${fs(10)}color:${fadeColor};">h</span></span></td>`;
-		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curPress} <span style="${fs(10)}color:${fadeColor};">hPa</span></span>${mdi(MDI.press)}</td>`;
+		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.sun, 14, 0, sdv)}<span style="margin-left:${c(4)};">${sunH} <span style="${fsd(10)}color:${fadeColor};">h</span></span></td>`;
+		html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};">${curPress} <span style="${fsd(10)}color:${fadeColor};">hPa</span></span>${mdi(MDI.press, 14, 0, sdv)}</td>`;
 		html += `<td></td>`;
 		html += `</tr>`;
 		html += `</table>`;
@@ -1747,12 +1753,12 @@ class Openmeteo extends utils.Adapter {
 		// ── Section 2: Next 24 h (2 h steps) ────────────────────────────────────
 		if (showHourly && hourly24.length > 0) {
 			html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
-			const hIconSz = c(isAmcharts ? 26 : isBasmilius ? 20 : 17);
+			const hIconSz = c((isAmcharts ? 26 : isBasmilius ? 20 : 17) * sfv);
 			html += `<table width="100%" style="border-collapse:collapse;table-layout:fixed;">`;
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;padding:0 0 1px;${border}"><span style="${fs(8)}${lh}color:${fadeColor};">${String(s[5]).padStart(2, "0")}h</span></td>`;
+					return `<td style="text-align:center;padding:0 0 1px;${border}"><span style="${fsf(8)}${lh}color:${fadeColor};">${String(s[5]).padStart(2, "0")}h</span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
@@ -1764,7 +1770,7 @@ class Openmeteo extends utils.Adapter {
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;padding:0;${border}"><span style="${fs(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fs(7)}">°C</span></span></td>`;
+					return `<td style="text-align:center;padding:0;${border}"><span style="${fsf(10)}${lh}font-weight:600;color:${textColor};">${s[1]}<span style="${fsf(7)}">°C</span></span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
@@ -1773,15 +1779,15 @@ class Openmeteo extends utils.Adapter {
 					const mm = parseFloat(s[2]) || 0;
 					const txt =
 						mm >= 0.1
-							? `<span style="${fs(8)}${lh}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fs(6)}color:${fadeColor};"> mm</span></span>`
-							: `<span style="${fs(8)}${lh}color:${subColor};">0<span style="${fs(6)}color:${fadeColor};"> mm</span></span>`;
+							? `<span style="${fsf(8)}${lh}color:${subColor};">${Math.round(mm * 10) / 10}<span style="${fsf(6)}color:${fadeColor};"> mm</span></span>`
+							: `<span style="${fsf(8)}${lh}color:${subColor};">0<span style="${fsf(6)}color:${fadeColor};"> mm</span></span>`;
 					return `<td style="text-align:center;padding:0;${border}">${txt}</td>`;
 				})
 				.join("")}</tr>`;
 			html += `<tr>${hourly24
 				.map((s, j) => {
 					const border = j > 0 ? `border-left:1px solid ${divColor};` : "";
-					return `<td style="text-align:center;padding:0 0 1px;${border}"><span style="${fs(8)}${lh}color:${subColor};">${s[3]}<span style="${fs(6)}color:${fadeColor};"> km/h</span> ${windArrow(s[4], 9)}</span></td>`;
+					return `<td style="text-align:center;padding:0 0 1px;${border}"><span style="${fsf(8)}${lh}color:${subColor};">${s[3]}<span style="${fsf(6)}color:${fadeColor};"> km/h</span> ${windArrow(s[4], 9, fsf)}</span></td>`;
 				})
 				.join("")}</tr>`;
 			html += `</table>`;
@@ -1790,7 +1796,7 @@ class Openmeteo extends utils.Adapter {
 		// ── Section 3: Daily forecast ────────────────────────────────────────────
 		html += `<div style="border-top:1px solid ${divColor};margin-bottom:${c(2)};"></div>`;
 
-		const iconSz = c(isAmcharts ? 36 : isBasmilius ? 30 : 26);
+		const iconSz = c((isAmcharts ? 36 : isBasmilius ? 30 : 26) * sfv);
 
 		// Row helper – no vertical padding, content drives height
 		const dRow = (cells, style = "") =>
@@ -1813,7 +1819,7 @@ class Openmeteo extends utils.Adapter {
 			// weekday
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(10)}${lh}color:${fadeColor};font-weight:${g === 0 && i === 0 ? "700" : "400"};">${d[0]}</span>`,
+					`<span style="${fsf(10)}${lh}color:${fadeColor};font-weight:${g === 0 && i === 0 ? "700" : "400"};">${d[0]}</span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
@@ -1822,7 +1828,7 @@ class Openmeteo extends utils.Adapter {
 				dSlice.map((d, i) => {
 					const moonUrl = hasMoon ? mSlice[i] : null;
 					const moonOverlay = moonUrl
-						? `<img src="${moonUrl}" style="position:absolute;width:${c(27)};height:${c(27)};top:${c(-10)};right:${c(-10)};opacity:0.92;z-index:1;">`
+						? `<img src="${moonUrl}" style="position:absolute;width:${c(27 * sfv)};height:${c(27 * sfv)};top:${c(-10 * sfv)};right:${c(-10 * sfv)};opacity:0.92;z-index:1;">`
 						: "";
 					return [
 						`<div style="position:relative;display:inline-block;width:${iconSz};height:${iconSz};"><img src="${d[1]}" style="width:${iconSz};height:${iconSz};display:block;${imgScale}${wmoSvgFilter}">${moonOverlay}</div>`,
@@ -1833,21 +1839,21 @@ class Openmeteo extends utils.Adapter {
 			// temp max
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fs(8)}">°C</span></span>`,
+					`<span style="${fsf(12)}${lh}font-weight:600;color:${textColor};">${d[2]}<span style="${fsf(8)}">°C</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
 			// temp min
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fs(7)}">°C</span></span>`,
+					`<span style="${fsf(10)}${lh}color:${fadeColor};">${d[3]}<span style="${fsf(7)}">°C</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
 			// precip prob
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(9)}${lh}color:${subColor};">${mdi(MDI.rain, 10)} ${d[4]}<span style="${fs(7)}margin-left:${c(1)};">%</span></span>`,
+					`<span style="${fsf(9)}${lh}color:${subColor};">${mdi(MDI.rain, 10, 0, sfv)} ${d[4]}<span style="${fsf(7)}margin-left:${c(1)};">%</span></span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);
@@ -1857,10 +1863,10 @@ class Openmeteo extends utils.Adapter {
 					const mm = parseFloat(d[5]) || 0;
 					const txt =
 						mm >= 0.1
-							? `${Math.round(mm * 10) / 10} <span style="${fs(7)}color:${fadeColor};">mm</span>`
-							: `0 <span style="${fs(7)}color:${fadeColor};">mm</span>`;
+							? `${Math.round(mm * 10) / 10} <span style="${fsf(7)}color:${fadeColor};">mm</span>`
+							: `0 <span style="${fsf(7)}color:${fadeColor};">mm</span>`;
 					return [
-						`<span style="${fs(9)}${lh}color:${subColor};">${txt}</span>`,
+						`<span style="${fsf(9)}${lh}color:${subColor};">${txt}</span>`,
 						i > 0 ? `border-left:1px solid ${divColor};` : "",
 					];
 				}),
@@ -1868,7 +1874,7 @@ class Openmeteo extends utils.Adapter {
 			// wind speed + direction
 			html += dRow(
 				dSlice.map((d, i) => [
-					`<span style="${fs(9)}${lh}color:${subColor};">${d[6]}<span style="${fs(7)}color:${fadeColor};"> km/h</span> ${windArrow(d[7], 11)}</span>`,
+					`<span style="${fsf(9)}${lh}color:${subColor};">${d[6]}<span style="${fsf(7)}color:${fadeColor};"> km/h</span> ${windArrow(d[7], 11, fsf)}</span>`,
 					i > 0 ? `border-left:1px solid ${divColor};` : "",
 				]),
 			);

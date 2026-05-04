@@ -94,5 +94,7 @@
   "widgetDetailedNoAstronomy": "Астрономію вимкнено – значок фази місяця не відображатиметься",
   "widgetHourlyRange": "Годин від зараз",
   "widgetHourlyStep": "Крок",
-  "widgetFontScale": "Розмір шрифту"
+  "widgetScaleHeader": "Заголовок",
+  "widgetScaleDetails": "Деталі",
+  "widgetScaleForecast": "Прогноз"
 }

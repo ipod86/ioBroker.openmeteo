@@ -94,5 +94,7 @@
   "widgetDetailedNoAstronomy": "天文学已禁用 – 不会显示月相图标",
   "widgetHourlyRange": "从现在起的小时数",
   "widgetHourlyStep": "步长",
-  "widgetFontScale": "字体大小"
+  "widgetScaleHeader": "标题区",
+  "widgetScaleDetails": "详情",
+  "widgetScaleForecast": "预报"
 }

@@ -94,5 +94,7 @@
   "widgetDetailedNoAstronomy": "Astronomia wyłączona – ikona fazy księżyca nie będzie wyświetlana",
   "widgetHourlyRange": "Godziny od teraz",
   "widgetHourlyStep": "Krok",
-  "widgetFontScale": "Rozmiar czcionki"
+  "widgetScaleHeader": "Nagłówek",
+  "widgetScaleDetails": "Szczegóły",
+  "widgetScaleForecast": "Prognoza"
 }

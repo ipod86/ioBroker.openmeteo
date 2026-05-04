@@ -105,5 +105,7 @@
   "warnNotifyLiftHelp": "Sendet eine Benachrichtigung wenn eine zuvor gemeldete Warnung aufgehoben wird oder abläuft",
   "widgetHourlyRange": "Stunden ab jetzt",
   "widgetHourlyStep": "Schrittweite",
-  "widgetFontScale": "Schriftgröße"
+  "widgetScaleHeader": "Kopfbereich",
+  "widgetScaleDetails": "Details",
+  "widgetScaleForecast": "Vorhersage"
 }

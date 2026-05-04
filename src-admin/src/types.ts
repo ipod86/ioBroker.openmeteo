@@ -15,7 +15,9 @@ export interface Widget {
     textBase: string;   // hex '#rrggbb'
     hourlyRange?: number; // hours to show from now (default 20)
     hourlyStep?: number;  // step in hours (default 2)
-    fontScale?: number;   // font size offset -5..+5 (default 0)
+    scaleHeader?: number;   // header section font scale -5..+5 (default 0)
+    scaleDetails?: number;  // details section font scale -5..+5 (default 0)
+    scaleForecast?: number; // forecast section font scale -5..+5 (default 0)
 }
 
 export interface OpenMeteoConfig {
