@@ -72,5 +72,10 @@
     "widgetDays": "Tage",
     "widgetTheme": "Design",
     "widgetFontSizes": "Schriftgrößen",
-    "widgetShowWarnBadge": "Warnungs-Badge für amtliche Warnungen"
+    "widgetShowWarnBadge": "Warnungs-Badge für amtliche Warnungen",
+    "enableWarnOfficialFetchHelp": "Ruft amtliche Warnungsdaten ab und legt Datenpunkte an — benötigt für den Warnungs-Badge im Widget.",
+    "enableWarnOfficialFetch": "Amtliche Warnungen (Datenpunkte)",
+    "widgetShowWarnBadgeHint": "Amtliche Warnungen unter Allgemein → Optionale Daten aktivieren, damit der Badge funktioniert.",
+    "warnOfficialEnableFetchHint": "Für den Warnungs-Badge im Widget amtliche Warnungen unter Allgemein → Optionale Daten aktivieren.",
+    "enableWarnOfficialFetchNotifyHint": "Um auch Push-Benachrichtigungen zu erhalten, amtliche Warnungen im Tab Benachrichtigungen aktivieren."
 }

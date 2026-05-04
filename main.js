@@ -838,7 +838,7 @@ class Openmeteo extends utils.Adapter {
 		}
 
 		// Schedule separate official warning updates aligned to clock boundaries
-		if (this.config.warnOfficial) {
+		if (this.config.warnOfficial || this.config.warnOfficialFetch) {
 			const warnIntervalMinutes = this.config.warnIntervalMinutes || 5;
 			const warnIntervalMs = warnIntervalMinutes * 60 * 1000;
 			const msUntilNextWarn = () => {
@@ -1120,7 +1120,7 @@ class Openmeteo extends utils.Adapter {
 	}
 
 	async runWarnUpdate() {
-		if (!this.config.warnOfficial) {
+		if (!this.config.warnOfficial && !this.config.warnOfficialFetch) {
 			return;
 		}
 		const locations = this.config.locations;
@@ -2383,7 +2383,10 @@ class Openmeteo extends utils.Adapter {
 			});
 		}
 
-		// Send notifications for new DWD warnings
+		// Send notifications for new DWD warnings (only if warnOfficial notifications are enabled)
+		if (!this.config.warnOfficial) {
+			return;
+		}
 		const minLevel = this.config.warnOfficialMinLevel ?? 2;
 		const excludeKeywords = (this.config.warnExcludeKeywords || "")
 			.split(",")
@@ -2514,7 +2517,10 @@ class Openmeteo extends utils.Adapter {
 			});
 		}
 
-		// Send notifications for new MeteoAlarm warnings
+		// Send notifications for new MeteoAlarm warnings (only if warnOfficial notifications are enabled)
+		if (!this.config.warnOfficial) {
+			return;
+		}
 		const minLevel = this.config.warnOfficialMinLevel ?? 2;
 		const excludeKeywords = (this.config.warnExcludeKeywords || "")
 			.split(",")

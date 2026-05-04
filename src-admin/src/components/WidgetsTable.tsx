@@ -14,7 +14,7 @@ interface Props {
     daysCount: number;
     hourlyDays: number;
     enableAstronomy: boolean;
-    enableWarnOfficial: boolean;
+    warnDataActive: boolean;
     onChange: (widgets: Widget[]) => void;
 }
 
@@ -42,7 +42,7 @@ const ColorSwatch: React.FC<{ value: string; onChange: (v: string) => void; disa
     />
 );
 
-const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, enableAstronomy, enableWarnOfficial, onChange }) => {
+const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDays, enableAstronomy, warnDataActive, onChange }) => {
     const update = (index: number, patch: Partial<Widget>): void => {
         const updated = widgets.map((w, i) => i === index ? { ...w, ...patch } : w);
         onChange(updated);
@@ -209,19 +209,24 @@ const WidgetsTable: React.FC<Props> = ({ widgets, locations, daysCount, hourlyDa
                                 </ToggleButtonGroup>
                             </Box>
 
-                            {/* Warning badge toggle — only when official warnings are enabled */}
-                            {enableWarnOfficial && (
+                            {/* Warning badge toggle — always visible, default off */}
+                            <Box>
                                 <FormControlLabel
                                     control={
                                         <Switch
                                             size="small"
-                                            checked={w.showWarnBadge !== false}
+                                            checked={!!w.showWarnBadge}
                                             onChange={e => update(i, { showWarnBadge: e.target.checked })}
                                         />
                                     }
                                     label={<Typography variant="caption">{I18n.t('widgetShowWarnBadge')}</Typography>}
                                 />
-                            )}
+                                {w.showWarnBadge && !warnDataActive && (
+                                    <Alert severity="warning" sx={{ mt: 0.5, maxWidth: 340 }}>
+                                        {I18n.t('widgetShowWarnBadgeHint')}
+                                    </Alert>
+                                )}
+                            </Box>
 
                             {/* Custom color pickers — only when theme === 'custom' */}
                             {w.theme === 'custom' && (

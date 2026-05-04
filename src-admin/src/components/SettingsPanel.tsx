@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
+import { Alert, Box, Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
 import { I18n } from '@iobroker/adapter-react-v5';
 import { OpenMeteoConfig } from '../types';
 import LocationsTable from './LocationsTable';
@@ -236,6 +236,23 @@ const SettingsPanel: React.FC<Props> = ({ native, onChange, themeType, namespace
                     <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mb: 1 }}>
                         {I18n.t('enableComfortHelp')}
                     </Typography>
+
+                    {/* Official warnings data */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                        <FormControlLabel
+                            control={<Switch checked={!!native.warnOfficialFetch} onChange={e => update('warnOfficialFetch', e.target.checked)} />}
+                            label={I18n.t('enableWarnOfficialFetch')}
+                            sx={{ minWidth: 280 }}
+                        />
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mb: 1 }}>
+                        {I18n.t('enableWarnOfficialFetchHelp')}
+                    </Typography>
+                    {native.warnOfficialFetch && !native.warnOfficial && (
+                        <Alert severity="info" sx={{ ml: 4, maxWidth: 440 }}>
+                            {I18n.t('enableWarnOfficialFetchNotifyHint')}
+                        </Alert>
+                    )}
 
                 </Box>
             </Box>

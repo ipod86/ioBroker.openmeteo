@@ -40,6 +40,7 @@ export interface OpenMeteoConfig {
     enablePollenHourly: boolean;
     enableComfort: boolean;
     enableComfortHourly: boolean;
+    warnOfficialFetch: boolean;
     warnOfficial: boolean;
     warnOfficialMinLevel: number;
     warnExcludeKeywords: string;
