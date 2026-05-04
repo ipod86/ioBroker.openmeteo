@@ -2254,6 +2254,20 @@ class Openmeteo extends utils.Adapter {
 			.filter(k => k.length > 0);
 		const warnNotifyLift = !!this.config.warnNotifyLift;
 		const activeKeys = new Set();
+		const fmtTime = val => {
+			if (!val) {
+				return null;
+			}
+			const d = typeof val === "number" ? new Date(val) : new Date(val);
+			if (isNaN(d)) {
+				return null;
+			}
+			return `${d.toLocaleTimeString("de-DE", {
+				hour: "2-digit",
+				minute: "2-digit",
+				timeZone: "Europe/Berlin",
+			})} Uhr`;
+		};
 		for (const w of warnings) {
 			const key = `${locId}_dwd_${w.event}_${w.start}`;
 			activeKeys.add(key);
@@ -2270,7 +2284,11 @@ class Openmeteo extends utils.Adapter {
 						4: "Extreme Warnung",
 					};
 					const levelText = levelTexts[w.level] || `Stufe ${w.level}`;
-					const msg = `DWD ${levelText} für ${locId}: ${w.headline || w.event}`;
+					const from = fmtTime(w.start);
+					const to = fmtTime(w.end);
+					const timeRange = from && to ? ` | ${from}–${to}` : from ? ` | ab ${from}` : "";
+					const desc = w.description ? `\n${w.description}` : "";
+					const msg = `DWD ${levelText} für ${locId}: ${w.headline || w.event}${timeRange}${desc}`;
 					this.log.warn(msg);
 					await this.registerNotification("openmeteo-notify", "official_warning", msg);
 				}
@@ -2367,6 +2385,20 @@ class Openmeteo extends utils.Adapter {
 			.filter(k => k.length > 0);
 		const warnNotifyLift = !!this.config.warnNotifyLift;
 		const activeKeys = new Set();
+		const fmtTime = val => {
+			if (!val) {
+				return null;
+			}
+			const d = new Date(val);
+			if (isNaN(d)) {
+				return null;
+			}
+			return `${d.toLocaleTimeString("de-DE", {
+				hour: "2-digit",
+				minute: "2-digit",
+				timeZone: "Europe/Berlin",
+			})} Uhr`;
+		};
 		for (const w of warnings) {
 			const key = `${locId}_meteoalarm_${w.event}_${w.onset}`;
 			activeKeys.add(key);
@@ -2376,7 +2408,11 @@ class Openmeteo extends utils.Adapter {
 				const passes = (METEOALARM_SEVERITY[w.severity] || 0) >= minLevel && !excluded;
 				this.warnState[key] = { headline: w.headline || w.event, sent: passes };
 				if (passes) {
-					const msg = `MeteoAlarm ${w.severity} für ${locId}: ${w.headline || w.event}`;
+					const from = fmtTime(w.onset);
+					const to = fmtTime(w.expires);
+					const timeRange = from && to ? ` | ${from}–${to}` : from ? ` | ab ${from}` : "";
+					const desc = w.description ? `\n${w.description}` : "";
+					const msg = `MeteoAlarm ${w.severity} für ${locId}: ${w.headline || w.event}${timeRange}${desc}`;
 					this.log.warn(msg);
 					await this.registerNotification("openmeteo-notify", "official_warning", msg);
 				}
