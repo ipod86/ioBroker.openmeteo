@@ -89,7 +89,16 @@
       "weather",
       "forecast",
       "openmeteo-notify",
-      "open-meteo"
+      "open-meteo",
+      "openmeteo",
+      "dwd",
+      "meteoalarm",
+      "notification",
+      "alert",
+      "warning",
+      "widget",
+      "wetter",
+      "unwetter"
     ],
     "licenseInformation": {
       "type": "free",
