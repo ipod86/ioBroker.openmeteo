@@ -295,17 +295,17 @@
           },
           "severity": "alert",
           "description": {
-            "en": "Official weather warning from national meteorological service (DE: DWD, EU: MeteoAlarm)",
-            "de": "Amtliche Unwetterwarnung des nationalen Wetterdienstes (DE: DWD, EU: MeteoAlarm)",
-            "ru": "Официальное предупреждение национальной метеорологической службы (DE: DWD, EU: MeteoAlarm)",
-            "pt": "Aviso meteorológico oficial do serviço meteorológico nacional (DE: DWD, EU: MeteoAlarm)",
-            "nl": "Officiële weerwaarschuwing van de nationale meteorologische dienst (DE: DWD, EU: MeteoAlarm)",
-            "fr": "Alerte météo officielle du service météorologique national (DE: DWD, EU: MeteoAlarm)",
-            "it": "Avviso meteo ufficiale del servizio meteorologico nazionale (DE: DWD, EU: MeteoAlarm)",
-            "es": "Alerta meteorológica oficial del servicio meteorológico nacional (DE: DWD, EU: MeteoAlarm)",
-            "pl": "Oficjalne ostrzeżenie pogodowe krajowej służby meteorologicznej (DE: DWD, EU: MeteoAlarm)",
-            "uk": "Офіційне попередження національної метеорологічної служби (DE: DWD, EU: MeteoAlarm)",
-            "zh-cn": "国家气象局官方天气预警（DE: DWD，EU: MeteoAlarm）"
+            "en": "",
+            "de": "",
+            "ru": "",
+            "pt": "",
+            "nl": "",
+            "fr": "",
+            "it": "",
+            "es": "",
+            "pl": "",
+            "uk": "",
+            "zh-cn": ""
           },
           "regex": [],
           "limit": 10
