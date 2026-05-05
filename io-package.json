@@ -295,17 +295,17 @@
           },
           "severity": "alert",
           "description": {
-            "en": "",
-            "de": "",
-            "ru": "",
-            "pt": "",
-            "nl": "",
-            "fr": "",
-            "it": "",
-            "es": "",
-            "pl": "",
-            "uk": "",
-            "zh-cn": ""
+            "en": "Messages from the official weather warning service.",
+            "de": "Nachrichten des Amtlichen Unwetterdienstes.",
+            "ru": "Сообщения официальной службы погодных предупреждений.",
+            "pt": "Mensagens do serviço oficial de avisos meteorológicos.",
+            "nl": "Berichten van de officiële weerwaarschuwingsdienst.",
+            "fr": "Messages du service officiel d'alertes météorologiques.",
+            "it": "Messaggi del servizio ufficiale di allerta meteo.",
+            "es": "Mensajes del servicio oficial de avisos meteorológicos.",
+            "pl": "Wiadomości z oficjalnej służby ostrzeżeń pogodowych.",
+            "uk": "Повідомлення офіційної служби погодних попереджень.",
+            "zh-cn": "来自官方气象预警服务的消息。"
           },
           "regex": [],
           "limit": 10
