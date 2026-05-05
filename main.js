@@ -1491,7 +1491,7 @@ class Openmeteo extends utils.Adapter {
 <tr>
 <td></td>
 <td style="text-align:left;padding:${c(1)} 0;">${mdi(MDI.sun, 16, 0, sd)}<span style="margin-left:${c(5)};">${sunH} <span style="font-size:${cd(10)};color:${fadeColor};">h</span></span></td>
-<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};font-size:${cd(11)};color:${subColor};">${sunrise ? `↑&thinsp;${sunrise}` : ""}${sunrise && sunset ? "&ensp;" : ""}${sunset ? `↓&thinsp;${sunset}` : ""}</span></td>
+<td style="text-align:right;padding:${c(1)} 0;"><span style="margin-right:${c(5)};font-size:${cd(13)};color:${subColor};">${sunrise ? `↑&thinsp;${sunrise}` : ""}${sunrise && sunset ? "&ensp;" : ""}${sunset ? `↓&thinsp;${sunset}` : ""}</span></td>
 <td></td>
 </tr>
 </table>`;
@@ -1799,7 +1799,7 @@ class Openmeteo extends utils.Adapter {
 		html += `<td></td>`;
 		html += `<td style="text-align:left;${pad(1, 0, 1, 0)}">${mdi(MDI.press, 14, 0, sdv)}<span style="margin-left:${c(4)};">${curPress} <span style="${fsd(10)}color:${fadeColor};">hPa</span></span></td>`;
 		if (sunrise || sunset) {
-			html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};${fsd(11)}color:${subColor};">${sunrise ? `↑&thinsp;${sunrise}` : ""}${sunrise && sunset ? "&ensp;" : ""}${sunset ? `↓&thinsp;${sunset}` : ""}</span></td>`;
+			html += `<td style="text-align:right;${pad(1, 0, 1, 0)};"><span style="margin-right:${c(4)};${fsd(13)}color:${subColor};">${sunrise ? `↑&thinsp;${sunrise}` : ""}${sunrise && sunset ? "&ensp;" : ""}${sunset ? `↓&thinsp;${sunset}` : ""}</span></td>`;
 		} else {
 			html += `<td></td>`;
 		}
